@@ -1,3 +1,3 @@
-# Flippando
+# Flippando - the game
 
 Gno implementation.
