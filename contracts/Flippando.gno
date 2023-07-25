@@ -1,53 +1,111 @@
+package flippando
 
-struct game: {
-    owner, 
-    gameId, 
-    board,
-    tileType, 
-    gameTiles, 
-    boardSize, 
-    status
-}  
+import (
+	"fmt"
+	"math/rand"
+	"time"
+)
+
+type game struct {
+	owner     string
+	gameId    string
+	board     []int
+	tileType  string
+	gameTiles []int
+	boardSize int
+	status    string
+}
+
 // owner - 'address', gameId - 'string', board - [int], tileType - 'coloredSquare', 'dice', 'hexagram', gameTiles - [int], boardSize - {4, 8}, status - 'created | ongoing | solved'
 
-struct positions : {
-    position1, 
-    position2
+type positions struct {
+	position1 int
+	position2 int
 }
+
 // position1 - int, postion2 - int
 
-struct inTransit : {
-    tokenId,
-    inTransit
+type inTransit struct {
+	tokenId   int
+	inTransit bool
 }
+
 // tokenId - int, inTransit, bool
 
-
 // creates game object and initializes board
-funct startGame(ownwer string, gameId string, tileType int, boardSize int) string {
-
+func startGame(owner string, gameId string, tileType int, boardSize int) string {
 }
 
-flipTiles(gameId, positions) 
-    - returns the tiles at the positions[] in the board array
-    - updates the game[gameId].board with the indices at positions
+func flipTiles(string gameId, positions positions) {
+	//   - returns the tiles at the positions[] in the board array
+	//   - updates the game[gameId].board with the indices at positions
+}
 
-createNFT(gameId) - generates a GRC721 token with the solved board SVG as a tokenURI
+func createNFT(gameId) {
+	// - generates a GRC721 token with the solved board SVG as a tokenURI
+}
 
-makeArt(owner, buildingBlocks[]) 
-    - checks if any of the tokenIds in the buildingBlocks[] are belonging to the user (not allowed)
-    - checks if any of the tokenIds in the buildingBlocks[] are in transit
-    - unlocks and sends the locked Flips in each used NFT
-    - transfers the NFTs to the new owner (the art creator)
-    - calls FlippandoBundler.bundleAssets() to generate a new GRC721 NFT with a standard tokenURI, and the tokenIds of the used NFT primitives
-    
+func makeArt(owner, buildingBlocks) {
+	// - checks if any of the tokenIds in the buildingBlocks[] are belonging to the user (not allowed)
+	// - checks if any of the tokenIds in the buildingBlocks[] are in transit
+	// - unlocks and sends the locked Flips in each used NFT
+	// - transfers the NFTs to the new owner (the art creator)
+	// - calls FlippandoBundler.bundleAssets() to generate a new GRC721 NFT with a standard tokenURI, and the tokenIds of the used NFT primitives
+}
 
-resetGame(gameId) - utility function, nullifies the game[gameId]
+func resetGame(gameId) {
+	//- utility function, nullifies the game[gameId]
+}
 
-boardHasZeroValues(gameId) - utility function, checks for existing zeros in the board (game is ongoing) // do we still need this?
+func boardHasZeroValues(gameId) {
+	// - utility function, checks for existing zeros in the board (game is ongoing) // do we still need this?
+}
 
-generateRandomNumbers(range, count) - generates count random numbers inside the range interval
+func generateRandomNumbers(num, start, end int) []int {
+	if start > end {
+		start, end = end, start // Ensure the range is in ascending order
+	}
 
-isValidGameLevel(boardSize) - utility function, checks valid game levels
+	if num < 0 {
+		fmt.Println("The number of random values (num) must be non-negative")
+		return nil
+	}
 
-isValidGameType(tileType) - utility function, checks valid tile types
+	if num > end-start+1 {
+		fmt.Println("The number of random values (num) cannot exceed the range size")
+		return nil
+	}
+
+	// Seed the random number generator with the current time
+	rand.Seed(time.Now().UnixNano())
+
+	// Generate num unique random values within the range
+	result := make([]int, 0, num)
+	for len(result) < num {
+		randomValue := rand.Intn(end-start+1) + start
+
+		// Check if the value already exists in the result slice
+		// If not, append it to the result slice
+		unique := true
+		for _, val := range result {
+			if val == randomValue {
+				unique = false
+				break
+			}
+		}
+
+		if unique {
+			result = append(result, randomValue)
+		}
+	}
+
+	return result
+}
+
+func isValidGameLevel(boardSize) {
+	// - utility function, checks valid game levels
+}
+
+func isValidGameType(tileType) {
+	//   - utility function, checks valid tile types
+}
