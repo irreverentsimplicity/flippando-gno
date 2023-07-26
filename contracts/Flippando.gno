@@ -3,7 +3,6 @@ package flippando
 import (
 	"fmt"
 	"math/rand"
-	"time"
 )
 
 type game struct {
@@ -36,16 +35,16 @@ type inTransit struct {
 func startGame(owner string, gameId string, tileType int, boardSize int) string {
 }
 
-func flipTiles(string gameId, positions positions) {
+func flipTiles(gameId string, positions positions) {
 	//   - returns the tiles at the positions[] in the board array
 	//   - updates the game[gameId].board with the indices at positions
 }
 
-func createNFT(gameId) {
+func createNFT(gameId string) {
 	// - generates a GRC721 token with the solved board SVG as a tokenURI
 }
 
-func makeArt(owner, buildingBlocks) {
+func makeArt(owner string, buildingBlocks []int) {
 	// - checks if any of the tokenIds in the buildingBlocks[] are belonging to the user (not allowed)
 	// - checks if any of the tokenIds in the buildingBlocks[] are in transit
 	// - unlocks and sends the locked Flips in each used NFT
@@ -53,11 +52,11 @@ func makeArt(owner, buildingBlocks) {
 	// - calls FlippandoBundler.bundleAssets() to generate a new GRC721 NFT with a standard tokenURI, and the tokenIds of the used NFT primitives
 }
 
-func resetGame(gameId) {
+func resetGame(gameId string) {
 	//- utility function, nullifies the game[gameId]
 }
 
-func boardHasZeroValues(gameId) {
+func boardHasZeroValues(gameId string) {
 	// - utility function, checks for existing zeros in the board (game is ongoing) // do we still need this?
 }
 
@@ -77,7 +76,7 @@ func generateRandomNumbers(num, start, end int) []int {
 	}
 
 	// Seed the random number generator with the current time
-	rand.Seed(time.Now().UnixNano())
+	rand.Seed(123)
 
 	// Generate num unique random values within the range
 	result := make([]int, 0, num)
@@ -102,10 +101,10 @@ func generateRandomNumbers(num, start, end int) []int {
 	return result
 }
 
-func isValidGameLevel(boardSize) {
+func isValidGameLevel(boardSize int) {
 	// - utility function, checks valid game levels
 }
 
-func isValidGameType(tileType) {
+func isValidGameType(tileType string) {
 	//   - utility function, checks valid tile types
 }
