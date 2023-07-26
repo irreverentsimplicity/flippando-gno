@@ -17,20 +17,20 @@ func TestGenerateRandomNumbers(t *testing.T) {
 	randomValues := generateRandomNumbers(4, 1, 4)
 	expectedValues := []int{3, 4, 1, 2} // Since we override the random number generator, we know the output.
 	if !sliceEqual(randomValues, expectedValues) {
-		t.Errorf("Expected %v, but got %v", expectedValues, randomValues)
+		t.Fatalf("Expected %v, but got %v", expectedValues, randomValues)
 	}
 
 	// Test case 2: Edge case with start and end equal
 	randomValues = generateRandomNumbers(3, 5, 5)
 	expectedValues = []int{5, 5, 5}
 	if !sliceEqual(randomValues, expectedValues) {
-		t.Errorf("Expected %v, but got %v", expectedValues, randomValues)
+		t.Fatalf("Expected %v, but got %v", expectedValues, randomValues)
 	}
 
 	// Test case 3: Edge case with num exceeding the range size
 	randomValues = generateRandomNumbers(10, 1, 4)
 	if randomValues != nil {
-		t.Errorf("Expected nil for num exceeding range size, but got %v", randomValues)
+		t.Fatalf("Expected nil for num exceeding range size, but got %v", randomValues)
 	}
 }
 
