@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Quantico:wght@700&display=swap');
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+.on {
+    background-color: black;
+    border: 1.5px solid #000;
+    border-radius: 100px;
+    align-self: flex-start;
+    padding: 5px 16px 3px;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 32px;
+    display: flex;
+    color:#ffff;
+}
+
+.off {
+    background-color: #ffff;
+    border: 1.5px solid #000;
+    border-radius: 100px;
+    align-self: flex-start;
+    padding: 5px 16px 3px;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 32px;
+    display: flex;
+    color:#000;
+}
+
+
