@@ -3,7 +3,7 @@ import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { ethers, utils } from 'ethers';
+//import { ethers, utils } from 'ethers';
 import GameLevels from '../components/GameLevels';
 import TileImages from '../components/TileImages';
 import Color1 from './assets/squares/Color1.svg';
@@ -21,9 +21,6 @@ import Hexagram6 from './assets/hexagrams/hexagram6.svg';
 import SmallTile from '../components/SmallTile';
 import Flippando from '../artifacts/contracts/Flippando.sol/Flippando.json'
 import Flip from '../artifacts/contracts/Flip.sol/Flip.json'
-import FlippandoBundler from '../artifacts/contracts/FlippandoBundler.sol/FlippandoBundler.json'
-import FlippandoGameMaster from '../artifacts/contracts/FlippandoGameMaster.sol/FlippandoGameMaster.json'
-import MyGames from '../components/MyGames';
 
 
 export default function Home() {

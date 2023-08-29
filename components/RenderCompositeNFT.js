@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ethers, BigNumber } from 'ethers';
+//import { ethers, BigNumber } from 'ethers';
 import { flippandoAddress, flippandoBundlerAddress } from '../config'
 import FlippandoBundler from '../artifacts/contracts/FlippandoBundler.sol/FlippandoBundler.json'
 import Flippando from '../artifacts/contracts/Flippando.sol/Flippando.json'

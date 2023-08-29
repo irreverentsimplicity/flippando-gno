@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ethers } from 'ethers';
+//import { ethers } from 'ethers';
 import {
     flippandoAddress
   } from '../config'

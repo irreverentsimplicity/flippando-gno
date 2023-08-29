@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';  
-import { ethers } from 'ethers';
+//import { ethers } from 'ethers';
 import SmallTile from './SmallTile'  
 import Flippando from '../artifacts/contracts/Flippando.sol/Flippando.json'
 import FlippandoBundler from '../artifacts/contracts/FlippandoBundler.sol/FlippandoBundler.json'

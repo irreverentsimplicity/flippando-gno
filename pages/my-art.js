@@ -1,5 +1,5 @@
 /* pages/my-art.js */
-import { ethers } from 'ethers'
+//import { ethers } from 'ethers'
 import { flippandoBundlerAddress } from '../config'
 import FlippandoBundler from '../artifacts/contracts/FlippandoBundler.sol/FlippandoBundler.json'
 

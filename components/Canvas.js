@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { useSelector } from 'react-redux';
-import {ethers} from 'ethers';
+//import {ethers} from 'ethers';
 import SmallTile from '../components/SmallTile';
 import Color7 from '../pages/assets/squares/Color7.svg';
 import Flippando from '../artifacts/contracts/Flippando.sol/Flippando.json'

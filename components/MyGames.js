@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from 'react';
 import { useSelector } from 'react-redux';  
-import { ethers } from 'ethers';
+//import { ethers } from 'ethers';
 import Flippando from '../artifacts/contracts/Flippando.sol/Flippando.json'
 import FlippandoGameMaster from '../artifacts/contracts/FlippandoGameMaster.sol/FlippandoGameMaster.json'
 

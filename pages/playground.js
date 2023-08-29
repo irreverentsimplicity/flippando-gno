@@ -1,5 +1,5 @@
 /* pages/my-nfts.js */
-import {ethers} from 'ethers';
+//import {ethers} from 'ethers';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useDrag, useDrop } from 'react-dnd';

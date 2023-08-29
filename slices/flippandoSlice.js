@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import goerli from '../src/config/testnet/goerli.js';
+/*import goerli from '../src/config/testnet/goerli.js';
 import mumbai from '../src/config/testnet/mumbai.js';
 import polygonZkevm from '../src/config/testnet/polygon-zkevm.js';
 import near from '../src/config/testnet/near';
@@ -8,39 +8,13 @@ import gnosis from '../src/config/testnet/gnosis.js';
 import arbitrum from '../src/config/testnet/arbitrum.js';
 import optimism from '../src/config/testnet/optimism.js';
 import flippando from '../src/config/testnet/flippando.js';
-
+*/
 export const setAddresses = createAsyncThunk(
   'flippando/setAddresses',
   async (args, thunkAPI) => {
     console.log('args ' + JSON.stringify(args, null, 2));
       try {
-        if (args.network === 'goerli'){
-          return goerli;
-        }
-        else if (args.network === 'mumbai'){
-          return mumbai;
-        }
-        else if (args.network === 'polygon-zkevm'){
-          return polygonZkevm;
-        }
-        else if (args.network === 'near'){
-          return near;
-        }
-        else if (args.network === 'evmos'){
-          return evmos;
-        }
-        else if (args.network === 'gnosis'){
-          return gnosis;
-        }
-        else if (args.network === 'arbitrum'){
-          return arbitrum;
-        }
-        else if (args.network === 'optimism'){
-          return optimism;
-        }
-        else if (args.network === 'flippando'){
-          return flippando;
-        }
+       return("12345");
   
       } catch (error) {
         console.error('Error importing file:', error);
