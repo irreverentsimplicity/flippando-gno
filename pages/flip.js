@@ -19,20 +19,21 @@ import Hexagram2 from './assets/hexagrams/hexagram2.svg';
 import Hexagram4 from './assets/hexagrams/hexagram4.svg';
 import Hexagram6 from './assets/hexagrams/hexagram6.svg';
 import SmallTile from '../components/SmallTile';
-import Flippando from '../artifacts/contracts/Flippando.sol/Flippando.json'
-import Flip from '../artifacts/contracts/Flip.sol/Flip.json'
+//import Flippando from '../artifacts/contracts/Flippando.sol/Flippando.json'
+//import Flip from '../artifacts/contracts/Flip.sol/Flip.json'
 
 
 export default function Home() {
 
     
-    const adr = useSelector(state => state.flippando.adr);
-    const flippandoAddress = adr.flippandoAddress;
-    const flipAddress = adr.flipAddress;
-    const flippandoBundlerAddress = adr.flippandoBundlerAddress;
-    const flippandoGameMasterAddress = adr.flippandoGameMasterAddress;
+    //const adr = useSelector(state => state.flippando.adr);
+    //const flippandoAddress = adr.flippandoAddress;
+    //const flipAddress = adr.flipAddress;
+    //const flippandoBundlerAddress = adr.flippandoBundlerAddress;
+    //const flippandoGameMasterAddress = adr.flippandoGameMasterAddress;
 
-    console.log('adr' + JSON.stringify(adr, null, 2));
+    //console.log('adr' + JSON.stringify(adr, null, 2));
+    const [gnoAddress, setGnoAddress] = useState();
   const [positions, setPositions] = useState([])
   const [remainingTiles, setRemainingTiles] = useState([])
   const [cleanupEvent, setCleanupEvent] = useState(false)
@@ -55,6 +56,14 @@ export default function Home() {
  const [nfts, setNfts] = useState([]);
   //console.log('nfts ' + JSON.stringify(nfts, null, 2));
 
+  useEffect( () => {
+    adena.GetAccount().then( (account) => {
+      console.log('account', account);
+      if(account.status === "success"){
+        setGnoAddress(account.data.address);
+      }
+    })
+  })
   useEffect(() => {
       fetchNFTs();
       fetchUserBalances();
@@ -62,141 +71,63 @@ export default function Home() {
 
 
   const fetchUserBalances = async () => {
-    if (flipAddress !== undefined){
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const contract = new ethers.Contract(flipAddress, Flip.abi, signer);
-
-        const accountAddress = await signer.getAddress();
-        console.log('Address:', accountAddress);
-
-        try {
-            const balance = await contract.balanceOf(accountAddress);
-
-            console.log('Balance:', balance);
-            const balanceFormatted = ethers.utils.formatEther(balance, 18);
-            console.log('Account Balance:', balanceFormatted);
-            setFlipBalance(Math.round(balanceFormatted * 100) / 100);
-        }
-            catch (error) {
-            console.log('Error:', error);
-        }
-    }
+    console.log("fetchUserBalances")
   
   }
 
   const fetchNFTs = async () => {
-    if (flipAddress !== undefined && flippandoAddress !== undefined){
-        // Connect to the Ethereum network
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const contract = new ethers.Contract(flippandoAddress, Flippando.abi, signer);
-        const flipContract = new ethers.Contract(flipAddress, Flip.abi, signer);
-        const flippandoBundlerContract = new ethers.Contract(flippandoBundlerAddress, FlippandoBundler.abi, signer);
-        const accountAddress = await signer.getAddress();
-        // Get the current user's address
-        const userAddress = await signer.getAddress();
-        var incrementedBalance = 0;
-        try {
-        const tokenIds = await contract.getUserNFTs({ from: userAddress });
-        var nftData = [];
-        await Promise.all(
-            tokenIds.map(async (tokenId) => {
-            
-                try {
-                  /*
-                    const lockedBalanceInToken = await flipContract.getLockedBalance(accountAddress, tokenId);
-                    console.log('lockedFlipBalaance ' + JSON.stringify(lockedBalanceInToken));
-                    const formattedLockedBalanceInToken = ethers.utils.formatEther( lockedBalanceInToken, 18 );
-                    console.log('formattedLockedBalanceInToken ' + JSON.stringify(formattedLockedBalanceInToken));
-                    //const formattedLockedBalanceInToken = Math.round(lockedBalanceInToken) / 100000000000000000;
-                    incrementedBalance = parseInt(lockedFlipBalance, 10) + parseInt(formattedLockedBalanceInToken, 10);
-                    */
-                   incrementedBalance++;
-                }
-                catch {
-                    console.error('Error while retrieving lockedFlipBalance:', error);
-                }
-                try {
-                    const isPartOfArtwork = await flippandoBundlerContract.isPartOfArtwork(tokenId);
-                    console.log("isPartOfArtwork ", isPartOfArtwork);
-                    if (isPartOfArtwork === false) {
-                        console.log("inside isPartOfArtwork check");
-                        const tokenUri = await contract.tokenURI(tokenId);
-                        const response = await fetch(tokenUri);
-                        const metadata = await response.text();
-                        console.log("metadata ", metadata);
-                        if (metadata !== undefined && metadata !== null) {
-                        var nftObject = {
-                            tokenId: tokenId.toString(),
-                            metadata: JSON.parse(metadata),
-                        };
-                        nftData.push(nftObject);
-                        }
-                    }
-                    else {
-                      // if it's part of artwork, the token has been unlocked
-                      incrementedBalance--;
-                    }
-                }
-                catch {
-                console.error('Error while checking if nft is part of artwork:', error);
-                }
-                       
-            })
-        );
-        setLockedFlipBalance(incrementedBalance);
-        console.log('nftData ', nftData);
-        setNfts(nftData);
-        
-        if (nftData.length <= 16) {
-            setGameLevel(gameLevels[0]); // boardSize 16
-        } else if (nftData.length > 16) {
-            setGameLevel(gameLevels[1]); // boardSize 64
-        }
-        } catch (error) {
-        if (error.code === ethers.utils.Logger.errors.CALL_EXCEPTION) {
-            console.log('Error: Exception in the getUserNFTs contract function call');
-        } else {
-            console.error('Error:', error);
-        }
-        }
-    }
-    
+    console.log("fetchUserNFTs")
   };
   // solidity enabled code
 
   async function createNewGame(gameLevel, typeOfGame){
     console.log('gameLevel ' + gameLevel + ' typeOfGame ' + typeOfGame + ' gameTileType ' + gameTileType)
-    if (flippandoGameMasterAddress !== undefined){
-    try {
-            const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-            // Prompt user for account connections
-            await provider.send("eth_requestAccounts", []);
-            const signer = provider.getSigner();
-            //console.log('inside try' + JSON.stringify(signer));
-            const contract = new ethers.Contract(flippandoGameMasterAddress, FlippandoGameMaster.abi, signer);
-            //console.log('contract' + JSON.stringify(contract));
-            contract.on("GameCreated", (gameId, game, sender) => {
+    if (gnoAddress !== undefined){
+    
+        adena.DoContract(
+          {
+            messages: [{
+              type: "/vm.m_call",
+              value: {
+                caller: gnoAddress, // your Adena address
+                send: "",
+                pkg_path: "gno.land/r/demo/flippando", // Gnoland package path
+                func: "StartGame", // Function name
+                args: [ // Arguments
+                  gnoAddress,
+                  "someGameId",
+                  "squareGrid",
+                  "4"
+                ]
+              }
+            }
+          ], 
+            gasFee: 1,
+            gasWanted: 10000000
+          }
+        ).then( (gnoTx) => {
+          console.log("gnoTx",gnoTx)
+        })  
+        /*
+          contract.on("GameCreated", (gameId, game, sender) => {
             console.log("gameId: " + gameId + ", sender: " + sender)
             console.log("game data: " + JSON.stringify(game, null, 2));
             let newGameStatus = "Flippando game created, game id: " + gameId
             setCurrentGameId(gameId);
             setGameStatus(newGameStatus);
-            })
+            })*/
     
             var gameType = 1; // default to normal games
             if (typeOfGame === 'sponsored') {
                 gameType = 0;
             }
-            const game  = await contract.createGame(gameLevel, gameType, gameTileType);
-            console.log("game created " + JSON.stringify(game, 2, null));
-        }
-        catch (error){
-            console.log('error in createNewGame ' + JSON.stringify(error));
-            alert("We can't create this game now. That's all we know.")
-            setGameStatus('Flippando is in an undefined state.')
-        }
+            //const game  = await contract.createGame(gameLevel, gameType, gameTileType);
+            //console.log("game created " + JSON.stringify(game, 2, null));
+        
+            //console.log('error in createNewGame ' + JSON.stringify(error));
+            //alert("We can't create this game now. That's all we know.")
+            //setGameStatus('Flippando is in an undefined state.')
+        
     }
   }
 
