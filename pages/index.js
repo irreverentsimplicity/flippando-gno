@@ -11,6 +11,7 @@ export default function Home() {
     getAnOutput()
   }, []);
 
+  /*
   useEffect( () => {
     if (!window.adena) {
       window.open("https://adena.app/", "_blank");
@@ -22,7 +23,7 @@ export default function Home() {
     adena.GetAccount().then( (account) => {
       console.log('account', account);
     })
-  })
+  })*/
   const provider = new GnoJSONRPCProvider('http://localhost:26657');
   // provider is created
   const getAnOutput = async () => {

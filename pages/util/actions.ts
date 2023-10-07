@@ -7,7 +7,7 @@ import {
   GameState,
   Player,
 } from '../types/types';
-import { defaultTxFee, GnoWallet, GnoWSProvider } from '@gnolang/gno-js-client';
+import { defaultTxFee, GnoJSONRPCProvider, GnoWallet, GnoWSProvider } from '@gnolang/gno-js-client';
 import {
   BroadcastTxCommitResult,
   TM2Error,
@@ -25,9 +25,10 @@ import { UserFundedError } from '../types/errors';
 
 // ENV values //
 const wsURL: string = Config.GNO_WS_URL;
+const rpcURL: string = Config.GNO_JSONRPC_URL;
 const flippandoRealm: string = Config.GNO_FLIPPANDO_REALM;
 const faucetURL: string = Config.FAUCET_URL;
-const defaultGasWanted: Long = new Long(10_000_000);
+const defaultGasWanted: Long = new Long(10_000_0);
 
 const cleanUpRealmReturn = (ret: string) => {
   return ret.slice(2, -9).replace(/\\"/g, '"');
@@ -56,6 +57,7 @@ class Actions {
   private static initPromise: Actions | PromiseLike<Actions>;
   private wallet: GnoWallet | null = null;
   private provider: GnoWSProvider | null = null;
+  private providerJSON: GnoJSONRPCProvider | null = null;
   private faucetToken: string | null = null;
   
   private constructor() {}
@@ -85,27 +87,31 @@ class Actions {
     // Wallet initialization //
 
     // Try to load the mnemonic from local storage
-    let mnemonic: string | null = localStorage.getItem(defaultMnemonicKey);
-    if (!mnemonic || mnemonic === '') {
+    //let mnemonic: string | null = localStorage.getItem(defaultMnemonicKey);
+    let mnemonic = "cream normal drama winter dust ocean thing hurry raccoon vessel festival process";
+    /*if (!mnemonic || mnemonic === '') {
       // Generate a fresh mnemonic
       mnemonic = generateMnemonic();
 
       // Save the mnemonic to local storage
       saveToLocalStorage(defaultMnemonicKey, mnemonic);
-    }
+    }*/
     try {
       // Initialize the wallet using the saved mnemonic
       this.wallet = await GnoWallet.fromMnemonic(mnemonic);
+      console.log(this.wallet);
       // Initialize the provider
-      this.provider = new GnoWSProvider(wsURL);
-
+      //this.provider = new GnoWSProvider(wsURL);
+      this.providerJSON = new GnoJSONRPCProvider(rpcURL)
+      console.log(this.providerJSON);
       // Connect the wallet to the provider
-      this.wallet.connect(this.provider);
+      this.wallet.connect(this.providerJSON);
     } catch (e) {
       //Should not happen
       console.error('Could not create wallet from mnemonic');
     }
 
+    /*
     // Faucet token initialization //
     let faucetToken: string | null = localStorage.getItem(
       defaultFaucetTokenKey
@@ -123,7 +129,7 @@ class Actions {
           console.error('Could not fund user.');
         }
       }
-    }
+    }*/
   }
 
   /**
@@ -147,7 +153,8 @@ class Actions {
 
   private gkLog(): Boolean {
     const wnd = window as { gnokeyLog?: Boolean };
-    return typeof wnd.gnokeyLog !== 'undefined' && wnd.gnokeyLog;
+    //return typeof wnd.gnokeyLog !== 'undefined' && wnd.gnokeyLog;
+    return true;
   }
 
   /**
@@ -180,12 +187,13 @@ class Actions {
     try {
       if (gkLog) {
         const gkArgs = args?.map((arg) => '-args ' + arg).join(' ') ?? '';
-        console.info(
+        console.log(
           `$ gnokey maketx call -broadcast ` +
             `-pkgpath ${flippandoRealm} -gas-wanted ${gasWanted} -gas-fee ${defaultTxFee} ` +
-            `-func ${method} ${gkArgs} test1`
+            `-func ${method} ${gkArgs} test`
         );
       }
+            
       const resp = (await this.wallet?.callMethod(
         flippandoRealm,
         method,
@@ -198,26 +206,30 @@ class Actions {
         }
       )) as BroadcastTxCommitResult;
       if (gkLog) {
-        console.info('response:', resp);
+        console.info('response:', JSON.stringify(resp));
         const respData = resp.deliver_tx.ResponseBase.Data;
         if (respData !== null) {
           console.info('response (parsed):', parsedJSONOrRaw(respData));
         }
       }
       return resp;
-    } catch (e) {
-      const ex = e as { log?: string; message?: string } | undefined;
+    } 
+    catch (err) {
+      if(err !== undefined){
+        let error: TM2Error;
+      const ex = err as { log?: string; message?: string } | undefined;
       if (
         typeof ex?.log !== 'undefined' &&
         typeof ex?.message !== 'undefined' &&
         ex.message.includes('abci.StringError')
       ) {
-        e = ErrorTransform(e as TM2Error);
+        error = ErrorTransform(err as TM2Error);
       }
       if (gkLog) {
-        console.info('error:', e);
+        console.log('error:', error);
       }
-      throw e;
+      throw error;
+    }
     }
   }
 
@@ -253,6 +265,25 @@ class Actions {
   /****************
    * GAME ENGINE
    ****************/
+
+  /**
+   * Starts a new game
+   * @param gameID the ID of the new game
+   */
+  async startGame(
+    gameID: string,
+    gameType: string,
+    boardSize: string,
+  ): Promise<any> {
+    // Make the move
+    const startNewGame = await this.callMethod('StartGame', [
+      gameID,
+      gameType,
+      boardSize
+    ]);
+    console.log("actions startGame response ", JSON.stringify(startNewGame))
+    return startNewGame;
+  }
 
   /**
    * Checks if the given game is ongoing
@@ -360,7 +391,7 @@ class Actions {
     }
 
     // Close out the WS connection
-    this.provider.closeConnection();
+    //this.provider.closeConnection();
   }
 
   /**

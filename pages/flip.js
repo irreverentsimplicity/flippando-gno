@@ -19,6 +19,7 @@ import Hexagram2 from './assets/hexagrams/hexagram2.svg';
 import Hexagram4 from './assets/hexagrams/hexagram4.svg';
 import Hexagram6 from './assets/hexagrams/hexagram6.svg';
 import SmallTile from '../components/SmallTile';
+import Actions from './util/actions';
 //import Flippando from '../artifacts/contracts/Flippando.sol/Flippando.json'
 //import Flip from '../artifacts/contracts/Flip.sol/Flip.json'
 
@@ -33,6 +34,7 @@ export default function Home() {
     //const flippandoGameMasterAddress = adr.flippandoGameMasterAddress;
 
     //console.log('adr' + JSON.stringify(adr, null, 2));
+    const actions = Actions.getInstance();
     const [gnoAddress, setGnoAddress] = useState();
   const [positions, setPositions] = useState([])
   const [remainingTiles, setRemainingTiles] = useState([])
@@ -56,18 +58,30 @@ export default function Home() {
  const [nfts, setNfts] = useState([]);
   //console.log('nfts ' + JSON.stringify(nfts, null, 2));
 
+/*
   useEffect( () => {
+    if (!window.adena) {
+      window.open("https://adena.app/", "_blank");
+    } else {
+      adena.AddEstablish("Flippando");
+    }
+  })
+  
+  useEffect( () => {
+
     adena.GetAccount().then( (account) => {
-      console.log('account', account);
+      console.log('adena account', account);
       if(account.status === "success"){
         setGnoAddress(account.data.address);
       }
     })
-  })
+  })*/
+
+  /*
   useEffect(() => {
       fetchNFTs();
       fetchUserBalances();
-  }, []);
+  }, []);*/
 
 
   const fetchUserBalances = async () => {
@@ -78,9 +92,8 @@ export default function Home() {
   const fetchNFTs = async () => {
     console.log("fetchUserNFTs")
   };
-  // solidity enabled code
-
-  async function createNewGame(gameLevel, typeOfGame){
+  
+  /* async function createNewGame(gameLevel, typeOfGame){
     console.log('gameLevel ' + gameLevel + ' typeOfGame ' + typeOfGame + ' gameTileType ' + gameTileType)
     if (gnoAddress !== undefined){
     
@@ -107,6 +120,9 @@ export default function Home() {
           }
         ).then( (gnoTx) => {
           console.log("gnoTx",gnoTx)
+          adena.waitForTransaction(gnoTx.data.hash).then( (result) => {
+            console.log(result);
+          })
         })  
         /*
           contract.on("GameCreated", (gameId, game, sender) => {
@@ -115,7 +131,7 @@ export default function Home() {
             let newGameStatus = "Flippando game created, game id: " + gameId
             setCurrentGameId(gameId);
             setGameStatus(newGameStatus);
-            })*/
+            })
     
             var gameType = 1; // default to normal games
             if (typeOfGame === 'sponsored') {
@@ -129,6 +145,46 @@ export default function Home() {
             //setGameStatus('Flippando is in an undefined state.')
         
     }
+  }*/
+
+  
+  async function createNewGame(gameLevel, typeOfGame){
+    //console.log('gameLevel ' + gameLevel + ' typeOfGame ' + typeOfGame)
+    //if (gnoAddress !== undefined){
+      const actions  = await Actions.getInstance();
+      //(await actions).initialize();
+      try {
+        actions.getBalance().then( (balance) => {
+          console.log(balance)
+        })
+      }
+      catch (err) {
+        console.log("error in getBalance", err)
+      }
+
+      try {
+        actions.getUserAddress().then( async (address) => {
+          console.log(address)
+          try {
+            actions.startGame("someGameId", "someGameType", "16").then ( (response) => {
+              console.log("response in Flip", response)  
+            })
+            
+          }
+          catch (err){
+            console.log("error in calling startGame", err)
+          }
+        })
+        
+      }
+      catch (err) {
+        console.log("error ", err)
+      }
+      
+      
+      (await actions).getWalletAddress();
+        
+    //}
   }
 
   async function initializeGame(gameId){
