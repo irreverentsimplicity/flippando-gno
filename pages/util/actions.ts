@@ -28,7 +28,8 @@ const wsURL: string = Config.GNO_WS_URL;
 const rpcURL: string = Config.GNO_JSONRPC_URL;
 const flippandoRealm: string = Config.GNO_FLIPPANDO_REALM;
 const faucetURL: string = Config.FAUCET_URL;
-const defaultGasWanted: Long = new Long(10_000_0);
+const defaultGasWanted: Long = new Long(50_000_0);
+const customTXFee = '200000ugnot'
 
 const cleanUpRealmReturn = (ret: string) => {
   return ret.slice(2, -9).replace(/\\"/g, '"');
@@ -201,7 +202,7 @@ class Actions {
         TransactionEndpoint.BROADCAST_TX_COMMIT,
         undefined,
         {
-          gasFee: defaultTxFee,
+          gasFee: customTXFee,
           gasWanted: gasWanted
         }
       )) as BroadcastTxCommitResult;
