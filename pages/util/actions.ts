@@ -28,8 +28,8 @@ const wsURL: string = Config.GNO_WS_URL;
 const rpcURL: string = Config.GNO_JSONRPC_URL;
 const flippandoRealm: string = Config.GNO_FLIPPANDO_REALM;
 const faucetURL: string = Config.FAUCET_URL;
-const defaultGasWanted: Long = new Long(50_000_0);
-const customTXFee = '200000ugnot'
+const defaultGasWanted: Long = new Long(200_000_0);
+const customTXFee = '2000000ugnot'
 
 const cleanUpRealmReturn = (ret: string) => {
   return ret.slice(2, -9).replace(/\\"/g, '"');
@@ -88,15 +88,14 @@ class Actions {
     // Wallet initialization //
 
     // Try to load the mnemonic from local storage
-    //let mnemonic: string | null = localStorage.getItem(defaultMnemonicKey);
-    let mnemonic = "cream normal drama winter dust ocean thing hurry raccoon vessel festival process";
-    /*if (!mnemonic || mnemonic === '') {
+    let mnemonic: string | null = localStorage.getItem(defaultMnemonicKey);
+    if (!mnemonic || mnemonic === '') {
       // Generate a fresh mnemonic
       mnemonic = generateMnemonic();
 
       // Save the mnemonic to local storage
       saveToLocalStorage(defaultMnemonicKey, mnemonic);
-    }*/
+    }
     try {
       // Initialize the wallet using the saved mnemonic
       this.wallet = await GnoWallet.fromMnemonic(mnemonic);
@@ -211,6 +210,7 @@ class Actions {
         const respData = resp.deliver_tx.ResponseBase.Data;
         if (respData !== null) {
           console.info('response (parsed):', parsedJSONOrRaw(respData));
+          return parsedJSONOrRaw(respData);
         }
       }
       return resp;
@@ -272,18 +272,36 @@ class Actions {
    * @param gameID the ID of the new game
    */
   async startGame(
-    gameID: string,
+    player: string,
     gameType: string,
     boardSize: string,
   ): Promise<any> {
     // Make the move
     const startNewGame = await this.callMethod('StartGame', [
-      gameID,
+      player,
       gameType,
       boardSize
     ]);
     console.log("actions startGame response ", JSON.stringify(startNewGame))
     return startNewGame;
+  }
+
+  /**
+   * Test the svg generation on a solved game
+   * @param solvedBoard array of ints
+   * @param int board size
+   */
+  async testBoard(
+    solvedBoard: string,
+    boardSize: string,
+  ): Promise<any> {
+    // Make the move
+    const svgBoard = await this.callMethod('TileTest', [
+      solvedBoard,
+      boardSize
+    ]);
+    console.log("actions TestTile response ", JSON.stringify(svgBoard))
+    return svgBoard;
   }
 
   /**
