@@ -305,6 +305,27 @@ class Actions {
   }
 
   /**
+   * Call the FlipTile function and return an ongoing game
+   * @param playerAddr string
+   * @param gameId string
+   * @param withPositions array of ints, converted into string, e.g. [1,4]
+   */
+  async flipTiles(
+    playerAddr: string,
+    gameId: string,
+    withPositions: string,
+  ): Promise<any> {
+    // Make the move
+    const gameObject = await this.callMethod('FlipTiles', [
+      playerAddr,
+      gameId,
+      withPositions
+    ]);
+    console.log("actions FlipTiles response ", JSON.stringify(gameObject))
+    return gameObject;
+  }
+
+  /**
    * Checks if the given game is ongoing
    * @param gameID the ID of the running game
    */

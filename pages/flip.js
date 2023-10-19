@@ -58,32 +58,6 @@ export default function Home() {
   const level2Board = new Array(16).fill(0);
 
   const [nfts, setNfts] = useState([]);
-  //console.log('nfts ' + JSON.stringify(nfts, null, 2));
-
-  /*
-  useEffect( () => {
-    if (!window.adena) {
-      window.open("https://adena.app/", "_blank");
-    } else {
-      adena.AddEstablish("Flippando");
-    }
-  })
-  
-  useEffect( () => {
-
-    adena.GetAccount().then( (account) => {
-      console.log('adena account', account);
-      if(account.status === "success"){
-        setGnoAddress(account.data.address);
-      }
-    })
-  })*/
-
-  /*
-  useEffect(() => {
-      fetchNFTs();
-      fetchUserBalances();
-  }, []);*/
 
   const fetchUserBalances = async () => {
     console.log("fetchUserBalances");
@@ -93,59 +67,6 @@ export default function Home() {
     console.log("fetchUserNFTs");
   };
 
-  /* async function createNewGame(gameLevel, typeOfGame){
-    console.log('gameLevel ' + gameLevel + ' typeOfGame ' + typeOfGame + ' gameTileType ' + gameTileType)
-    if (gnoAddress !== undefined){
-    
-        adena.DoContract(
-          {
-            messages: [{
-              type: "/vm.m_call",
-              value: {
-                caller: gnoAddress, // your Adena address
-                send: "",
-                pkg_path: "gno.land/r/demo/flippando", // Gnoland package path
-                func: "StartGame", // Function name
-                args: [ // Arguments
-                  gnoAddress,
-                  "someGameId",
-                  "squareGrid",
-                  "4"
-                ]
-              }
-            }
-          ], 
-            gasFee: 1,
-            gasWanted: 10000000
-          }
-        ).then( (gnoTx) => {
-          console.log("gnoTx",gnoTx)
-          adena.waitForTransaction(gnoTx.data.hash).then( (result) => {
-            console.log(result);
-          })
-        })  
-        /*
-          contract.on("GameCreated", (gameId, game, sender) => {
-            console.log("gameId: " + gameId + ", sender: " + sender)
-            console.log("game data: " + JSON.stringify(game, null, 2));
-            let newGameStatus = "Flippando game created, game id: " + gameId
-            setCurrentGameId(gameId);
-            setGameStatus(newGameStatus);
-            })
-    
-            var gameType = 1; // default to normal games
-            if (typeOfGame === 'sponsored') {
-                gameType = 0;
-            }
-            //const game  = await contract.createGame(gameLevel, gameType, gameTileType);
-            //console.log("game created " + JSON.stringify(game, 2, null));
-        
-            //console.log('error in createNewGame ' + JSON.stringify(error));
-            //alert("We can't create this game now. That's all we know.")
-            //setGameStatus('Flippando is in an undefined state.')
-        
-    }
-  }*/
 
   async function createNewGame(gameLevel, typeOfGame) {
     const actions = await Actions.getInstance();
@@ -181,60 +102,23 @@ export default function Home() {
     }
   }
 
-  async function initializeGame(gameId) {
-    setGameStatus("Assembling the board...");
-    setPositions([]);
-    console.log("gameId: " + gameId);
-    const extractedGameId = parseInt(gameId.substring(40));
-    if (flippandoGameMasterAddress !== undefined) {
-      try {
-        const provider = new ethers.providers.Web3Provider(
-          window.ethereum,
-          "any"
-        );
-        // Prompt user for account connections
-        await provider.send("eth_requestAccounts", []);
-        const signer = provider.getSigner();
-
-        const flippandoGameMasterContract = new ethers.Contract(
-          flippandoGameMasterAddress,
-          FlippandoGameMaster.abi,
-          signer
-        );
-        const game = await flippandoGameMasterContract.initializeGame(
-          extractedGameId
-        );
-        console.log(
-          "result returned from FlippandoGameMaster.initializeGame()  " +
-            JSON.stringify(game, 2, null)
-        );
-
-        const flippandoContract = new ethers.Contract(
-          flippandoAddress,
-          Flippando.abi,
-          signer
-        );
-        //console.log('contract' + JSON.stringify(contract));
-        flippandoContract.on("GameInitialized", (gameId, game, sender) => {
-          console.log("gameId: " + gameId + ", sender: " + sender);
-          console.log("game in Flippando: " + JSON.stringify(game));
-          let newGameStatus = "Flippando initialized, game id: " + gameId;
-          setGameStatus(newGameStatus);
-          setTileMatrix(Array(gameLevel).fill(0));
-          setUncoveredTileMatrix(Array(gameLevel).fill(0));
-          setCurrentGameId(gameId);
-        });
-      } catch (error) {
-        console.log("Error in initializeGame " + JSON.stringify(error));
-        alert("We can't initialize this game now. That's all we know.");
-        setGameStatus("Flippando is in an undefined state.");
-      }
-    }
-  }
-
   async function flipTiles(withPositions){
+    const actions = await Actions.getInstance();
+    const playerAddress = await actions.getWalletAddress();
+    const processedPositions = JSON.stringify(withPositions);
 
+    try {
+      actions.flipTiles(playerAddress, currentGameId, processedPositions).then((response) => {
+        console.log("Game response in flip.js flipTiles", response);
+        let parsedResponse = JSON.parse(response);
+        console.log("parseResponse", parsedResponse)
+      });
+    } catch (err) {
+      console.log("error in calling flipTiles", err);
+    }
+    
   }
+
   async function playBlockchainGame(withPositions) {
     if (flippandoAddress !== undefined) {
       const provider = new ethers.providers.Web3Provider(
@@ -379,184 +263,14 @@ export default function Home() {
   }
 
   async function mintNFT(gameId) {
-    if (flippandoAddress !== undefined) {
-      console.log("gameId in mintNFT " + gameId);
-      const provider = new ethers.providers.Web3Provider(
-        window.ethereum,
-        "any"
-      );
-      // Prompt user for account connections
-      await provider.send("eth_requestAccounts", []);
-      const signer = provider.getSigner();
-      const contract = new ethers.Contract(
-        flippandoAddress,
-        Flippando.abi,
-        signer
-      );
-      const startBlockNumber = await provider.getBlockNumber();
-      provider.once("block", () => {
-        contract.on("NFTCreated", (gameId, blockNumber) => {
-          if (blockNumber <= startBlockNumber) {
-            console.log(
-              "old event, blockNumber " +
-                blockNumber +
-                ", startBlockNumber " +
-                startBlockNumber
-            );
-            return;
-          }
-          console.log({
-            gameId: gameId,
-            blockNumber: blockNumber,
-          });
-        });
-      });
-
-      //const options = {value: ethers.utils.parseEther("0.001")};
-
-      //const txResponse  = await contract.create_nft(gameId, { value: ethers.utils.parseEther('0.001') })
-      const txResponse = await contract
-        .create_nft(gameId)
-        .then((result) => {
-          console.log("mint txResponse " + JSON.stringify(result));
-          result
-            .wait()
-            .then((result) => {
-              console.log("wait result " + JSON.stringify(result));
-              fetchNFTs();
-              fetchUserBalances();
-              setPositions([]);
-            })
-            .catch((error) => {
-              console.log(
-                "mint error after result " + JSON.stringify(error, null, 2)
-              );
-            });
-        })
-        .catch((error) => {
-          console.log("mint error " + JSON.stringify(error, null, 2));
-        });
-    }
   }
 
   async function mintTestNFT() {
-    if (flippandoAddress !== undefined) {
-      const provider = new ethers.providers.Web3Provider(
-        window.ethereum,
-        "any"
-      );
-      // Prompt user for account connections
-      await provider.send("eth_requestAccounts", []);
-      const signer = provider.getSigner();
-      const contract = new ethers.Contract(
-        flippandoAddress,
-        Flippando.abi,
-        signer
-      );
-      const startBlockNumber = await provider.getBlockNumber();
-      provider.once("block", () => {
-        contract.on("NFTCreated", (gameId, blockNumber) => {
-          if (blockNumber <= startBlockNumber) {
-            console.log(
-              "old event, blockNumber " +
-                blockNumber +
-                ", startBlockNumber " +
-                startBlockNumber
-            );
-            return;
-          }
-          console.log({
-            gameId: gameId,
-            blockNumber: blockNumber,
-          });
-        });
-      });
-      //const options = {value: ethers.utils.parseEther("0.001")};
-
-      // values: "squareGrid", "dice", "hexagrams"
-      const gasLimit = ethers.BigNumber.from("40000000");
-      const txResponse = await contract
-        .create_test_nft("dice", {
-          gasLimit: gasLimit,
-        })
-        .then((result) => {
-          console.log("mint test txResponse " + JSON.stringify(result));
-          result
-            .wait()
-            .then((result) => {
-              console.log("wait test result " + JSON.stringify(result));
-              fetchNFTs();
-              fetchUserBalances();
-            })
-            .catch((error) => {
-              console.log(
-                "mint test error after result " + JSON.stringify(error, null, 2)
-              );
-            });
-        })
-        .catch((error) => {
-          console.log("mint test error " + JSON.stringify(error, null, 2));
-        });
-    }
+    
   }
 
   async function mintSingleTestNFT() {
-    if (flippandoAddress !== undefined) {
-      const provider = new ethers.providers.Web3Provider(
-        window.ethereum,
-        "any"
-      );
-      // Prompt user for account connections
-      await provider.send("eth_requestAccounts", []);
-      const signer = provider.getSigner();
-      const contract = new ethers.Contract(
-        flippandoAddress,
-        Flippando.abi,
-        signer
-      );
-      const startBlockNumber = await provider.getBlockNumber();
-      provider.once("block", () => {
-        contract.on("NFTCreated", (gameId, blockNumber) => {
-          if (blockNumber <= startBlockNumber) {
-            console.log(
-              "old event, blockNumber " +
-                blockNumber +
-                ", startBlockNumber " +
-                startBlockNumber
-            );
-            return;
-          }
-          console.log({
-            gameId: gameId,
-            blockNumber: blockNumber,
-          });
-        });
-      });
-      //const options = {value: ethers.utils.parseEther("0.001")};
-
-      // values: "squareGrid", "dice", "hexagrams"
-      const gasLimit = ethers.BigNumber.from("40000000");
-      const txResponse = await contract
-        .create_single_test_nft(gameTileType)
-        .then((result) => {
-          console.log("mint test txResponse " + JSON.stringify(result));
-          result
-            .wait()
-            .then((result) => {
-              console.log("wait test result " + JSON.stringify(result));
-              fetchNFTs();
-              fetchUserBalances();
-            })
-            .catch((error) => {
-              console.log(
-                "mint test error after result " + JSON.stringify(error, null, 2)
-              );
-            });
-        })
-        .catch((error) => {
-          console.log("mint test error " + JSON.stringify(error, null, 2));
-        });
-    }
+    
   }
 
   // pure react code
@@ -575,7 +289,6 @@ export default function Home() {
 
         if (positionsArray[0] !== positionsArray[1]) {
           flipTiles(positionsArray)
-          //playBlockchainGame(positionsArray);
           
           var tileMatrixCopy = [...tileMatrix];
           var tmpTileMatrixCopy = [...tileMatrix];
@@ -838,66 +551,6 @@ export default function Home() {
       );
     });
 
-    /*
-    return tileMatrix.map( (value, index) => {
-        const colorComponent = `Color${value} width="100" height="100"`;
-        const diceComponent = `Dice${value} width="100" height="100"`;
-        const hexagramComponent = `Hexagram${value} width="100" height="100"`;
-        return(
-          <span key={index} className={styles.empty_div}>
-
-            {value === -1 && 
-              <div role="status" className={styles.empty_div}>
-              <svg aria-hidden="true" className="mr-4 ml-4 mb-4 mt-4 text-gray-200 animate-spin dark:text-gray-600 fill-gray-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
-                  <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
-              </svg>
-              <span className="sr-only">Loading...</span>
-              </div>
-            }
-            {value === -2 && 
-              <div role="status" className={styles.empty_div}>
-              <svg aria-hidden="true" className="mr-4 ml-4 mb-4 mt-4 text-red-200 animate-pulse dark:text-red-600 fill-red-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
-                  <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
-              </svg>
-              <span className="sr-only">Loading...</span>
-              </div>
-            }
-            {value !== -1 && value !== -2 && value !== 0 && 
-              <div className={styles.game_tile_image} style={{
-                backgroundRepeat: 'no-repeat',
-                backgroundSize: 'contain',
-            }} >
-              {gameTileType == "squareGrid" && {colorComponent} }
-              {gameTileType == "dice" && {diceComponent} }
-              {gameTileType == "hexagrams" && {hexagramComponent} }
-              </div>
-            }
-            {(value === 0 && positions.includes(index)) &&
-              <button 
-                disabled
-                onClick={() => {
-                  playGame(index)
-                  console.log("you clicked " + JSON.stringify(index))
-                  }
-                } 
-                  className={styles.card}>
-              </button>
-            }
-            {(value === 0 && !positions.includes(index)) &&
-              <button 
-                onClick={() => {
-                  playGame(index)
-                  console.log("you clicked " + JSON.stringify(index))
-                  }
-                } 
-                  className={styles.card}>
-              </button>
-            }
-          </span>
-        )
-    })*/
   };
 
   function capitalize(str) {
