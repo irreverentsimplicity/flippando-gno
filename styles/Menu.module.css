@@ -1,0 +1,43 @@
+.menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 10vw;
+    background-color: #f7f7f7;
+    transition: width 0.3s ease;
+    overflow-x: hidden;
+    z-index: 10;
+}
+
+.expanded {
+    width: 25vw;
+}
+
+.menuItem {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    text-decoration: none;
+    color: black;
+    font-size: 14px;
+}
+
+.expanded .menuItem {
+    font-size: 18px;
+}
+
+.icon1, .icon2, .icon3, .icon4 {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+    background-size: cover;
+}
+
+.expanded .icon1, .expanded .icon2, .expanded .icon3, .expanded .icon4 {
+    width: 32px;
+    height: 32px;
+}
+
+/* Add styles for icons here using background-image property. Example: */
+/* .icon1 { background-image: url('/path-to-icon1.png'); } */

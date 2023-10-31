@@ -1,8 +1,4 @@
 import React, { useEffect, useState } from 'react';
-//import { ethers, BigNumber } from 'ethers';
-import { flippandoAddress, flippandoBundlerAddress } from '../config'
-import FlippandoBundler from '../artifacts/contracts/FlippandoBundler.sol/FlippandoBundler.json'
-import Flippando from '../artifacts/contracts/Flippando.sol/Flippando.json'
 import SmallTile from './SmallTile';
 import styles from '../styles/Home.module.css'
 
@@ -19,6 +15,8 @@ function RenderCompositeNFT({ tokenId, artwork }) {
     }, []);
   
     const fetchNFTs = async () => {
+      console.log("fetchNFTs")
+      /*
       // Connect to the Ethereum network
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
@@ -58,21 +56,9 @@ function RenderCompositeNFT({ tokenId, artwork }) {
 
   if (!nfts) {
     return <div>Loading composite NFT...</div>;
-  }
-
-  /*const renderBoard = () => {
-    
-    for (let i = 0; i < nfts.length; i++){
-        levelBoard[i] = nfts[i];
-    }
-    return levelBoard.map( (value, index) => {
-      return(
-        <span key={index}>
-            <SmallTile metadata={JSON.stringify(value.metadata)}/>
-        </span>
-      )
-    })
   }*/
+
+  }
 
 
   const renderBoard = () => {

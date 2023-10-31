@@ -8,14 +8,8 @@ import Canvas from '../components/Canvas';
 import Grey from './assets/squares/grey.svg';
 import Image from 'next/image';
 import artNFT from './assets/artNFT.jpg';
-import Flippando from '../artifacts/contracts/Flippando.sol/Flippando.json'
-import FlippandoBundler from '../artifacts/contracts/FlippandoBundler.sol/FlippandoBundler.json'
 
 export default function MyAssets() {
-  const adr = useSelector(state => state.flippando.adr);
-  const artPayload = useSelector(state => state.flippando.artPayload);
-  const flippandoAddress = adr.flippandoAddress;
-  const flippandoBundlerAddress = adr.flippandoBundlerAddress;
   const [width, setWidth] = useState(4);
   const [height, setHeight] = useState(4);
 
@@ -26,7 +20,8 @@ export default function MyAssets() {
 
   // test, to replace in prod with real board/canvas values and dragged NFTs into it
   async function makeArt(){
-
+    console.log("makeArt")
+    /*
     const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
     // Prompt user for account connections
     await provider.send("eth_requestAccounts", []);
@@ -64,7 +59,7 @@ export default function MyAssets() {
     .catch(error => { 
       console.log('make art error ' + JSON.stringify(error, null, 2))
     })
-
+    */
   }
 
   return (
@@ -74,7 +69,7 @@ export default function MyAssets() {
       </div>
       <div  className="flex justify-center">
       <button 
-        disabled={artPayload.length === 0}
+        disabled={false}
         onClick={() => { makeArt() }} 
         className="bg-[#2A2F4F] hover:bg-black text-white font-bold py-2 px-4 mr-2 ml-2 rounded-full font-quantico">
           Make Art

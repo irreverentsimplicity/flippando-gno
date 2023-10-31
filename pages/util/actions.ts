@@ -305,6 +305,30 @@ class Actions {
   }
 
   /**
+   * Call the FlipTilesClient6 function and return an ongoing game, this is for DEMO purposes only!
+   * @param playerAddr string
+   * @param gameId string
+   * @param withPositions array of ints, converted into string, e.g. [7,15]
+   * @param withRandomNumbers array of ints between min and max, converted into string, e.g. [1,4]
+   */
+  async flipTilesClient(
+    playerAddr: string,
+    gameId: string,
+    withPositions: string,
+    withRandomNumbers: string,
+  ): Promise<any> {
+    // Make the move
+    const gameObject = await this.callMethod('FlipTilesClient', [
+      playerAddr,
+      gameId,
+      withPositions,
+      withRandomNumbers,
+    ]);
+    console.log("actions FlipTilesClient response ", JSON.stringify(gameObject))
+    return gameObject;
+  }
+
+  /**
    * Call the FlipTile function and return an ongoing game
    * @param playerAddr string
    * @param gameId string

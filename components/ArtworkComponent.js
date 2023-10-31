@@ -1,7 +1,4 @@
 import React, { useEffect, useState } from 'react';
-//import { ethers, BigNumber } from 'ethers';
-import { flippandoBundlerAddress } from '../config'
-import FlippandoBundler from '../artifacts/contracts/FlippandoBundler.sol/FlippandoBundler.json'
 import RenderCompositeNFT from './RenderCompositeNFT';
 
 function ArtworkComponent({ tokenId }) {
@@ -9,8 +6,12 @@ function ArtworkComponent({ tokenId }) {
 
   useEffect(() => {
     const fetchArtwork = async () => {
+      console.log("fetchArtWork")
+      /*
       try {
         // Connect to the Ethereum network
+        
+        
         const provider = new ethers.providers.Web3Provider(window.ethereum);
 
         // Contract address and ABI
@@ -46,10 +47,10 @@ function ArtworkComponent({ tokenId }) {
       } catch (error) {
         console.error('Error retrieving Artwork:', error);
         setArtwork(null);
-      }
+      }*/
     }
 
-    fetchArtwork();
+    //fetchArtwork();
   }, [tokenId]);
 
   if (!artwork) {

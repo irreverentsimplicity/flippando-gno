@@ -2,15 +2,9 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';  
 //import { ethers } from 'ethers';
 import SmallTile from './SmallTile'  
-import Flippando from '../artifacts/contracts/Flippando.sol/Flippando.json'
-import FlippandoBundler from '../artifacts/contracts/FlippandoBundler.sol/FlippandoBundler.json'
 
 
 const NFTListUser = () => {
-
-  const adr = useSelector(state => state.flippando.adr);
-  const flippandoAddress = adr.flippandoAddress;
-  const flippandoBundlerAddress = adr.flippandoBundlerAddress;
 
   const [allNfts, setAllNfts] = useState([]);
   const [artworkNFTs, setArtworkNFTs] = useState([]);
@@ -20,102 +14,12 @@ const NFTListUser = () => {
   }, []);
 
   const fetchNFTs = async () => {
-    // Connect to the Ethereum network
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(flippandoAddress, Flippando.abi, signer);
-    // Get the user's account address
-    const accounts = await provider.listAccounts();
-
-    // Create a contract instance
-    const flippandoBundlerContract = new ethers.Contract(flippandoBundlerAddress, FlippandoBundler.abi, provider);
-
-    // Get the current user's address
-    const userAddress = await signer.getAddress();
-
-    // Call the getUserNFTs function from the smart contract
-    const tokenIds = await contract.getUserNFTs({ from: userAddress });
-    const tokensInArtwork = [];
-    const nftData = [];
-    await Promise.all(
-      tokenIds.map(async (tokenId) => {
-        const tokenUri = await contract.tokenURI(tokenId);
-        const response = await fetch(tokenUri);
-        const metadata = await response.text();
-        console.log("metadata ", metadata);
-
-        try {
-          const isPartOfArtwork = await flippandoBundlerContract.isPartOfArtwork(tokenId);
-          console.log("isPartOfArtwork ", isPartOfArtwork);
-          if (isPartOfArtwork === false) {
-            console.log("inside isPartOfArtwork check");
-            if (metadata !== undefined && metadata !== null) {
-              nftData.push({
-                tokenId: tokenId.toString(),
-                metadata: JSON.parse(metadata),
-              });
-            }
-          }
-          else {
-            if (metadata !== undefined && metadata !== null) {
-              tokensInArtwork.push({
-                tokenId: tokenId.toString(),
-                metadata: JSON.parse(metadata),
-              });
-            }
-          }
-        }
-        catch {
-          console.error('Error while checking if nft is part of artwork:', error);
-        }
-
-      })
-    );
-    setArtworkNFTs(tokensInArtwork);
-    setAllNfts(nftData);
+    console.log("fethcNFTs")
   };
 
   const getArtworkNFTs = async () => {
     try {
-      // Connect to the Ethereum network
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-
-      // Contract address and ABI
-      const flippandoBundlerABI = FlippandoBundler.abi;
-
-      // Get the user's account address
-      const accounts = await provider.listAccounts();
-      const userAddress = accounts[0];
-
-      // Create a contract instance
-      const flippandoBundlerContract = new ethers.Contract(flippandoBundlerAddress, flippandoBundlerABI, provider);
-      const flippandoContract = new ethers.Contract(flippandoAddress, Flippando.abi, signer);
-
-      
-      // Get the balance of NFTs owned by the user
-      const balance = await flippandoBundlerContract.balanceOf(userAddress);
-      console.log('balance ' + balance)
-
-      // Iterate over the NFTs and retrieve their token IDs
-      const tokenIds = [];
-      for (let i = 0; i < balance; i++) {
-        const tokenId = await flippandoBundlerContract.tokenOfOwnerByIndex(userAddress, i);
-        console.log('tokenId ' + tokenId)
-        const tokenIdInt = parseInt(tokenId._hex, 16);
-        const containedNfts = await flippandoBundlerContract.getArtwork(tokenIdInt);
-        for (let m = 0; m < containedNfts.length; m++) {
-            const nftId = containedNfts[m];
-            const tokenUri = await flippandoContract.tokenURI(tokenId);
-            const response = await fetch(tokenUri);
-            const metadata = await response.text();
-            if(metadata !== undefined && metadata !== null){
-              tokenIds.push({tokenId: nftId, metadata: metadata});  
-            }
-          }
-        
-      }
-
-      setArtworkNFTs(tokenIds);
+      console.log("getArtworkNFTs")
       
     } catch (error) {
       console.log('Error:', error);

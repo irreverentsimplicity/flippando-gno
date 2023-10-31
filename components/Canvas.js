@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { useSelector } from 'react-redux';
-//import {ethers} from 'ethers';
 import SmallTile from '../components/SmallTile';
 import Color7 from '../pages/assets/squares/Color7.svg';
-import Flippando from '../artifacts/contracts/Flippando.sol/Flippando.json'
+
 import { setArtPayload } from '../slices/flippandoSlice';
 import Loader from '../pages/assets/loader.svg';
 
@@ -71,8 +70,6 @@ const GridItem = ({ onDragStart, nft }) => {
 };
 
 const Canvas = ({height, width}) => {
-    const adr = useSelector(state => state.flippando.adr);
-    const flippandoAddress = adr.flippandoAddress;
     const placeHolderNFT = {tokenId: 0, metadata: {image: 'i'}};
     const [sourceGrid, setSourceGrid] = useState([]);
     const [canvas, setCanvas] = useState(Array(height*width).fill(placeHolderNFT));
@@ -81,53 +78,8 @@ const Canvas = ({height, width}) => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const fetchNFTs = async () => {
-          // Connect to the Ethereum network
-          const provider = new ethers.providers.Web3Provider(window.ethereum);
-          const signer = provider.getSigner();
-          const contract = new ethers.Contract(flippandoAddress, Flippando.abi, signer);
-    
-    
-          // Call the getUserNFTs function from the smart contract
-          //const tokenIds = await contract.getUserNFTs({ from: userAddress });
-          const totalSupply = await contract.totalSupply();
-          const tokenIds = [];
-          // Get the current user's address
-          const userAddress = await signer.getAddress();
-          setIsLoading(true);
-          for (let i = 0; i < totalSupply; i++) {
-            const tokenId = await contract.tokenByIndex(i);
-            const owner = await contract.ownerOf(tokenId);
-            if (userAddress !== owner){
-              tokenIds.push(tokenId);
-              console.log(JSON.stringify(tokenId));
-            }
-          }
-          // Retrieve tokenURI metadata for each NFT
-          const nftData = await Promise.all(
-            tokenIds.map(async (tokenId) => {
-              const tokenUri = await contract.tokenURI(tokenId);
-              const response = await fetch(tokenUri);
-              const metadata = await response.text();
-              //console.log("metadata " + metadata)
-              
-              if(metadata !== undefined && metadata !== null){
-                return {
-                  tokenId: tokenId.toString(),
-                  metadata: JSON.parse(metadata),
-                };
-              }
-            
-            })
-          );
-
-          if(nftData.length !== 0){
-            setIsLoading(false);
-            setSourceGrid(nftData);
-          }
-        };
-    
-        fetchNFTs();
+        console.log("fetchNFTs")
+        //fetchNFTs();
       }, []);
 
   const handleDrop = (index) => {

@@ -106,9 +106,16 @@ export default function Home() {
     const actions = await Actions.getInstance();
     const playerAddress = await actions.getWalletAddress();
     const processedPositions = JSON.stringify(withPositions);
+    // for DEMO purposes only
+    const max = 4;
+    const min = 1;
+    let randomNumbers = [0, 0];
+    randomNumbers = randomNumbers.map(() => Math.floor(Math.random() * (max - min + 1)) + min);
+
+    const withRandomNumbers = JSON.stringify(randomNumbers)
 
     try {
-      actions.flipTiles(playerAddress, currentGameId, processedPositions).then((response) => {
+      actions.flipTilesClient(playerAddress, currentGameId, processedPositions, withRandomNumbers).then((response) => {
         console.log("Game response in flip.js flipTiles", response);
         let parsedResponse = JSON.parse(response);
         console.log("parseResponse", parsedResponse)
@@ -639,7 +646,7 @@ export default function Home() {
                 <a
                   href="#"
                   onClick={() => {
-                    createNewGame(gameLevel, "normal");
+                    createNewGame(gameLevel, "squareGrid");
                   }}
                 >
                   <button className="rounded-md bg-[#98D0E9] px-3.5 py-2.5 text-lg hover:scale-110 font-semibold font-quantic text-white shadow-sm hover:bg-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 border-none w-[140px] focus:outline-none">
@@ -700,7 +707,7 @@ export default function Home() {
                 <a
                   href="#"
                   onClick={() => {
-                    createNewGame(gameLevel, "normal");
+                    createNewGame(gameLevel, "squareGrid");
                   }}
                 >
                   <button className="rounded-md bg-[#98D0E9] px-3.5 py-2.5 text-lg hover:scale-110 font-semibold font-quantic text-white shadow-sm hover:bg-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 border-none w-[140px] focus:outline-none">
