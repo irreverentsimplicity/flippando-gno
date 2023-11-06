@@ -12,7 +12,6 @@ export default function Menu() {
             <Link href="/my-flips"><a className={styles.menuItem}><i className="icon3"></i> My Flips</a></Link>
             <Link href="/playground"><a className={styles.menuItem}><i className="icon4"></i>  Playground</a></Link>
             <Link href="/my-art"><a className={styles.menuItem}><i className="icon4"></i> My Art</a></Link>
-            {/* Add more menu items as needed */}
         </div>
     );
 }

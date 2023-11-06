@@ -19,19 +19,12 @@ import Hexagram2 from "./assets/hexagrams/hexagram2.svg";
 import Hexagram4 from "./assets/hexagrams/hexagram4.svg";
 import Hexagram6 from "./assets/hexagrams/hexagram6.svg";
 import SmallTile from "../components/SmallTile";
+import Menu from "../components/Menu";
 import Actions from "./util/actions";
-//import Flippando from '../artifacts/contracts/Flippando.sol/Flippando.json'
-//import Flip from '../artifacts/contracts/Flip.sol/Flip.json'
+import { parse } from "path";
 
 export default function Home() {
-  //const adr = useSelector(state => state.flippando.adr);
-  //const flippandoAddress = adr.flippandoAddress;
-  //const flipAddress = adr.flipAddress;
-  //const flippandoBundlerAddress = adr.flippandoBundlerAddress;
-  //const flippandoGameMasterAddress = adr.flippandoGameMasterAddress;
-
-  //console.log('adr' + JSON.stringify(adr, null, 2));
-  const actions = Actions.getInstance();
+  
   const [gnoAddress, setGnoAddress] = useState();
   const [positions, setPositions] = useState([]);
   const [remainingTiles, setRemainingTiles] = useState([]);
@@ -59,12 +52,44 @@ export default function Home() {
 
   const [nfts, setNfts] = useState([]);
 
+  useEffect( () => {
+    fetchUserNFTs();
+    fetchAllNFTs();
+  }, [])
+
   const fetchUserBalances = async () => {
     console.log("fetchUserBalances");
   };
 
-  const fetchNFTs = async () => {
+  const fetchUserNFTs = async () => {
     console.log("fetchUserNFTs");
+    const actions = await Actions.getInstance();
+    const playerAddress = await actions.getWalletAddress();
+    try {
+      actions.getUserNFTs(playerAddress).then((response) => {
+        console.log("getUserNFTS response in Flip", response);
+        let parsedResponse = JSON.parse(response);
+        console.log("parseResponse", parsedResponse)
+        setTestResponse(parsedResponse);
+      });
+    } catch (err) {
+      console.log("error in calling getUserNFTs", err);
+    }
+  };
+
+  const fetchAllNFTs = async () => {
+    console.log("fetchAllNFTs");
+    const actions = await Actions.getInstance();
+    try {
+      actions.getAllNFTs().then((response) => {
+        console.log("getAllNFTS response in Flip", response);
+        let parsedResponse = JSON.parse(response);
+        console.log("parseResponse", parsedResponse)
+        setTestResponse(parsedResponse);
+      });
+    } catch (err) {
+      console.log("error in calling getAllNFTs", err);
+    }
   };
 
 
@@ -76,7 +101,7 @@ export default function Home() {
         console.log("response in Flip", response);
         let parsedResponse = JSON.parse(response);
         let newGameStatus = "Flippando initialized, game id: " + parsedResponse.id;
-        setCurrentGameId(parsedResponse.GameId);
+        setCurrentGameId(parsedResponse.id);
         setTileMatrix(Array(gameLevel).fill(0));
         setUncoveredTileMatrix(Array(gameLevel).fill(0));
         setGameStatus(newGameStatus);
@@ -106,19 +131,68 @@ export default function Home() {
     const actions = await Actions.getInstance();
     const playerAddress = await actions.getWalletAddress();
     const processedPositions = JSON.stringify(withPositions);
-    // for DEMO purposes only
-    const max = 4;
-    const min = 1;
-    let randomNumbers = [0, 0];
-    randomNumbers = randomNumbers.map(() => Math.floor(Math.random() * (max - min + 1)) + min);
-
-    const withRandomNumbers = JSON.stringify(randomNumbers)
-
+    
     try {
-      actions.flipTilesClient(playerAddress, currentGameId, processedPositions, withRandomNumbers).then((response) => {
+      actions.flipTiles(playerAddress, currentGameId, processedPositions).then((response) => {
         console.log("Game response in flip.js flipTiles", response);
         let parsedResponse = JSON.parse(response);
-        console.log("parseResponse", parsedResponse)
+        console.log("parsedResponse", parsedResponse)
+        
+        // this is the blockchain solved matrix
+        var tileMatrixCopy = parsedResponse.solvedGameBoard;
+        // we get non-zero values from chain
+        if (
+          parsedResponse.gameBoard[withPositions[0]] ===
+          parsedResponse.gameBoard[withPositions[1]] &&
+          parsedResponse.gameBoard[withPositions[0]] !== 0 &&
+          parsedResponse.gameBoard[withPositions[1]] !== 0
+        ) {
+          // this is the blockchain solved matrix
+          setTileMatrix(parsedResponse.solvedGameBoard);
+        }
+        // we get zero values from chain, we're in quantum state, and
+        // we don't have equal numbers, display quantum flickering visual
+        else if (
+          parsedResponse.gameBoard[withPositions[0]] ===
+          parsedResponse.gameBoard[withPositions[1]] &&
+          parsedResponse.gameBoard[withPositions[0]] === 0 &&
+          parsedResponse.gameBoard[withPositions[1]] === 0
+        ) {
+          // add a timeout function, so the numbers are visible for a while
+          tileMatrixCopy[withPositions[0]] = -2;
+          tileMatrixCopy[withPositions[1]] = -2;
+          setTileMatrix(tileMatrixCopy);
+
+          // wait 2 secs, then update with the solved tile matrix
+          setTimeout(() => {
+            console.log("Delayed for 2 seconds.");
+            var tileMatrixCopy1 = [...parsedResponse.solvedGameBoard];
+            tileMatrixCopy1[withPositions[0]] = 0;
+            tileMatrixCopy1[withPositions[1]] = 0;
+            setTileMatrix(tileMatrixCopy1);
+          }, 1000);
+        } else {
+          // add a timeout function, so the numbers are visible for a while
+          tileMatrixCopy[withPositions[0]] =
+          parsedResponse.gameBoard[withPositions[0]];
+          tileMatrixCopy[withPositions[1]] =
+          parsedResponse.gameBoard[withPositions[1]];
+          setTileMatrix(tileMatrixCopy);
+
+          // wait 2 secs, then update with the solved tile matrix
+          setTimeout(() => {
+            console.log("Delayed for 2 seconds.");
+            var tileMatrixCopy1 = [...parsedResponse.solvedGameBoard];
+            tileMatrixCopy1[withPositions[0]] = 0;
+            tileMatrixCopy1[withPositions[1]] = 0;
+            setTileMatrix(tileMatrixCopy1);
+          }, 2000);
+        }
+        if(parsedResponse.gameStatus === "finished"){
+          setGameStatus("Flippando solved, all tiles uncovered. Congrats!");
+        }
+      
+
       });
     } catch (err) {
       console.log("error in calling flipTiles", err);
@@ -270,15 +344,22 @@ export default function Home() {
   }
 
   async function mintNFT(gameId) {
+    const actions = await Actions.getInstance();
+    const playerAddress = await actions.getWalletAddress();
+    try {
+      actions.createNFT(playerAddress, gameId).then((response) => {
+        console.log("mintNFT response in Flip", response);
+        let parsedResponse = JSON.parse(response);
+        console.log("parseResponse", parsedResponse)
+        if(parsedResponse.error === undefined){
+          fetchAllNFTs()
+        }
+      });
+    } catch (err) {
+      console.log("error in calling mintNFT", err);
+    }
   }
 
-  async function mintTestNFT() {
-    
-  }
-
-  async function mintSingleTestNFT() {
-    
-  }
 
   // pure react code
   const playGame = (atPosition) => {
@@ -590,26 +671,25 @@ export default function Home() {
         <meta name="description" content="Entry point" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <div className="grid grid-cols-5 pb-20 justify-end">
+        <div className="col-span-5 flex justify-end pr-10">
+        <div className="rounded-md flex flex-col justify-center items-center mt-3 pl-3 pr-3 bg-gray-600">
+          <button className="text-sm font-medium gap-6 font-quantic text-white border-transparent focus:outline-none">
+            {flipBalance} liquid / {lockedFlipBalance + flipBalance} locked
+            $FLIP
+          </button>
+        </div>
+        </div>
+      </div>
       <div className="grid flex grid-cols-5">
+      
         <div className="bg-white-100">
-          <p className="bold text-lg text-blue-800 pb-2 pt-4">Level 1</p>
-          <div className="grid w-4/5 gap-y-2 gap-2 px-0 mx-0 pr-0 mr-0 grid-cols-4 grid-rows-2">
-            {renderLevels(1)}
-          </div>
-          <p className="bold text-lg text-blue-800 pb-2 pt-4">Level 2</p>
-          <div className="grid w-4/5 gap-y-2 px-0 mx-0 pr-0 mr-0 grid-cols-4 grid-rows-4">
-            {renderLevels(2)}
-          </div>
+        <Menu />
         </div>
 
         <div className="col-span-3 flex flex-col items-center pt-10">
           <div className="mb-4 w-full flex justify-end pr-20">
-            <div className="rounded-md flex flex-col justify-start items-start">
-              <button className="text-lg font-bold gap-6 font-quantic border-transparent focus:outline-none">
-                {flipBalance} liquid / {lockedFlipBalance + flipBalance} locked
-                $FLIP
-              </button>
-            </div>
+            
           </div>
           <div className="mb-4">{gameStatus}</div>
           {gameStatus === "Initializing..." && (
@@ -646,11 +726,11 @@ export default function Home() {
                 <a
                   href="#"
                   onClick={() => {
-                    createNewGame(gameLevel, "squareGrid");
+                    createNewGame(gameLevel, gameTileType);
                   }}
                 >
-                  <button className="rounded-md bg-[#98D0E9] px-3.5 py-2.5 text-lg hover:scale-110 font-semibold font-quantic text-white shadow-sm hover:bg-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 border-none w-[140px] focus:outline-none">
-                    Initialize<p>new game</p>{" "}
+                  <button className="rounded-md bg-gray-200 px-3.5 py-2.5 text-lg hover:scale-110 font-semibold font-quantic text-black shadow-bg hover:bg-green-700 hover:text-white border-none w-[160px] focus:outline-none">
+                    Start a new flip                  
                   </button>
                 </a>
               </div>
@@ -707,11 +787,11 @@ export default function Home() {
                 <a
                   href="#"
                   onClick={() => {
-                    createNewGame(gameLevel, "squareGrid");
+                    createNewGame(gameLevel, gameTileType);
                   }}
                 >
-                  <button className="rounded-md bg-[#98D0E9] px-3.5 py-2.5 text-lg hover:scale-110 font-semibold font-quantic text-white shadow-sm hover:bg-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 border-none w-[140px] focus:outline-none">
-                    Initialize<p> new game</p>{" "}
+                  <button className="rounded-md bg-gray-200 px-3.5 py-2.5 text-lg hover:scale-110 font-semibold font-quantic text-black shadow-bg hover:bg-green-700 hover:text-white border-none w-[160px] focus:outline-none">
+                    Start a new flip                  
                   </button>
                 </a>
               </div>
@@ -755,79 +835,113 @@ export default function Home() {
             
         
           </div>
-        </div>
-        <div className="bg-white-100">
-          <p className="bold text-lg text-blue-800 pb-2 pt-4">Game type</p>
-          Tiles:{" "}
-          <GameLevels
-            options={gameLevels}
-            value={gameLevel}
-            onChange={handleGameLevelChange}
-          />
-          {gameTileTypes.map((gameTypeChoice, index) => (
-            <div key={index}>
-              {gameTypeChoice === "squareGrid" && (
-                <a href="#" onClick={() => selectGameTileType(gameTypeChoice)}>
-                  <div
-                    className={`${
-                      gameTileType === gameTypeChoice
-                        ? "flex justify-center p-4 m-4 rounded-lg shadow-lg bg-gray-200"
-                        : "flex justify-center p-4 m-4 rounded-lg bg-gray-100"
-                    }`}
-                  >
-                    <div className="grid grid-cols-2 gap-2">
-                      <Color1 width={50} height={50} />
-                      <Color5 width={50} height={50} />
-                      <Color9 width={50} height={50} />
-                      <Color3 width={50} height={50} />
+
+          
+          <div className="col-span-3 flex flex-col items-center pt-10">
+            {gameStatus.includes("undefined") && 
+            (
+            <div className="mb-4 w-full flex justify-center">
+            {/*
+            
+            <p className="bold text-lg text-blue-800 pb-2 pt-4">Game type</p>
+            Tiles:{" "}
+            <GameLevels
+              options={gameLevels}
+              value={gameLevel}
+              onChange={handleGameLevelChange}
+            />
+            */}
+          
+          
+            {gameTileTypes.map((gameTypeChoice, index) => (
+              <div key={index}>
+                {gameTypeChoice === "squareGrid" && (
+                  <a href="#" onClick={() => selectGameTileType(gameTypeChoice)}>
+                    <div
+                      className={`${
+                        gameTileType === gameTypeChoice
+                          ? "flex justify-center p-2 m-2 rounded-lg shadow-lg bg-gray-300"
+                          : "flex justify-center p-2 m-2 rounded-lg bg-gray-100"
+                      }`}
+                    >
+                      <div className="grid grid-cols-2 gap-2">
+                        <Color1 width={28} height={28} />
+                        <Color5 width={28} height={28} />
+                        <Color9 width={28} height={28} />
+                        <Color3 width={28} height={28} />
+                      </div>
                     </div>
-                  </div>
-                </a>
-              )}
-              <hr />
-              {gameTypeChoice === "dice" && (
-                <a href="#" onClick={() => selectGameTileType(gameTypeChoice)}>
-                  <div
-                    className={`${
-                      gameTileType === gameTypeChoice
-                        ? "flex justify-center p-4 m-4 rounded-lg shadow-lg bg-gray-200"
-                        : "flex justify-center p-4 m-4 rounded-lg bg-gray-100"
-                    }`}
-                  >
-                    <div className="grid grid-cols-2 gap-2">
-                      <Dice1 width={50} height={50} />
-                      <Dice3 width={50} height={50} />
-                      <Dice6 width={50} height={50} />
-                      <Dice5 width={50} height={50} />
+                  </a>
+                )}
+                
+                {gameTypeChoice === "dice" && (
+                  <a href="#" onClick={() => selectGameTileType(gameTypeChoice)}>
+                    <div
+                      className={`${
+                        gameTileType === gameTypeChoice
+                          ? "flex justify-center p-2 m-2 rounded-lg shadow-lg bg-gray-300"
+                          : "flex justify-center p-2 m-2 rounded-lg bg-gray-100"
+                      }`}
+                    >
+                      <div className="grid grid-cols-2 gap-2">
+                        <Dice1 width={28} height={28} />
+                        <Dice3 width={28} height={28} />
+                        <Dice6 width={28} height={28} />
+                        <Dice5 width={28} height={28} />
+                      </div>
                     </div>
-                  </div>
-                </a>
-              )}
-              {gameTypeChoice === "hexagrams" && (
-                <a href="#" onClick={() => selectGameTileType(gameTypeChoice)}>
-                  <div
-                    className={`${
-                      gameTileType === gameTypeChoice
-                        ? "flex justify-center p-4 m-4 rounded-lg shadow-lg bg-gray-200"
-                        : "flex justify-center p-4 m-4 rounded-lg bg-gray-100"
-                    }`}
-                  >
-                    <div className="grid grid-cols-2 gap-4">
-                      <Hexagram2 width={50} height={50} />
-                      <Hexagram4 width={50} height={50} />
-                      <Hexagram1 width={50} height={50} />
-                      <Hexagram6 width={50} height={50} />
+                  </a>
+                )}
+                {gameTypeChoice === "hexagrams" && (
+                  <a href="#" onClick={() => selectGameTileType(gameTypeChoice)}>
+                    <div
+                      className={`${
+                        gameTileType === gameTypeChoice
+                          ? "flex justify-center p-2 m-2 rounded-lg shadow-lg bg-gray-300"
+                          : "flex justify-center p-2 m-2 rounded-lg bg-gray-100"
+                      }`}
+                    >
+                      <div className="grid grid-cols-2 gap-4">
+                        <Hexagram2 width={24} height={24} />
+                        <Hexagram4 width={24} height={24} />
+                        <Hexagram1 width={24} height={24} />
+                        <Hexagram6 width={24} height={24} />
+                      </div>
                     </div>
-                  </div>
-                </a>
-              )}
+                  </a>
+                )}
+              </div>
+            ))}
             </div>
-          ))}
+          )}
         </div>
-        <div className="col-span-5">
-          <footer className={styles.footer}></footer>
+                  
+        
         </div>
-      </div>
+        {/* levels */}
+        <div>
+           <p className="bold text-lg text-blue-800 pb-2 pt-4">Level 1</p>
+            <div className="grid w-4/5 gap-y-2 gap-2 px-0 mx-0 pr-0 mr-0 grid-cols-4 grid-rows-2">
+              {renderLevels(1)}
+            </div>
+            <p className="bold text-lg text-blue-800 pb-2 pt-4">Level 2</p>
+            <div className="grid w-4/5 gap-y-2 px-0 mx-0 pr-0 mr-0 grid-cols-4 grid-rows-4">
+              {renderLevels(2)}
+            </div>
+          </div>
+        </div>
+        <div className="col-span-5 pt-20">
+
+        <footer className={styles.footer}></footer>
+        </div>
+        {/**
+        <div className="col-span-3">
+          <h1>Ongoing games</h1>
+        </div>
+         */}
+        
+
+      
     </div>
   );
 }

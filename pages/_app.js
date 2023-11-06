@@ -62,7 +62,6 @@ function MyApp({ Component, pageProps }) {
         </div>
       </nav>
       */}
-      <Menu />
       <Component {...pageProps} />
     </div>
     </DndProvider>

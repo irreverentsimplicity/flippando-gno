@@ -28,7 +28,7 @@ const wsURL: string = Config.GNO_WS_URL;
 const rpcURL: string = Config.GNO_JSONRPC_URL;
 const flippandoRealm: string = Config.GNO_FLIPPANDO_REALM;
 const faucetURL: string = Config.FAUCET_URL;
-const defaultGasWanted: Long = new Long(200_000_0);
+const defaultGasWanted: Long = new Long(300_000_0);
 const customTXFee = '2000000ugnot'
 
 const cleanUpRealmReturn = (ret: string) => {
@@ -305,30 +305,6 @@ class Actions {
   }
 
   /**
-   * Call the FlipTilesClient6 function and return an ongoing game, this is for DEMO purposes only!
-   * @param playerAddr string
-   * @param gameId string
-   * @param withPositions array of ints, converted into string, e.g. [7,15]
-   * @param withRandomNumbers array of ints between min and max, converted into string, e.g. [1,4]
-   */
-  async flipTilesClient(
-    playerAddr: string,
-    gameId: string,
-    withPositions: string,
-    withRandomNumbers: string,
-  ): Promise<any> {
-    // Make the move
-    const gameObject = await this.callMethod('FlipTilesClient', [
-      playerAddr,
-      gameId,
-      withPositions,
-      withRandomNumbers,
-    ]);
-    console.log("actions FlipTilesClient response ", JSON.stringify(gameObject))
-    return gameObject;
-  }
-
-  /**
    * Call the FlipTile function and return an ongoing game
    * @param playerAddr string
    * @param gameId string
@@ -350,73 +326,48 @@ class Actions {
   }
 
   /**
-   * Checks if the given game is ongoing
-   * @param gameID the ID of the running game
+   * Call the CreateNFT function and return an ongoing game
+   * @param playerAddr string
+   * @param gameId string
+   * @param withPositions array of ints, converted into string, e.g. [1,4]
    */
-  public async isGameOngoing(gameID: string) {
-    // Fetch the game
-    const game: Game = await this.getGame(gameID);
-
-    return game.state === GameState.OPEN;
-  }
-
-  /**
-   * Fetches the active game state. Should be called
-   * within a loop and checked.
-   * @param gameID the ID of the running game
-   */
-  public async getGame(gameID: string): Promise<Game> {
-    const gameResponse: string = (await this.evaluateExpression(
-      `GetGame("${gameID}")`
-    )) as string;
-
-    // Parse the response
-    return JSON.parse(cleanUpRealmReturn(gameResponse));
-  }
-
-  /**
-   * Executes the move and returns the game state
-   * @param gameID the ID of the game
-   * @param from from position
-   * @param to  to position
-   * @param promotion promotion information
-   */
-  async makeMove(
-    gameID: string,
-    from: string,
-    to: string,
-  ): Promise<Game> {
+  async createNFT(
+    playerAddr: string,
+    gameId: string,
+  ): Promise<any> {
     // Make the move
-    const moveResponse = await this.callMethod('MakeMove', [
-      gameID,
-      from,
-      to
+    const response = await this.callMethod('CreateBasicNFT', [
+      playerAddr,
+      gameId
     ]);
-
-    // Parse the response from the node
-    const moveData = JSON.parse(
-      decodeRealmResponse(moveResponse.deliver_tx.ResponseBase.Data as string)
-    );
-    if (!moveData) {
-      throw new Error('invalid move response');
-    }
-
-    // Magically parse the response
-    return moveData;
+    console.log("actions createBasicNFT response ", JSON.stringify(response))
+    return response;
   }
 
   /**
-   * Returns a flag indicating if the game with the specified ID is over
-   * @param gameID the ID of the running game
-   * @param type the game-over state types
+   * Call the GetUserNFTs function and return an array of basic NFTs
+   * @param playerAddr string
    */
-  async isGameOver(gameID: string, type: GameState): Promise<boolean> {
-    // Fetch the game state
-    const game: Game = await this.getGame(gameID);
-
-    return game.state === type;
+  async getUserNFTs(
+    playerAddr: string
+  ): Promise<any> {
+    const response = await this.callMethod('GetUserBasicNFTs', [
+      playerAddr
+    ]);
+    console.log("actions GetUserBasicNFTs response ", JSON.stringify(response))
+    return response;
   }
-  
+
+  /**
+   * Call the GetUserNFTs function and return an array of basic NFTs
+   * @param playerAddr string
+   */
+  async getAllNFTs(): Promise<any> {
+    const response = await this.callMethod('GetAllBasicNFTs', []);
+    console.log("actions GetAllBasicNFTs response ", JSON.stringify(response))
+    return response;
+  }
+
   /****************
    * DASHBOARD
    ****************/
@@ -432,18 +383,7 @@ class Actions {
     return this.getPlayer(address);
   }
 
-  /**
-   * Fetches the player score data
-   * @param playerID the ID of the player (can be address or @username)
-   */
-  async getPlayer(playerID: string): Promise<Player> {
-    const playerResponse: string = (await this.evaluateExpression(
-      `GetPlayer("${playerID}")`
-    )) as string;
-
-    // Parse the response
-    return JSON.parse(cleanUpRealmReturn(playerResponse));
-  }
+  
 
   /**
    * Destroys the Actions instance, and closes any running services
