@@ -54,7 +54,7 @@ export default function Home() {
 
   useEffect( () => {
     fetchUserNFTs();
-    fetchAllNFTs();
+    //fetchAllNFTs();
   }, [])
 
   const fetchUserBalances = async () => {
