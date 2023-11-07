@@ -354,7 +354,7 @@ class Actions {
     const response = await this.callMethod('GetUserBasicNFTs', [
       playerAddr
     ]);
-    console.log("actions GetUserBasicNFTs response ", JSON.stringify(response))
+    //console.log("actions GetUserBasicNFTs response ", JSON.stringify(response))
     return response;
   }
 
@@ -364,7 +364,19 @@ class Actions {
    */
   async getAllNFTs(): Promise<any> {
     const response = await this.callMethod('GetAllBasicNFTs', []);
-    console.log("actions GetAllBasicNFTs response ", JSON.stringify(response))
+    //console.log("actions GetAllBasicNFTs response ", JSON.stringify(response))
+    return response;
+  }
+
+  /**
+   * Call the GetTokenURI function and return a JSON object
+   * @param tokenID string
+   */
+  async getTokenURI(tokenID: string): Promise<any> {
+    const response = await this.callMethod('GetTokenURI', [
+      tokenID
+    ]);
+    //console.log("actions GetTokenURI response ", JSON.stringify(response))
     return response;
   }
 

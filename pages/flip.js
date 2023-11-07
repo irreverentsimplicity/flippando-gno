@@ -7,10 +7,10 @@ import { useSelector } from "react-redux";
 import GameLevels from "../components/GameLevels";
 import TileImages from "../components/TileImages";
 import Color1 from "./assets/squares/Color1.svg";
-import Color3 from "./assets/squares/Color3.svg";
+import Color14 from "./assets/squares/Color14.svg";
 import Color9 from "./assets/squares/Color9.svg";
 import Color5 from "./assets/squares/Color5.svg";
-import Dice1 from "./assets/dice/1.svg";
+import Dice4 from "./assets/dice/4.svg";
 import Dice3 from "./assets/dice/3.svg";
 import Dice5 from "./assets/dice/5.svg";
 import Dice6 from "./assets/dice/6.svg";
@@ -54,7 +54,6 @@ export default function Home() {
 
   useEffect( () => {
     fetchUserNFTs();
-    //fetchAllNFTs();
   }, [])
 
   const fetchUserBalances = async () => {
@@ -62,6 +61,7 @@ export default function Home() {
   };
 
   const fetchUserNFTs = async () => {
+    let userNFTs = [];
     console.log("fetchUserNFTs");
     const actions = await Actions.getInstance();
     const playerAddress = await actions.getWalletAddress();
@@ -69,13 +69,31 @@ export default function Home() {
       actions.getUserNFTs(playerAddress).then((response) => {
         console.log("getUserNFTS response in Flip", response);
         let parsedResponse = JSON.parse(response);
-        console.log("parseResponse", parsedResponse)
-        setTestResponse(parsedResponse);
+        console.log("parseResponse", JSON.stringify(response, null, 2))
+        if(parsedResponse.userNFTs !== undefined && parsedResponse.userNFTs.length !== 0){  
+           setNfts(parsedResponse.userNFTs)
+        }
+        //setTestResponse(parsedResponse);
       });
     } catch (err) {
       console.log("error in calling getUserNFTs", err);
     }
   };
+
+  const fetchTokenURI = async (tokenID) => {
+    console.log("fetTokenURIs");
+    const actions = await Actions.getInstance();
+    try {
+      actions.getTokenURI(tokenID).then((response) => {
+        console.log("getTokenURIs response in Flip", response);
+        let parsedResponse = JSON.parse(response);
+        console.log("parseResponse", parsedResponse)
+        
+      });
+    } catch (err) {
+      console.log("error in calling getTokenURIs", err);
+    }
+  }
 
   const fetchAllNFTs = async () => {
     console.log("fetchAllNFTs");
@@ -352,7 +370,8 @@ export default function Home() {
         let parsedResponse = JSON.parse(response);
         console.log("parseResponse", parsedResponse)
         if(parsedResponse.error === undefined){
-          fetchAllNFTs()
+          setGameStatus("Board minted. Flippando is now in an undefined state.")
+          fetchUserNFTs()
         }
       });
     } catch (err) {
@@ -508,7 +527,7 @@ export default function Home() {
             <button disabled className={styles.card_small}></button>
           )}
           {value !== 0 && nfts.length !== 0 && (
-            <SmallTile metadata={JSON.stringify(value.metadata)} />
+            <SmallTile metadata={JSON.stringify(value)} />
           )}
         </span>
       );
@@ -713,7 +732,7 @@ export default function Home() {
               <span className="sr-only">Inititalizing new game...</span>
             </div>
           )}
-          {gameStatus === "Flippando is in an undefined state." && (
+          {gameStatus.includes("undefined") && (
             <div className="flex gap-6">
               {/** 
                  <div>
@@ -868,7 +887,7 @@ export default function Home() {
                         <Color1 width={28} height={28} />
                         <Color5 width={28} height={28} />
                         <Color9 width={28} height={28} />
-                        <Color3 width={28} height={28} />
+                        <Color14 width={28} height={28} />
                       </div>
                     </div>
                   </a>
@@ -884,7 +903,7 @@ export default function Home() {
                       }`}
                     >
                       <div className="grid grid-cols-2 gap-2">
-                        <Dice1 width={28} height={28} />
+                        <Dice4 width={28} height={28} />
                         <Dice3 width={28} height={28} />
                         <Dice6 width={28} height={28} />
                         <Dice5 width={28} height={28} />
