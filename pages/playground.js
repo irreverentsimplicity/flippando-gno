@@ -1,5 +1,9 @@
 /* pages/my-nfts.js */
 //import {ethers} from 'ethers';
+import styles from "../styles/Home.module.css";
+import Head from "next/head";
+import Menu from '../components/Menu';
+import Footer from '../components/Footer';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useDrag, useDrop } from 'react-dnd';
@@ -12,6 +16,8 @@ import artNFT from './assets/artNFT.jpg';
 export default function MyAssets() {
   const [width, setWidth] = useState(4);
   const [height, setHeight] = useState(4);
+  const [flipBalance, setFlipBalance] = useState(0);
+  const [lockedFlipBalance, setLockedFlipBalance] = useState(0);
 
   const setCanvas = (boardWidth, boardHeight) => {
     setWidth(boardWidth);
@@ -21,49 +27,35 @@ export default function MyAssets() {
   // test, to replace in prod with real board/canvas values and dragged NFTs into it
   async function makeArt(){
     console.log("makeArt")
-    /*
-    const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-    // Prompt user for account connections
-    await provider.send("eth_requestAccounts", []);
-    const signer = provider.getSigner();
-  
-    const flippandoContract = new ethers.Contract(flippandoAddress, Flippando.abi, signer);
-    const flippandobundlerContract = new ethers.Contract(flippandoBundlerAddress, FlippandoBundler.abi, signer);
-
-    const startBlockNumber = await provider.getBlockNumber();
-    provider.once("block", () => {
-      flippandoContract.on("ArtworkCreated", (artefact, blockNumber) => {
-        if (blockNumber <= startBlockNumber) {
-          console.log("old event, blockNumber " + blockNumber + ", startBlockNumber " + startBlockNumber);
-          return;
-        }
-        console.log({
-          Artwork: JSON.stringify(artefact, null, 2),
-        })
-      })
-    })
-
-    const txResponse  = await flippandoContract.makeArt(2,2,[1,3,2,4])
-    .then( (result) => 
-      { 
-        console.log('make art txResponse ' + JSON.stringify(result))
-        result.wait()
-        .then( (result) => {
-          console.log('wait test result ' + JSON.stringify(result))
-            fetchNFTs();
-        })
-        .catch(error => { 
-          console.log('make art error after result ' + JSON.stringify(error, null, 2))
-        })
-      })
-    .catch(error => { 
-      console.log('make art error ' + JSON.stringify(error, null, 2))
-    })
-    */
+   
   }
 
   return (
-    <div>
+    <div className={styles.container}>
+      <Head>
+        <title>Flippando</title>
+        <meta name="description" content="Entry point" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <div className="grid grid-cols-5 pb-20 justify-end">
+        <div className="col-span-5 flex justify-end pr-10">
+        <div className="rounded-md flex flex-col justify-center items-center mt-3 pl-3 pr-3 bg-gray-600">
+          <button className="text-sm font-medium gap-6 font-quantic text-white border-transparent focus:outline-none">
+            {flipBalance} liquid / {lockedFlipBalance + flipBalance} locked
+            $FLIP
+          </button>
+        </div>
+        </div>
+      </div>
+      
+      <div className="grid flex grid-cols-5">
+      
+        <div className="bg-white-100 col-span-1">
+        <Menu />
+        </div>
+
+
+    <div className="col-span-3">
       <div>
           <Canvas height={4} width={5}/>
       </div>
@@ -75,6 +67,13 @@ export default function MyAssets() {
           Make Art
       </button>
     </div>
+    </div>
+
+    </div>
+        <div className="col-span-5 pt-20">
+            <Footer/>
+        
+        </div>
     </div>
   );
 }

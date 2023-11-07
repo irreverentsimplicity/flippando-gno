@@ -20,6 +20,7 @@ import Hexagram4 from "./assets/hexagrams/hexagram4.svg";
 import Hexagram6 from "./assets/hexagrams/hexagram6.svg";
 import SmallTile from "../components/SmallTile";
 import Menu from "../components/Menu";
+import Footer from "../components/Footer";
 import Actions from "./util/actions";
 import { parse } from "path";
 
@@ -950,8 +951,8 @@ export default function Home() {
           </div>
         </div>
         <div className="col-span-5 pt-20">
-
-        <footer className={styles.footer}></footer>
+            <Footer/>
+        
         </div>
         {/**
         <div className="col-span-3">
