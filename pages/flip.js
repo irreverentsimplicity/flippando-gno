@@ -73,6 +73,7 @@ export default function Home() {
         console.log("parseResponse", JSON.stringify(response, null, 2))
         if(parsedResponse.userNFTs !== undefined && parsedResponse.userNFTs.length !== 0){  
            setNfts(parsedResponse.userNFTs)
+           setLockedFlipBalance(parsedResponse.userNFTs.length)
         }
         //setTestResponse(parsedResponse);
       });
@@ -80,37 +81,6 @@ export default function Home() {
       console.log("error in calling getUserNFTs", err);
     }
   };
-
-  const fetchTokenURI = async (tokenID) => {
-    console.log("fetTokenURIs");
-    const actions = await Actions.getInstance();
-    try {
-      actions.getTokenURI(tokenID).then((response) => {
-        console.log("getTokenURIs response in Flip", response);
-        let parsedResponse = JSON.parse(response);
-        console.log("parseResponse", parsedResponse)
-        
-      });
-    } catch (err) {
-      console.log("error in calling getTokenURIs", err);
-    }
-  }
-
-  const fetchAllNFTs = async () => {
-    console.log("fetchAllNFTs");
-    const actions = await Actions.getInstance();
-    try {
-      actions.getAllNFTs().then((response) => {
-        console.log("getAllNFTS response in Flip", response);
-        let parsedResponse = JSON.parse(response);
-        console.log("parseResponse", parsedResponse)
-        setTestResponse(parsedResponse);
-      });
-    } catch (err) {
-      console.log("error in calling getAllNFTs", err);
-    }
-  };
-
 
   async function createNewGame(gameLevel, typeOfGame) {
     const actions = await Actions.getInstance();

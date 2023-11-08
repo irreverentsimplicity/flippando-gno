@@ -12,21 +12,17 @@ import Canvas from '../components/Canvas';
 import Grey from './assets/squares/grey.svg';
 import Image from 'next/image';
 import artNFT from './assets/artNFT.jpg';
+import Actions from "./util/actions";
 
 export default function MyAssets() {
   const [width, setWidth] = useState(4);
   const [height, setHeight] = useState(4);
   const [flipBalance, setFlipBalance] = useState(0);
   const [lockedFlipBalance, setLockedFlipBalance] = useState(0);
-
-  const setCanvas = (boardWidth, boardHeight) => {
-    setWidth(boardWidth);
-    setHeight(boardHeight);
-  }
-
-  // test, to replace in prod with real board/canvas values and dragged NFTs into it
+  
+  const artPayload = useSelector(state => state.flippando.artPayload);
   async function makeArt(){
-    console.log("makeArt")
+    console.log("makeArt, " + JSON.stringify(artPayload))
    
   }
 
@@ -57,7 +53,7 @@ export default function MyAssets() {
 
     <div className="col-span-3">
       <div>
-          <Canvas height={4} width={5}/>
+          <Canvas height={2} width={2}/>
       </div>
       <div  className="flex justify-center">
       <button 

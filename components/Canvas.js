@@ -6,6 +6,7 @@ import Color7 from '../pages/assets/squares/Color7.svg';
 
 import { setArtPayload } from '../slices/flippandoSlice';
 import Loader from '../pages/assets/loader.svg';
+import Actions from '../pages/util/actions';
 
 const Square = ({ isOccupied, onDrop, onClick, nft }) => {
     const stringifiedNFT = JSON.stringify(nft.metadata);
@@ -79,12 +80,45 @@ const Canvas = ({height, width}) => {
 
     useEffect(() => {
         console.log("fetchNFTs")
-        //fetchNFTs();
+        const fetchNFTs = async () => {
+            
+          setIsLoading(true);
+
+          const actions = await Actions.getInstance();
+          const playerAddress = await actions.getWalletAddress();
+          try {
+            actions.getAllNFTs(playerAddress).then((response) => {
+              console.log("getAllNFTS response in Canvas", response);
+              let parsedResponse = JSON.parse(response);
+              console.log("parseResponse", parsedResponse)
+              if(parsedResponse.userNFTs !== undefined && parsedResponse.userNFTs.length !== 0){
+                  let nftData = []
+                  parsedResponse.userNFTs.map((nftItem) => {
+                    nftData.push({
+                      tokenId: nftItem.tokenId,
+                      metadata: nftItem,
+                    })
+                  })
+                
+                if(nftData.length !== 0){
+                  setIsLoading(false);
+                  setSourceGrid(nftData);
+                }
+              }
+            });
+          } catch (err) {
+            console.log("error in calling getAllNFTs", err);
+          }
+          
+        };
+    
+        fetchNFTs();;
       }, []);
 
   const handleDrop = (index) => {
     const updatedCanvas = [...canvas];
     updatedCanvas[index] = sourceGrid[indexSourceGrid];
+    console.log('updatedCanvas ' + JSON.stringify(updatedCanvas));
     setCanvas(updatedCanvas);
     checkAndPrepareArtPayload(updatedCanvas);
     const updatedSourceGrid = [...sourceGrid];
@@ -95,7 +129,6 @@ const Canvas = ({height, width}) => {
     indexTrackCopy.push(idxTrack);
     setIndexTrack(indexTrackCopy);
     
-    console.log('updatedCanvas ' + JSON.stringify(updatedCanvas));
   };
 
   const handleDragStart = (index) => {
@@ -123,13 +156,15 @@ const Canvas = ({height, width}) => {
   }
 
   const checkAndPrepareArtPayload = (updatedCanvas) => {
+    console.log("checkAndPrepare " + JSON.stringify(canvas, null, 2))
     let tokenIds = [];
     canvas.map( (nft, index) => {
-        if(nft.tokenId !== 0){
-            tokenIds.push(nft.tokenId);
+        if(nft.metadata.tokenID !== 0){
+            tokenIds.push(nft.metadata.tokenID);
         }
     });
-    if (tokenIds.length === height*width){
+    if (tokenIds.length == height*width){
+        console.log("canvas filled")
         setArtPayload([height, width, tokenIds]);
     }
   }
@@ -153,6 +188,7 @@ const Canvas = ({height, width}) => {
       <div>
         {/* <h2 className="mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">Your Canvas</h2> */}
         <div className='flex justify-center items-center text-2xl font-medium font-quantico pt-3'><p>Your canvas</p></div>
+        {/*
         <div style={{ display: 'inline-grid', gridTemplateColumns: 'repeat(4, 1fr)', gridGap: '0px', border: '1px dashed #ccc' }}>
           {canvas.map((nft, index) => (
             <Square
@@ -164,6 +200,25 @@ const Canvas = ({height, width}) => {
             />
           ))}
         </div>
+        */}
+        <div style={{ 
+          display: 'inline-grid', 
+          gridTemplateColumns: `repeat(${width}, 1fr)`, 
+          gridTemplateRows: `repeat(${height}, 1fr)`, 
+          gridGap: '0px', 
+          border: '1px dashed #ccc' 
+        }}>
+          {canvas.map((nft, index) => (
+            <Square
+              key={index}
+              onClick={() => handleClick(index)}
+              isOccupied={nft.tokenId !== 0}
+              nft={nft}
+              onDrop={() => handleDrop(index)}
+            />
+          ))}
+        </div>
+
       </div>
     </div>
   );

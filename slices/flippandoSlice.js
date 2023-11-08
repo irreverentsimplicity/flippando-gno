@@ -52,6 +52,7 @@ const flippandoSlice = createSlice({
       state.blockchainName = action.payload;
     },
     setArtPayload(state, action) {
+      console.log("slice", JSON.stringify(action.payload))
       state.artPayload = action.payload;
     },
     setNetwork(state, action) {

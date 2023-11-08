@@ -360,10 +360,10 @@ class Actions {
 
   /**
    * Call the GetUserNFTs function and return an array of basic NFTs
-   * @param playerAddr string
+   * @param excludePlayer string - if not empty, returns all nfts except his
    */
-  async getAllNFTs(): Promise<any> {
-    const response = await this.callMethod('GetAllBasicNFTs', []);
+  async getAllNFTs(excludePlayer: string): Promise<any> {
+    const response = await this.callMethod('GetAllBasicNFTs', [excludePlayer]);
     //console.log("actions GetAllBasicNFTs response ", JSON.stringify(response))
     return response;
   }
@@ -372,9 +372,9 @@ class Actions {
    * Call the GetTokenURI function and return a JSON object
    * @param tokenID string
    */
-  async getTokenURI(tokenID: string): Promise<any> {
-    const response = await this.callMethod('GetTokenURI', [
-      tokenID
+  async getFlipBalances(playerAddr: string): Promise<any> {
+    const response = await this.callMethod('GetFlipBalances', [
+      playerAddr
     ]);
     //console.log("actions GetTokenURI response ", JSON.stringify(response))
     return response;
