@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import SmallTile from '../components/SmallTile';
 import Color7 from '../pages/assets/squares/Color7.svg';
 
@@ -77,6 +77,7 @@ const Canvas = ({height, width}) => {
     const [indexSourceGrid, setIndexSourceGrid] = useState(null);
     const [indexTrack, setIndexTrack] = useState([{}]);
     const [isLoading, setIsLoading] = useState(true);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         console.log("fetchNFTs")
@@ -156,16 +157,19 @@ const Canvas = ({height, width}) => {
   }
 
   const checkAndPrepareArtPayload = (updatedCanvas) => {
-    console.log("checkAndPrepare " + JSON.stringify(canvas, null, 2))
+    console.log("checkAndPrepare updatedCanvas " + JSON.stringify(updatedCanvas, null, 2))
     let tokenIds = [];
-    canvas.map( (nft, index) => {
-        if(nft.metadata.tokenID !== 0){
+    updatedCanvas.map( (nft, index) => {
+      console.log("nft ", JSON.stringify(nft, null, 2))
+        if(nft.tokenId != 0){
             tokenIds.push(nft.metadata.tokenID);
         }
+        
     });
-    if (tokenIds.length == height*width){
+    console.log("tokenIds ", JSON.stringify(tokenIds, null, 2))
+    if (tokenIds.length === (height*width)){
         console.log("canvas filled")
-        setArtPayload([height, width, tokenIds]);
+        dispatch(setArtPayload([height, width, tokenIds]));
     }
   }
 

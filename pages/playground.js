@@ -21,9 +21,31 @@ export default function MyAssets() {
   const [lockedFlipBalance, setLockedFlipBalance] = useState(0);
   
   const artPayload = useSelector(state => state.flippando.artPayload);
+
   async function makeArt(){
-    console.log("makeArt, " + JSON.stringify(artPayload))
-   
+    const actions = await Actions.getInstance();
+    const playerAddress = await actions.getWalletAddress();
+    const width = artPayload[0]
+    const height = artPayload[1]
+    
+    const bTokenIDs = JSON.stringify(artPayload[2], (key, value) => 
+      (key === '' ? value : parseInt(value))
+    );
+    console.log("makeArt, ", JSON.stringify(artPayload), width, height, bTokenIDs)
+    try {
+      actions.createCompositeNFT(playerAddress, String(width), String(height), bTokenIDs).then((response) => {
+        console.log("createCompositeNFT response in Playground", response);
+        let parsedResponse = JSON.parse(response);
+        console.log("parseResponse", parsedResponse)
+        if(parsedResponse.error === undefined){
+          
+          //fetchUserNFTs()
+        }
+      });
+    } catch (err) {
+      console.log("error in calling mintNFT", err);
+    }
+    
   }
 
   return (

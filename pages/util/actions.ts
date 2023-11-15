@@ -315,7 +315,6 @@ class Actions {
     gameId: string,
     withPositions: string,
   ): Promise<any> {
-    // Make the move
     const gameObject = await this.callMethod('FlipTiles', [
       playerAddr,
       gameId,
@@ -335,13 +334,29 @@ class Actions {
     playerAddr: string,
     gameId: string,
   ): Promise<any> {
-    // Make the move
     const response = await this.callMethod('CreateBasicNFT', [
       playerAddr,
       gameId
     ]);
     console.log("actions createBasicNFT response ", JSON.stringify(response))
     return response;
+  }
+
+  async createCompositeNFT(
+    playerAddr: string,
+    width: string,
+    height: string,
+    bTokenIDs: string,
+  ): Promise<any> {
+    const response = await this.callMethod('CreateCompositeNFT', [
+      playerAddr,
+      width,
+      height,
+      bTokenIDs
+    ]);
+    console.log("actions createCompositeNFT response ", JSON.stringify(response))
+    return response;
+    
   }
 
   /**
