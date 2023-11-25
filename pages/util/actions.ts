@@ -342,6 +342,13 @@ class Actions {
     return response;
   }
 
+  /**
+   * Generates a width x height canvas with bTokenIDs inside, as a composite NFT
+   * @param playerAddr string
+   * @param width string - canvas width
+   * @param height string - canvas height
+   * @param bTokenIDs array of ints, converted into string, e.g. [1,4] - basic NFTs tooken ids used in the canvas
+   */
   async createCompositeNFT(
     playerAddr: string,
     width: string,
@@ -356,7 +363,20 @@ class Actions {
     ]);
     console.log("actions createCompositeNFT response ", JSON.stringify(response))
     return response;
-    
+  }
+
+  /**
+   * Get both locked and unlocked FLIP balances for a user
+   * @param playerAddr string
+   */
+  async GetFLIPBalance(
+    playerAddr: string,
+  ): Promise<any> {
+    const response = await this.callMethod('GetFLIPBalance', [
+      playerAddr
+    ]);
+    console.log("actions GetFLIPBalance response ", JSON.stringify(response))
+    return response;
   }
 
   /**
@@ -395,21 +415,11 @@ class Actions {
     return response;
   }
 
-  /****************
-   * DASHBOARD
-   ****************/
-
-  /**
-   * Fetches the current user player profile
-   */
-  async getUserData(): Promise<Player> {
-    // Get the current player address
-    const address: string = (await this.wallet?.getAddress()) as string;
-
-    // Return the player data
-    return this.getPlayer(address);
+  async getUserCompositeNFTs(playerAddr: string): Promise<any> {
+    const response = await this.callMethod('GetUserCompositeFlipNFTs', [playerAddr]);
+    console.log("actions getUserCompositeNFTS ", JSON.stringify(response, null, 2));
+    return response;
   }
-
   
 
   /**

@@ -22,7 +22,6 @@ import SmallTile from "../components/SmallTile";
 import Menu from "../components/Menu";
 import Footer from "../components/Footer";
 import Actions from "./util/actions";
-import { parse } from "path";
 
 export default function Home() {
   
@@ -57,9 +56,9 @@ export default function Home() {
     fetchUserNFTs();
   }, [])
 
-  const fetchUserBalances = async () => {
-    console.log("fetchUserBalances");
-  };
+  useEffect( () => {
+    fetchUserFLIPBalances();
+  }, [nfts])
 
   const fetchUserNFTs = async () => {
     let userNFTs = [];
@@ -73,12 +72,30 @@ export default function Home() {
         console.log("parseResponse", JSON.stringify(response, null, 2))
         if(parsedResponse.userNFTs !== undefined && parsedResponse.userNFTs.length !== 0){  
            setNfts(parsedResponse.userNFTs)
-           setLockedFlipBalance(parsedResponse.userNFTs.length)
         }
         //setTestResponse(parsedResponse);
       });
     } catch (err) {
       console.log("error in calling getUserNFTs", err);
+    }
+  };
+
+  const fetchUserFLIPBalances = async () => {
+    console.log("fetchUserFLIPBalances");
+    const actions = await Actions.getInstance();
+    const playerAddress = await actions.getWalletAddress();
+    try {
+      actions.GetFLIPBalance(playerAddress).then((response) => {
+        console.log("fetchUserFLIPBalances response in Flip", response);
+        let parsedResponse = JSON.parse(response);
+        console.log("parseResponse", JSON.stringify(response, null, 2))
+        if(parsedResponse.lockedBalance !== undefined && parsedResponse.availableBalance !== undefined){  
+           setLockedFlipBalance(parsedResponse.lockedBalance)
+           setFlipBalance(parsedResponse.availableBalance)
+        }
+      });
+    } catch (err) {
+      console.log("error in calling fetchUserFLIPBalances", err);
     }
   };
 
@@ -343,6 +360,7 @@ export default function Home() {
         if(parsedResponse.error === undefined){
           setGameStatus("Board minted. Flippando is now in an undefined state.")
           fetchUserNFTs()
+          fetchUserFLIPBalances()
         }
       });
     } catch (err) {
@@ -665,7 +683,7 @@ export default function Home() {
         <div className="col-span-5 flex justify-end pr-10">
         <div className="rounded-md flex flex-col justify-center items-center mt-3 pl-3 pr-3 bg-gray-600">
           <button className="text-sm font-medium gap-6 font-quantic text-white border-transparent focus:outline-none">
-            {flipBalance} liquid / {lockedFlipBalance + flipBalance} locked
+            {flipBalance} liquid / {lockedFlipBalance} locked
             $FLIP
           </button>
         </div>

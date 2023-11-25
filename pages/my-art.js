@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import ArtworkComponent from '../components/ArtworkComponent';
 import artNFT from  './../pages/assets/artNFT.png'
+import Actions from './util/actions';
 
 
 const FlippandoNFTs = () => {
@@ -27,22 +28,8 @@ const FlippandoNFTs = () => {
   }, [ownedNFTs]);
 
   useEffect(() => {
-    const getOwnedNFTs = async () => {
-      try {
-        console.log("get users' NFT")
-        let tokenIds = [];
-        if(tokenIds !== undefined){
-        setOwnedNFTs(tokenIds);
-        }
-        
-      } catch (error) {
-        console.log('Error:', error);
-      }
-    };
-    getOwnedNFTs();
+    getArtwork();
   }, []);
-
-
 
   const getTokenURI = async (tokenId) => {
     try {
@@ -68,9 +55,20 @@ const FlippandoNFTs = () => {
     }
   };
 
-  const getArtwork = async (tokenId) => {
+  const getArtwork = async () => {
+    const actions = await Actions.getInstance();
+    const playerAddress = await actions.getWalletAddress();
+
     try {
       console.log("getArtwork")
+      actions.getUserCompositeNFTs(playerAddress,).then((response) => {
+        console.log("getUserCompositeNFTs response in Flip", response);
+        let parsedResponse = JSON.parse(response);
+        console.log("getUserCompositeNFTs parseResponse", parsedResponse)
+        if(parsedResponse.error === undefined){
+          setOwnedNFTs(parsedResponse.userNFTs);
+        }
+      });
     } catch (error) {
       console.error('Error retrieving Artwork:', error);
       return null;
@@ -89,9 +87,9 @@ const FlippandoNFTs = () => {
         <Image src={artNFT} alt="nft" width={700} height={400} layout='fixed'/>
       </div>
       <ul>
-        {ownedNFTs.map((tokenId, index) => (
-          <li key={index}>{tokenId}
-          <ArtworkComponent tokenId={tokenId} />
+        {ownedNFTs.length !== 0 && ownedNFTs.map((compositeNFT, index) => (
+          <li key={index}>{compositeNFT.tokenId}
+          <ArtworkComponent tokenId={compositeNFT.tokenId} />
           </li>
         ))}
         

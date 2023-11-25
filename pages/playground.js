@@ -22,6 +22,7 @@ export default function MyAssets() {
   
   const artPayload = useSelector(state => state.flippando.artPayload);
 
+
   async function makeArt(){
     const actions = await Actions.getInstance();
     const playerAddress = await actions.getWalletAddress();
@@ -36,14 +37,10 @@ export default function MyAssets() {
       actions.createCompositeNFT(playerAddress, String(width), String(height), bTokenIDs).then((response) => {
         console.log("createCompositeNFT response in Playground", response);
         let parsedResponse = JSON.parse(response);
-        console.log("parseResponse", parsedResponse)
-        if(parsedResponse.error === undefined){
-          
-          //fetchUserNFTs()
-        }
+        console.log("createCompositeNFT parseResponse", parsedResponse)
       });
     } catch (err) {
-      console.log("error in calling mintNFT", err);
+      console.log("error in calling createCompositeNFT", err);
     }
     
   }
