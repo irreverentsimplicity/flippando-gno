@@ -245,6 +245,21 @@
   height: 40px;
 }
 
+.art_small_tile {
+  display: flex;
+  flex-direction: column;
+  height: 80px;
+  width: 80px;
+  border: 0px;
+  margin: 0px;
+}
+
+.art_small_tile_image {
+  background-size: cover;
+  height: 80px;
+  background-position: center;
+}
+
 .tile_info {
   display: flex;
   flex-direction: column;

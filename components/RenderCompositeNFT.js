@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import SmallTile from './SmallTile';
+import ArtSmallTile from './ArtSmallTile';
 import styles from '../styles/Home.module.css'
+import Actions from '../pages/util/actions';
 
-function RenderCompositeNFT({ tokenId, artwork }) {
+function RenderCompositeNFT({ artwork }) {
     console.log('artwork ' + JSON.stringify(artwork));
     const [nfts, setNfts] = useState([]);
     const buildingBlocks = artwork.buildingBlocks;
@@ -11,74 +12,49 @@ function RenderCompositeNFT({ tokenId, artwork }) {
     const levelBoard = new Array(boardWidth, boardHeight).fill(0);
 
     useEffect(() => {
-        fetchNFTs();
+        fetchArtworkNFTs();
     }, []);
   
-    const fetchNFTs = async () => {
-      console.log("fetchNFTs")
-      /*
-      // Connect to the Ethereum network
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-      const contract = new ethers.Contract(flippandoAddress, Flippando.abi, signer);
-  
-      // Get the current user's address
-      const userAddress = await signer.getAddress();
-  
+    const fetchArtworkNFTs = async () => {
+      console.log("fetchArtworkNFTs", JSON.stringify(artwork, null, 2))
+      const actions = await Actions.getInstance();
+      const bTokenIds = JSON.stringify(artwork.bTokenIDs)
       try {
-      // Call the getUserNFTs function from the smart contract
-      // Retrieve tokenURI metadata for each NFT
-      console.log('buildingBlocks ' + JSON.stringify(buildingBlocks));
-      const nftData = await Promise.all(
-        buildingBlocks.map(async (childTokenId) => {
-            console.log('childTokenId ' + childTokenId)
-          const tokenUri = await contract.tokenURI(childTokenId);
-          const response = await fetch(tokenUri);
-          const metadata = await response.text();
-          console.log("metadata " + metadata)
-          if(metadata !== undefined && metadata !== null){
-            return {
-              tokenId: childTokenId.toString(),
-              metadata: JSON.parse(metadata),
-            };
+        console.log("fetchArtworkNFTs")
+        actions.getArtworkNFTs(bTokenIds,).then((response) => {
+          console.log("getArtworkNFTs response in RenderCompositeNFT", response);
+          let parsedResponse = JSON.parse(response);
+          console.log("getArtworkNFTs parseResponse", parsedResponse)
+          if(parsedResponse.error === undefined){
+            setNfts(parsedResponse.userNFTs);
           }
-          else {
-            console.log('error');
-          }
-        })
-        )
-        setNfts(nftData);
+        });
+      } catch (error) {
+        console.error('Error retrieving Artwork:', error);
+        return null;
       }
-      catch {
-        console.log('error, exception in the getUserNFTs contract function call')
-      }
-    };
+    
 
-  if (!nfts) {
-    return <div>Loading composite NFT...</div>;
-  }*/
-
-  }
+    }
 
 
   const renderBoard = () => {
     const gridItems = [];
   
-    for (let row = 0; row < artwork.boardHeight; row++) {
-      for (let col = 0; col < artwork.boardWidth; col++) {
-        const index = row * artwork.boardWidth + col;
+    for (let row = 0; row < artwork.canvasHeight; row++) {
+      for (let col = 0; col < artwork.canvasWidth; col++) {
+        const index = row * artwork.canvasHeight + col;
         const value = nfts[index];
   
         gridItems.push(
           <span key={index} className={styles.gridItem}>
-              <SmallTile metadata={JSON.stringify(value.metadata)} />
+              <ArtSmallTile metadata={JSON.stringify(value)} />
           </span>
         );
       }
     }
   
-    //return <div className={styles.gridContainer}>{gridItems}</div>;
-    return <div className={`inline-grid grid-cols-${artwork.boardWidth} grid-rows-${artwork.boardHeight} gap-x-0 gap-y-0`}>{gridItems}</div>;
+    return <div className={`inline-grid grid-cols-${artwork.canvasWidth} grid-rows-${artwork.canvasHeight} gap-x-0 gap-y-0`}>{gridItems}</div>;
   };
 
   // Render the artwork component

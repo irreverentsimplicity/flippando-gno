@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import ArtworkComponent from '../components/ArtworkComponent';
+import RenderCompositeNFT from '../components/RenderCompositeNFT';
 import artNFT from  './../pages/assets/artNFT.png'
 import Actions from './util/actions';
 
@@ -18,12 +18,6 @@ const FlippandoNFTs = () => {
   useEffect(() => {
     if (ownedNFTs.length > 0) {
       getBoardDimensions(ownedNFTs[0]);
-    }
-  }, [ownedNFTs]);
-
-  useEffect(() => {
-    if (ownedNFTs.length > 0) {
-      revealBundledNFTs(ownedNFTs);
     }
   }, [ownedNFTs]);
 
@@ -75,21 +69,12 @@ const FlippandoNFTs = () => {
     }
   }
 
-  const revealBundledNFTs = async (tokenId) => {
-      //console.log('revealBundledNFTs for tokenID ' + tokenId)
-      return <ArtworkComponent tokenId={tokenId} />
-    
-  };
-
   return (
     <div>
-      <div className='flex justify-center items-center mt-[60px]'>
-        <Image src={artNFT} alt="nft" width={700} height={400} layout='fixed'/>
-      </div>
       <ul>
         {ownedNFTs.length !== 0 && ownedNFTs.map((compositeNFT, index) => (
           <li key={index}>{compositeNFT.tokenId}
-          <ArtworkComponent tokenId={compositeNFT.tokenId} />
+          <RenderCompositeNFT artwork={compositeNFT} />
           </li>
         ))}
         

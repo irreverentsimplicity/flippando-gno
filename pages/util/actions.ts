@@ -403,6 +403,17 @@ class Actions {
     return response;
   }
 
+
+    /**
+   * 
+   * @param bTokenIds string - stringified array of tokenIds
+   */
+    async getArtworkNFTs(bTokenIds: string): Promise<any> {
+      const response = await this.callMethod('GetBasicNFTsByTokenId', [bTokenIds]);
+      console.log("actions getArtworkNFTs response ", JSON.stringify(response))
+      return response;
+    }
+  
   /**
    * Call the GetTokenURI function and return a JSON object
    * @param tokenID string
