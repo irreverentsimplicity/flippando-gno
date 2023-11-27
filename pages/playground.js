@@ -26,8 +26,9 @@ export default function MyAssets() {
   async function makeArt(){
     const actions = await Actions.getInstance();
     const playerAddress = await actions.getWalletAddress();
-    const width = artPayload[0]
-    const height = artPayload[1]
+    const height = artPayload[0]
+    const width = artPayload[1]
+    
     
     const bTokenIDs = JSON.stringify(artPayload[2], (key, value) => 
       (key === '' ? value : parseInt(value))
@@ -72,7 +73,7 @@ export default function MyAssets() {
 
     <div className="col-span-3">
       <div>
-          <Canvas height={2} width={2}/>
+          <Canvas height={3} width={2}/>
       </div>
       <div  className="flex justify-center">
       <button 
