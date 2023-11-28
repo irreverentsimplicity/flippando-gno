@@ -740,7 +740,7 @@ export default function Home() {
                     createNewGame(gameLevel, gameTileType);
                   }}
                 >
-                  <button className="rounded-md bg-gray-200 px-3.5 py-2.5 text-lg hover:scale-110 font-semibold font-quantic text-black shadow-bg hover:bg-green-700 hover:text-white border-none w-[160px] focus:outline-none">
+                  <button className="rounded-full bg-gray-200 px-3.5 py-2.5 text-lg hover:scale-110 font-semibold font-quantic text-black shadow-bg hover:bg-purple-900 hover:text-white border-none w-[160px] focus:outline-none">
                     Start a new flip                  
                   </button>
                 </a>

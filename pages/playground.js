@@ -79,7 +79,7 @@ export default function MyAssets() {
       <button 
         disabled={false}
         onClick={() => { makeArt() }} 
-        className="bg-[#2A2F4F] hover:bg-black text-white font-bold py-2 px-4 mr-2 ml-2 rounded-full font-quantico">
+        className="bg-gray-200 hover:bg-purple-900 hover:text-white text-black text-lg font-bold py-2 px-4 mr-2 ml-2 rounded-full font-quantico">
           Make Art
       </button>
     </div>

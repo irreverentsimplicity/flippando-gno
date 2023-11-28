@@ -26,11 +26,11 @@ const FlippandoNFTs = () => {
     try {
       console.log("getArtwork")
       actions.getUserCompositeNFTs(playerAddress,).then((response) => {
-        console.log("getUserCompositeNFTs response in Flip", response);
+        console.log("getUserCompositeNFTs response in my-art.js", response);
         let parsedResponse = JSON.parse(response);
-        console.log("getUserCompositeNFTs parseResponse", parsedResponse)
+        //console.log("getUserCompositeNFTs parseResponse", parsedResponse)
         if(parsedResponse.error === undefined){
-          setOwnedNFTs(parsedResponse.userNFTs);
+          fetchArtworkNFTsForAll(parsedResponse.userNFTs);
         }
       });
     } catch (error) {
@@ -38,6 +38,34 @@ const FlippandoNFTs = () => {
       return null;
     }
   }
+
+  const fetchArtworkNFTsForAll = async (compositeNFTs) => {
+    const actions = await Actions.getInstance();
+    const compositeNFTsWithArtwork = [];
+  
+    for (const compositeNFT of compositeNFTs) {
+      const bTokenIds = JSON.stringify(compositeNFT.bTokenIDs);
+      try {
+        const response = await actions.getArtworkNFTs(bTokenIds);
+        const parsedResponse = JSON.parse(response);
+        if (!parsedResponse.error) {
+          compositeNFTsWithArtwork.push({
+            ...compositeNFT,
+            artworkNFT: parsedResponse.userNFTs
+          });
+        } else {
+          compositeNFTsWithArtwork.push(compositeNFT);
+        }
+      } catch (error) {
+        console.error('Error retrieving basic NFTs for composite NFT:', error);
+        compositeNFTsWithArtwork.push(compositeNFT);
+      }
+    }
+    
+    setOwnedNFTs(compositeNFTsWithArtwork);
+  };
+  
+  
 
   return (
 
