@@ -12,6 +12,7 @@ const SmallTile = ({ tokenId, metadata }) => {
       style={{
             backgroundRepeat: 'no-repeat',
             backgroundSize: 'contain',
+            backgroundColor: 'white',
         }} >
         <img src={"data:image/svg+xml;base64," + svgData} alt={tokenID}/>
       </div>

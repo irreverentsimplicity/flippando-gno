@@ -11,6 +11,7 @@ const Tile = ({ tokenId, metadata }) => {
       style={{
             backgroundRepeat: 'no-repeat',
             backgroundSize: 'contain',
+            backgroundClip: 'white',
         }} >
         <img src={image} alt="Flippando"/>
       </div>

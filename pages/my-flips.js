@@ -77,7 +77,7 @@ export default function MyAssets() {
         <div className="bg-white-100 col-span-1">
         <Menu />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-4">
             <NFTListUser userNFTs={nfts} userArtworkNFTs={usedNfts}/>
         </div>
     </div>

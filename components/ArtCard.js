@@ -5,14 +5,22 @@ import Actions from "../pages/util/actions";
 const ArtSmallTile = ({ size, nft, tokenID }) => {
   console.log("svgData", JSON.stringify(nft))
   return (
-    <div style={{ display: "flex", flexDirection: "column", margin: "0px", border: "0px", width: size, height: size }}>
-     <img src={"data:image/svg+xml;base64," + nft.svgData} alt={tokenID}/>
+    <div style={{
+      display: "flex",
+      flexDirection: "column",
+      margin: "0px",
+      border: "0px",
+      width: size,
+      height: size,
+      backgroundColor: 'white', // Resets background color
+    }}>
+      <img src={"data:image/svg+xml;base64," + nft.svgData} alt={tokenID} />
     </div>
   );
 };
 
 const ArtCard = ({ title, text, artwork, numRows, numCols }) => {
-  const imageWidth = 160; // Fixed image width
+  const imageWidth = 240; // Fixed image width
   const tileSize = imageWidth / numCols; // Calculate tile size based on the number of columns
   console.log('artwork ' + JSON.stringify(artwork));
   const [nfts, setNfts] = useState([]);

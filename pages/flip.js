@@ -513,7 +513,7 @@ export default function Home() {
     }
     return levelsBoard.map((value, index) => {
       return (
-        <span key={index}>
+        <span key={index} >
           {value === 0 && (
             <button disabled className={styles.card_small}></button>
           )}
@@ -569,7 +569,7 @@ export default function Home() {
                 aria-hidden="true"
                 className="mr-4 ml-4 mb-4 mt-4 text-gray-200 animate-spin dark:text-gray-600 fill-gray-600"
                 viewBox="0 0 100 101"
-                fill="none"
+                fill="white"
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path
@@ -595,7 +595,7 @@ export default function Home() {
                 aria-hidden="true"
                 className="mr-4 ml-4 mb-4 mt-4 text-red-200 animate-pulse dark:text-red-600 fill-red-600"
                 viewBox="0 0 100 101"
-                fill="none"
+                fill="white"
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path
@@ -620,6 +620,7 @@ export default function Home() {
               style={{
                 backgroundRepeat: "no-repeat",
                 backgroundSize: "contain",
+                backgroundColor: "white",
               }}
             >
               {gameLevel == 16 && <TileImage {...tileProps} />}
@@ -694,7 +695,7 @@ export default function Home() {
       <div className="grid flex grid-cols-5">
       
         <div className="bg-white-100">
-        <Menu />
+        <Menu currentPage="/flip"/>
         </div>
 
         <div className="col-span-3 flex flex-col items-center pt-10">
@@ -930,11 +931,11 @@ export default function Home() {
         </div>
         {/* levels */}
         <div>
-           <p className="bold text-lg text-blue-800 pb-2 pt-4">Level 1</p>
+           <p className="bold text-lg pb-2 pt-4">Level 1</p>
             <div className="grid w-4/5 gap-y-2 gap-2 px-0 mx-0 pr-0 mr-0 grid-cols-4 grid-rows-2">
               {renderLevels(1)}
             </div>
-            <p className="bold text-lg text-blue-800 pb-2 pt-4">Level 2</p>
+            <p className="bold text-lg pb-2 pt-4">Level 2</p>
             <div className="grid w-4/5 gap-y-2 px-0 mx-0 pr-0 mr-0 grid-cols-4 grid-rows-4">
               {renderLevels(2)}
             </div>

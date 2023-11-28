@@ -71,7 +71,7 @@ export default function MyAssets() {
         </div>
 
 
-    <div className="col-span-3">
+    <div className="col-span-4">
       <div>
           <Canvas height={2} width={2}/>
       </div>
