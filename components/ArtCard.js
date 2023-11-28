@@ -20,11 +20,11 @@ const ArtSmallTile = ({ size, artNFT, tokenID }) => {
 };
 
 const ArtCard = ({ title, text, artwork, numRows, numCols }) => {
-  const imageWidth = 180; // Fixed image width
+  const imageWidth = 300; // Fixed image width
   const tileSize = imageWidth / numCols; 
 
   return (
-    <Box maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden">
+    <Box maxW="sm" maxH="sm" borderWidth="1px" borderRadius="lg" overflow="hidden">
       <div style={{ display: 'flex', flexWrap: 'wrap', width: `${imageWidth}px` }}>
         {artwork.artworkNFT !== undefined && artwork.artworkNFT.map((artNFT, index) => (
            <ArtSmallTile key={artNFT.tokenID} size={`${tileSize}px`} artNFT={artNFT} tokenID={artNFT.tokenID} />
