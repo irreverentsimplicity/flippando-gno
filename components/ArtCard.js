@@ -19,7 +19,7 @@ const ArtCard = ({ title, text, artwork, numRows, numCols }) => {
 
   useEffect(() => {
     fetchArtworkNFTs();
-}, []);
+  }, []);
 
 const fetchArtworkNFTs = async () => {
   console.log("fetchArtworkNFTs in ArtCard", JSON.stringify(artwork, null, 2))
@@ -39,8 +39,6 @@ const fetchArtworkNFTs = async () => {
     console.error('Error retrieving Artwork:', error);
     return null;
   }
-
-
 }
 
   return (

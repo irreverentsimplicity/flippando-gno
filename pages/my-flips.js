@@ -11,30 +11,49 @@ export default function MyAssets() {
   const [flipBalance, setFlipBalance] = useState(0);
   const [lockedFlipBalance, setLockedFlipBalance] = useState(0);
   const [nfts, setNfts] = useState([])
+  const [usedNfts, setUsedNfts] = useState([])
 
+
+  /*
   useEffect(() => {
-    fetchUserNFTs();
+    fetchReadyToUseNFTs();
   }, []);
 
+  useEffect(() => {
+    fetchUsedNFTs();
+  }, []);*/
 
-  const fetchUserNFTs = async () => {
-    console.log("fetchUserNFTs");
-    const actions = await Actions.getInstance();
-    const playerAddress = await actions.getWalletAddress();
-    try {
-      actions.getUserNFTs(playerAddress).then((response) => {
-        console.log("getUserNFTS response in My flips", response);
-        let parsedResponse = JSON.parse(response);
-        console.log("parseResponse", JSON.stringify(response, null, 2))
-        if(parsedResponse.userNFTs !== undefined && parsedResponse.userNFTs.length !== 0){  
-           setNfts(parsedResponse.userNFTs)
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        console.log("fetchReadyToUseNFTs");
+        const actions = await Actions.getInstance();
+        const playerAddress = await actions.getWalletAddress();
+  
+        const readyToUseResponse = await actions.getUserNFTs(playerAddress, "yes");
+        console.log("fetchReadyToUseNFTs response in My flips", readyToUseResponse);
+        let parsedReadyToUseResponse = JSON.parse(readyToUseResponse);
+        console.log("parseResponse", JSON.stringify(readyToUseResponse, null, 2))
+        if(parsedReadyToUseResponse.userNFTs !== undefined && parsedReadyToUseResponse.userNFTs.length !== 0){  
+           setNfts(parsedReadyToUseResponse.userNFTs);
         }
-      });
-    } catch (err) {
-      console.log("error in calling getUserNFTs", err);
-    }
-  };
-
+  
+        console.log("fetchUsedNFTs");
+        const usedResponse = await actions.getUserNFTs(playerAddress, "used");
+        console.log("fetchUsedNFTs response in My flips", usedResponse);
+        let parsedUsedResponse = JSON.parse(usedResponse);
+        console.log("parseResponse", JSON.stringify(usedResponse, null, 2))
+        if(parsedUsedResponse.userNFTs !== undefined && parsedUsedResponse.userNFTs.length !== 0){  
+           setUsedNfts(parsedUsedResponse.userNFTs);
+        }
+      } catch (err) {
+        console.log("error in fetching NFTs", err);
+      }
+    };
+  
+    fetchData();
+  }, []);
+  
   return (
     <div className={styles.container}>
       <Head>
@@ -59,7 +78,7 @@ export default function MyAssets() {
         <Menu />
         </div>
         <div className="col-span-3">
-            <NFTListUser userNFTs={nfts} userArtworkNFTs={null}/>
+            <NFTListUser userNFTs={nfts} userArtworkNFTs={usedNfts}/>
         </div>
     </div>
         <div className="col-span-5 pt-20">

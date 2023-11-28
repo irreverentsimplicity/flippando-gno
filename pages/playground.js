@@ -73,7 +73,7 @@ export default function MyAssets() {
 
     <div className="col-span-3">
       <div>
-          <Canvas height={3} width={2}/>
+          <Canvas height={2} width={2}/>
       </div>
       <div  className="flex justify-center">
       <button 

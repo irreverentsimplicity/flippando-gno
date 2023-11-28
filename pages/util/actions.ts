@@ -384,21 +384,23 @@ class Actions {
    * @param playerAddr string
    */
   async getUserNFTs(
-    playerAddr: string
+    playerAddr: string,
+    readyToUse: string,
   ): Promise<any> {
     const response = await this.callMethod('GetUserBasicNFTs', [
-      playerAddr
+      playerAddr,
+      readyToUse
     ]);
     //console.log("actions GetUserBasicNFTs response ", JSON.stringify(response))
     return response;
   }
 
   /**
-   * Call the GetUserNFTs function and return an array of basic NFTs
-   * @param excludePlayer string - if not empty, returns all nfts except his
+   * All available NFTs for making art
+   * @param forPlayer string - current player
    */
-  async getAllNFTs(excludePlayer: string): Promise<any> {
-    const response = await this.callMethod('GetAllBasicNFTs', [excludePlayer]);
+  async getAllNFTs(forPlayer: string): Promise<any> {
+    const response = await this.callMethod('GetAllBasicNFTs', [forPlayer]);
     //console.log("actions GetAllBasicNFTs response ", JSON.stringify(response))
     return response;
   }

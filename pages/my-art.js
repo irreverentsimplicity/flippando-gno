@@ -14,44 +14,10 @@ const FlippandoNFTs = () => {
   const [ownedNFTs, setOwnedNFTs] = useState([]);
   const [flipBalance, setFlipBalance] = useState(0);
   const [lockedFlipBalance, setLockedFlipBalance] = useState(0);
-  const [boardDimensions, setBoardDimensions] = useState({ width: 0, height: 0 });
-  const [tokenURIs, setTokenURIs] = useState([]);
-  const [revealMatrix, setRevealMatrix] = useState([]);
-
-
-  useEffect(() => {
-    if (ownedNFTs.length > 0) {
-      getBoardDimensions(ownedNFTs[0]);
-    }
-  }, [ownedNFTs]);
-
+  
   useEffect(() => {
     getArtwork();
   }, []);
-
-  const getTokenURI = async (tokenId) => {
-    try {
-      console.log("getTokenURi for tokenId")
-
-      //return tokenURI;
-    } catch (error) {
-      console.log('Error:', error);
-    }
-  };
-
-  const getBoardDimensions = async (tokenId) => {
-    try {
-
-      console.log("Retrieve the board dimensions from the bundled artwork")
-      
-      const boardWidth = 16;
-      const boardHeight = 16;
-
-      setBoardDimensions({ width: boardWidth, height: boardHeight });
-    } catch (error) {
-      console.log('Error:', error);
-    }
-  };
 
   const getArtwork = async () => {
     const actions = await Actions.getInstance();

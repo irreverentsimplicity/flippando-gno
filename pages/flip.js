@@ -56,9 +56,10 @@ export default function Home() {
     fetchUserNFTs();
   }, [])
 
+  
   useEffect( () => {
     fetchUserFLIPBalances();
-  }, [nfts])
+  }, [])
 
   const fetchUserNFTs = async () => {
     let userNFTs = [];
@@ -66,12 +67,13 @@ export default function Home() {
     const actions = await Actions.getInstance();
     const playerAddress = await actions.getWalletAddress();
     try {
-      actions.getUserNFTs(playerAddress).then((response) => {
+      actions.getUserNFTs(playerAddress, "yes").then((response) => {
         console.log("getUserNFTS response in Flip", response);
         let parsedResponse = JSON.parse(response);
         console.log("parseResponse", JSON.stringify(response, null, 2))
         if(parsedResponse.userNFTs !== undefined && parsedResponse.userNFTs.length !== 0){  
            setNfts(parsedResponse.userNFTs)
+           fetchUserFLIPBalances()
         }
         //setTestResponse(parsedResponse);
       });
@@ -360,7 +362,7 @@ export default function Home() {
         if(parsedResponse.error === undefined){
           setGameStatus("Board minted. Flippando is now in an undefined state.")
           fetchUserNFTs()
-          fetchUserFLIPBalances()
+          
         }
       });
     } catch (err) {
