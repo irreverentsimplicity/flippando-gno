@@ -1,39 +1,47 @@
 import React from 'react';
-import { Box, VStack, Link } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
+import { Box, Link as ChakraLink, VStack } from '@chakra-ui/react';
+import Link from 'next/link';
 
 const MenuItem = ({ href, children }) => {
   const router = useRouter();
   const isCurrentPage = router.pathname === href;
 
   return (
-    <Box
-      as="nav"
-      border="1px"
-      borderColor="purple.100"
-      borderRadius="lg"
-      p={2}
-      _hover={{
-        bg: 'purple.800',
-        color: 'white',
-      }}
-      position="relative"
-    >
-      <Link href={href} color="purple.800" fontWeight="bold" _hover={{ textDecoration: 'none', color: 'white' }}>
-        {children}
-      </Link>
-      {isCurrentPage && (
+    <Link href={href} passHref>
+      <ChakraLink 
+        style={{ width: '100%' }} 
+        color="purple.800"
+        fontWeight="bold"
+        _hover={{ textDecoration: 'none' }}>
         <Box
-          position="absolute"
-          right="2"
-          top="50%"
-          transform="translateY(-50%)"
-          w="12px"
-          h="12px"
-          bg="purple.800"
-        />
-      )}
-    </Box>
+          as="nav"
+          border="1px"
+          borderColor="purple.100"
+          borderRadius="lg"
+          p={2}
+          _hover={{
+            bg: 'purple.800',
+            color: 'white',
+          }}
+          position="relative"
+          cursor="pointer"
+        >
+          {children}
+          {isCurrentPage && (
+            <Box
+              position="absolute"
+              right="2"
+              top="50%"
+              transform="translateY(-50%)"
+              w="12px"
+              h="12px"
+              bg="purple.800"
+            />
+          )}
+        </Box>
+      </ChakraLink>
+    </Link>
   );
 };
 
