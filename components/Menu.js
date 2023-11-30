@@ -54,6 +54,8 @@ const Menu = () => {
         <MenuItem href="/my-flips">My Flips</MenuItem>
         <MenuItem href="/playground">Playground</MenuItem>
         <MenuItem href="/my-art">My Art</MenuItem>
+        <MenuItem href="/market">Market</MenuItem>
+        <MenuItem href="/docs">What's this</MenuItem>
       </VStack>
     </Box>
   );

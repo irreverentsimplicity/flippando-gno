@@ -1,5 +1,6 @@
 import NFTListUser from '../components/NFTlistUser'
 import styles from "../styles/Home.module.css";
+import { Box, Text } from "@chakra-ui/react";
 import Head from "next/head";
 import Menu from '../components/Menu';
 import Footer from '../components/Footer';
@@ -11,17 +12,9 @@ export default function MyAssets() {
   const [flipBalance, setFlipBalance] = useState(0);
   const [lockedFlipBalance, setLockedFlipBalance] = useState(0);
   const [nfts, setNfts] = useState([])
+  const [isLoadingNFTs, setIsLoadingNFTs] = useState(true)
   const [usedNfts, setUsedNfts] = useState([])
-
-
-  /*
-  useEffect(() => {
-    fetchReadyToUseNFTs();
-  }, []);
-
-  useEffect(() => {
-    fetchUsedNFTs();
-  }, []);*/
+  const [isLoadingUsedNFTs, setIsLoadingUsedNFTs] = useState(true)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,8 +27,11 @@ export default function MyAssets() {
         console.log("fetchReadyToUseNFTs response in My flips", readyToUseResponse);
         let parsedReadyToUseResponse = JSON.parse(readyToUseResponse);
         console.log("parseResponse", JSON.stringify(readyToUseResponse, null, 2))
-        if(parsedReadyToUseResponse.userNFTs !== undefined && parsedReadyToUseResponse.userNFTs.length !== 0){  
+        if(parsedReadyToUseResponse.userNFTs !== undefined){
+          if(parsedReadyToUseResponse.userNFTs.length !== 0){  
            setNfts(parsedReadyToUseResponse.userNFTs);
+          }
+           setIsLoadingNFTs(false)
         }
   
         console.log("fetchUsedNFTs");
@@ -45,6 +41,7 @@ export default function MyAssets() {
         console.log("parseResponse", JSON.stringify(usedResponse, null, 2))
         if(parsedUsedResponse.userNFTs !== undefined && parsedUsedResponse.userNFTs.length !== 0){  
            setUsedNfts(parsedUsedResponse.userNFTs);
+           setIsLoadingUsedNFTs(false)
         }
       } catch (err) {
         console.log("error in fetching NFTs", err);
@@ -77,8 +74,19 @@ export default function MyAssets() {
         <div className="bg-white-100 col-span-1">
         <Menu />
         </div>
+        <div className='col-span-4 justify-start'>
+        <Box className="justify-end" borderBottom="1px solid white" mb={4}>
+          <Text fontSize="2xl" fontWeight="bold" textAlign="right" mb={4} mr={4}>
+            My Flips
+          </Text>
+        </Box>
         <div className="col-span-4">
-            <NFTListUser userNFTs={nfts} userArtworkNFTs={usedNfts}/>
+            <NFTListUser 
+            userNFTs={nfts} 
+            isLoadingUserNFTs={isLoadingNFTs} 
+            isLoadingUserArtworkNFTs={isLoadingUsedNFTs} 
+            userArtworkNFTs={usedNfts}/>
+        </div>
         </div>
     </div>
         <div className="col-span-5 pt-20">

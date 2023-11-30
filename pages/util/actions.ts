@@ -28,7 +28,7 @@ const wsURL: string = Config.GNO_WS_URL;
 const rpcURL: string = Config.GNO_JSONRPC_URL;
 const flippandoRealm: string = Config.GNO_FLIPPANDO_REALM;
 const faucetURL: string = Config.FAUCET_URL;
-const defaultGasWanted: Long = new Long(300_000_0);
+const defaultGasWanted: Long = new Long(340_000_0);
 const customTXFee = '2000000ugnot'
 
 const cleanUpRealmReturn = (ret: string) => {

@@ -15,7 +15,7 @@ import Image from 'next/image';
 import artNFT from './assets/artNFT.jpg';
 import Actions from "./util/actions";
 
-export default function MyAssets() {
+export default function Market() {
   const [width, setWidth] = useState(4);
   const [height, setHeight] = useState(4);
   const [flipBalance, setFlipBalance] = useState(0);
@@ -75,20 +75,10 @@ export default function MyAssets() {
     <div className="col-span-4">
     <Box className="justify-end" borderBottom="1px solid white" mb={4}>
           <Text fontSize="2xl" fontWeight="bold" textAlign="right" mb={4} mr={4}>
-            Playground
+            Market
           </Text>
         </Box>
-      <div>
-          <Canvas height={2} width={2}/>
-      </div>
-      <div  className="flex justify-center">
-      <button 
-        disabled={false}
-        onClick={() => { makeArt() }} 
-        className="bg-gray-200 hover:bg-purple-900 hover:text-white text-black text-lg font-bold py-2 px-4 mr-2 ml-2 rounded-full font-quantico">
-          Make Art
-      </button>
-    </div>
+     
     </div>
 
     </div>

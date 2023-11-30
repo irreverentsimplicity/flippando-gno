@@ -75,20 +75,10 @@ export default function MyAssets() {
     <div className="col-span-4">
     <Box className="justify-end" borderBottom="1px solid white" mb={4}>
           <Text fontSize="2xl" fontWeight="bold" textAlign="right" mb={4} mr={4}>
-            Playground
+            Flippando - How it works?
           </Text>
         </Box>
-      <div>
-          <Canvas height={2} width={2}/>
-      </div>
-      <div  className="flex justify-center">
-      <button 
-        disabled={false}
-        onClick={() => { makeArt() }} 
-        className="bg-gray-200 hover:bg-purple-900 hover:text-white text-black text-lg font-bold py-2 px-4 mr-2 ml-2 rounded-full font-quantico">
-          Make Art
-      </button>
-    </div>
+      
     </div>
 
     </div>
