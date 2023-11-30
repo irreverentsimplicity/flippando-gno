@@ -1,20 +1,21 @@
 /* pages/my-art.js */
 
 import { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from "react-redux";
 import styles from "../styles/Home.module.css";
 import Head from "next/head";
+import Spinner from '../components/Spinner';
 import Menu from '../components/Menu';
+import Wallet from '../components/Wallet';
 import Footer from '../components/Footer';
 import Actions from './util/actions';
 import { Box, Text } from "@chakra-ui/react";
 import ArtGridLayout from '../components/ArtGridLayout';
-import Spinner from '../components/Spinner';
 
 
 const FlippandoNFTs = () => {
   const [ownedNFTs, setOwnedNFTs] = useState([]);
-  const [flipBalance, setFlipBalance] = useState(0);
-  const [lockedFlipBalance, setLockedFlipBalance] = useState(0);
+  const userBalances = useSelector(state => state.flippando.userBalances);
   const [isLoading, setIsLoading] = useState(false)
   
   useEffect(() => {
@@ -79,16 +80,7 @@ const FlippandoNFTs = () => {
         <meta name="description" content="Entry point" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="grid grid-cols-5 pb-20 justify-end">
-        <div className="col-span-5 flex justify-end pr-10">
-        <div className="rounded-md flex flex-col justify-center items-center mt-3 pl-3 pr-3 bg-gray-600">
-          <button className="text-sm font-medium gap-6 font-quantic text-white border-transparent focus:outline-none">
-            {flipBalance} liquid / {lockedFlipBalance + flipBalance} locked
-            $FLIP
-          </button>
-        </div>
-        </div>
-      </div>
+      <Wallet userBalances={userBalances} />
       
       <div className="grid flex grid-cols-5">
       

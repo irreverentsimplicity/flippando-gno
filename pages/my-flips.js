@@ -1,17 +1,19 @@
+import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import NFTListUser from '../components/NFTlistUser'
 import styles from "../styles/Home.module.css";
 import { Box, Text } from "@chakra-ui/react";
 import Head from "next/head";
 import Menu from '../components/Menu';
+import Wallet from '../components/Wallet';
 import Footer from '../components/Footer';
-import { useEffect, useState } from "react";
 import Actions from "./util/actions";
+
 
 export default function MyAssets() {
 
-  const [flipBalance, setFlipBalance] = useState(0);
-  const [lockedFlipBalance, setLockedFlipBalance] = useState(0);
-  const [nfts, setNfts] = useState([])
+  const userBalances = useSelector(state => state.flippando.userBalances);
+  const userBasicNFTs = useSelector(state => state.flippando.userBasicNFTs);
   const [isLoadingNFTs, setIsLoadingNFTs] = useState(true)
   const [usedNfts, setUsedNfts] = useState([])
   const [isLoadingUsedNFTs, setIsLoadingUsedNFTs] = useState(true)
@@ -19,20 +21,6 @@ export default function MyAssets() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log("fetchReadyToUseNFTs");
-        const actions = await Actions.getInstance();
-        const playerAddress = await actions.getWalletAddress();
-  
-        const readyToUseResponse = await actions.getUserNFTs(playerAddress, "yes");
-        console.log("fetchReadyToUseNFTs response in My flips", readyToUseResponse);
-        let parsedReadyToUseResponse = JSON.parse(readyToUseResponse);
-        console.log("parseResponse", JSON.stringify(readyToUseResponse, null, 2))
-        if(parsedReadyToUseResponse.userNFTs !== undefined){
-          if(parsedReadyToUseResponse.userNFTs.length !== 0){  
-           setNfts(parsedReadyToUseResponse.userNFTs);
-          }
-           setIsLoadingNFTs(false)
-        }
   
         console.log("fetchUsedNFTs");
         const usedResponse = await actions.getUserNFTs(playerAddress, "used");
@@ -50,6 +38,12 @@ export default function MyAssets() {
   
     fetchData();
   }, []);
+
+  useEffect( () => {
+    if(userBasicNFTs !== undefined && userBasicNFTs.length !== 0){
+      setIsLoadingNFTs(false)
+    }
+  }, [userBasicNFTs])
   
   return (
     <div className={styles.container}>
@@ -58,16 +52,7 @@ export default function MyAssets() {
         <meta name="description" content="Entry point" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="grid grid-cols-5 pb-20 justify-end">
-        <div className="col-span-5 flex justify-end pr-10">
-        <div className="rounded-md flex flex-col justify-center items-center mt-3 pl-3 pr-3 bg-gray-600">
-          <button className="text-sm font-medium gap-6 font-quantic text-white border-transparent focus:outline-none">
-            {flipBalance} liquid / {lockedFlipBalance + flipBalance} locked
-            $FLIP
-          </button>
-        </div>
-        </div>
-      </div>
+      <Wallet userBalances={userBalances}/>
       
       <div className="grid flex grid-cols-5">
       
@@ -82,7 +67,7 @@ export default function MyAssets() {
         </Box>
         <div className="col-span-4">
             <NFTListUser 
-            userNFTs={nfts} 
+            userNFTs={userBasicNFTs} 
             isLoadingUserNFTs={isLoadingNFTs} 
             isLoadingUserArtworkNFTs={isLoadingUsedNFTs} 
             userArtworkNFTs={usedNfts}/>

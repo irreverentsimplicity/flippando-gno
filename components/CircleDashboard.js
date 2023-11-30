@@ -2,7 +2,6 @@ import React from 'react';
 import { useEffect, useState } from 'react';
 import Router from 'next/router';
 import { useDispatch } from 'react-redux';
-//import { ethers, utils } from 'ethers';
 import { setAddresses } from '../slices/flippandoSlice';
 
 function CircleDashboard() {

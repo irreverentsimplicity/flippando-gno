@@ -2,8 +2,8 @@
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-//import { ethers, utils } from 'ethers';
+import { useSelector, useDispatch } from "react-redux";
+import {setUserBalances, setUserBasicNFTs, setUserArtNFTs} from '../slices/flippandoSlice';
 import GameLevels from "../components/GameLevels";
 import TileImages from "../components/TileImages";
 import Color1 from "./assets/squares/Color1.svg";
@@ -20,6 +20,7 @@ import Hexagram4 from "./assets/hexagrams/hexagram4.svg";
 import Hexagram6 from "./assets/hexagrams/hexagram6.svg";
 import SmallTile from "../components/SmallTile";
 import Menu from "../components/Menu";
+import Wallet from "../components/Wallet";
 import Footer from "../components/Footer";
 import Actions from "./util/actions";
 
@@ -37,8 +38,8 @@ export default function Home() {
     "Flippando is in an undefined state."
   );
   const [currentGameId, setCurrentGameId] = useState(null);
-  const [flipBalance, setFlipBalance] = useState(0);
   const [testResponse, setTestResponse] = useState(null);
+  const [flipBalance, setFlipBalance] = useState(0);
   const [lockedFlipBalance, setLockedFlipBalance] = useState(0);
   const gameTileTypes = ["squareGrid", "dice", "hexagrams"];
   const gameLevels = [16, 64];
@@ -49,17 +50,16 @@ export default function Home() {
   // levels boards, to be taken by querying player's NFTs
   const level1Board = new Array(8).fill(0);
   const level2Board = new Array(16).fill(0);
+  //const [nfts, setNfts] = useState([]);
+  const userBalances = useSelector(state => state.flippando.userBalances);
+  const userBasicNFTs = useSelector(state => state.flippando.userBasicNFTs);
 
-  const [nfts, setNfts] = useState([]);
+  const dispatch = useDispatch();
+
 
   useEffect( () => {
     fetchUserNFTs();
-  }, [])
-
-  
-  useEffect( () => {
-    fetchUserFLIPBalances();
-  }, [])
+  }, [userBasicNFTs])
 
   const fetchUserNFTs = async () => {
     let userNFTs = [];
@@ -72,10 +72,10 @@ export default function Home() {
         let parsedResponse = JSON.parse(response);
         console.log("parseResponse", JSON.stringify(response, null, 2))
         if(parsedResponse.userNFTs !== undefined && parsedResponse.userNFTs.length !== 0){  
-           setNfts(parsedResponse.userNFTs)
+           //setNfts(parsedResponse.userNFTs)
+           dispatch(setUserBasicNFTs(parsedResponse.userNFTs))
            fetchUserFLIPBalances()
         }
-        //setTestResponse(parsedResponse);
       });
     } catch (err) {
       console.log("error in calling getUserNFTs", err);
@@ -92,8 +92,9 @@ export default function Home() {
         let parsedResponse = JSON.parse(response);
         console.log("parseResponse", JSON.stringify(response, null, 2))
         if(parsedResponse.lockedBalance !== undefined && parsedResponse.availableBalance !== undefined){  
-           setLockedFlipBalance(parsedResponse.lockedBalance)
-           setFlipBalance(parsedResponse.availableBalance)
+           //setLockedFlipBalance(parsedResponse.lockedBalance)
+           //setFlipBalance(parsedResponse.availableBalance)
+           dispatch(setUserBalances(parsedResponse))
         }
       });
     } catch (err) {
@@ -503,9 +504,10 @@ export default function Home() {
     let i = 0;
     if (levels === 1) {
       levelsBoard = level1Board;
-      if (nfts.length !== 0) {
-        for (i = 0; i < nfts.length; i++) {
-          levelsBoard[i] = nfts[i];
+      if(userBasicNFTs !== undefined && userBasicNFTs.length !== 0) {
+      //if (nfts.length !== 0) {
+        for (i = 0; i < userBasicNFTs.length; i++) {
+          levelsBoard[i] = userBasicNFTs[i];
         }
       }
     } else if (levels === 2) {
@@ -517,7 +519,7 @@ export default function Home() {
           {value === 0 && (
             <button disabled className={styles.card_small}></button>
           )}
-          {value !== 0 && nfts.length !== 0 && (
+          {value !== 0 && userBasicNFTs.length !== 0 && (
             <SmallTile metadata={JSON.stringify(value)} />
           )}
         </span>
@@ -682,16 +684,9 @@ export default function Home() {
         <meta name="description" content="Entry point" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="grid grid-cols-5 pb-20 justify-end">
-        <div className="col-span-5 flex justify-end pr-10">
-        <div className="rounded-md flex flex-col justify-center items-center mt-3 pl-3 pr-3 bg-gray-600">
-          <button className="text-sm font-medium gap-6 font-quantic text-white border-transparent focus:outline-none">
-            {flipBalance} liquid / {lockedFlipBalance} locked
-            $FLIP
-          </button>
-        </div>
-        </div>
-      </div>
+
+      <Wallet userBalances={userBalances} />
+    
       <div className="grid flex grid-cols-5">
       
         <div className="bg-white-100">

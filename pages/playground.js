@@ -10,16 +10,16 @@ import { useSelector } from 'react-redux';
 import { useDrag, useDrop } from 'react-dnd';
 import SmallTile from '../components/SmallTile';
 import Canvas from '../components/Canvas';
+import Wallet from "../components/Wallet";
 import Grey from './assets/squares/grey.svg';
 import Image from 'next/image';
 import artNFT from './assets/artNFT.jpg';
 import Actions from "./util/actions";
 
-export default function MyAssets() {
+export default function Playground() {
   const [width, setWidth] = useState(4);
   const [height, setHeight] = useState(4);
-  const [flipBalance, setFlipBalance] = useState(0);
-  const [lockedFlipBalance, setLockedFlipBalance] = useState(0);
+  const userBalances = useSelector(state => state.flippando.userBalances);
   
   const artPayload = useSelector(state => state.flippando.artPayload);
 
@@ -39,7 +39,6 @@ export default function MyAssets() {
       alert("You have to fill the entire canvas")
     }
     if (artPayload.length !== 0){
-      console.log("call backend")
       
       try {
         actions.createCompositeNFT(playerAddress, String(width), String(height), bTokenIDs).then((response) => {
@@ -60,16 +59,7 @@ export default function MyAssets() {
         <meta name="description" content="Entry point" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="grid grid-cols-5 pb-20 justify-end">
-        <div className="col-span-5 flex justify-end pr-10">
-        <div className="rounded-md flex flex-col justify-center items-center mt-3 pl-3 pr-3 bg-gray-600">
-          <button className="text-sm font-medium gap-6 font-quantic text-white border-transparent focus:outline-none">
-            {flipBalance} liquid / {lockedFlipBalance + flipBalance} locked
-            $FLIP
-          </button>
-        </div>
-        </div>
-      </div>
+      <Wallet userBalances={userBalances} />
       
       <div className="grid flex grid-cols-5">
       
