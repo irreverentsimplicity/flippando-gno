@@ -34,17 +34,23 @@ export default function MyAssets() {
     const bTokenIDs = JSON.stringify(artPayload[2], (key, value) => 
       (key === '' ? value : parseInt(value))
     );
-    console.log("makeArt, ", JSON.stringify(artPayload), width, height, bTokenIDs)
-    try {
-      actions.createCompositeNFT(playerAddress, String(width), String(height), bTokenIDs).then((response) => {
-        console.log("createCompositeNFT response in Playground", response);
-        let parsedResponse = JSON.parse(response);
-        console.log("createCompositeNFT parseResponse", parsedResponse)
-      });
-    } catch (err) {
-      console.log("error in calling createCompositeNFT", err);
+    console.log("makeArt, ", JSON.stringify(artPayload))
+    if (artPayload.length === 0){
+      alert("You have to fill the entire canvas")
     }
-    
+    if (artPayload.length !== 0){
+      console.log("call backend")
+      
+      try {
+        actions.createCompositeNFT(playerAddress, String(width), String(height), bTokenIDs).then((response) => {
+          console.log("createCompositeNFT response in Playground", response);
+          let parsedResponse = JSON.parse(response);
+          console.log("createCompositeNFT parseResponse", parsedResponse)
+        });
+      } catch (err) {
+        console.log("error in calling createCompositeNFT", err);
+      }
+    } 
   }
 
   return (
@@ -79,7 +85,7 @@ export default function MyAssets() {
           </Text>
         </Box>
       <div>
-          <Canvas height={2} width={2}/>
+          <Canvas height={3} width={3}/>
       </div>
       <div  className="flex justify-center">
       <button 
