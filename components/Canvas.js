@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import SmallTile from '../components/SmallTile';
 import Color7 from '../pages/assets/squares/Color7.svg';
 import { Box } from "@chakra-ui/react";
-
+import Spinner from './Spinner';
 import { setArtPayload } from '../slices/flippandoSlice';
 import Loader from '../pages/assets/loader.svg';
 import Actions from '../pages/util/actions';
@@ -103,10 +103,11 @@ const Canvas = ({height, width}) => {
                   })
                 
                 if(nftData.length !== 0){
-                  setIsLoading(false);
                   setSourceGrid(nftData);
                 }
+                
               }
+              setIsLoading(false);
             });
           } catch (err) {
             console.log("error in calling getAllNFTs", err);
@@ -172,10 +173,6 @@ const Canvas = ({height, width}) => {
         console.log("canvas filled")
         dispatch(setArtPayload([height, width, tokenIds]));
     }
-    /*
-    else {
-      alert("You have to fill the entire canvas")
-    }*/
   }
 
   return (
@@ -184,24 +181,31 @@ const Canvas = ({height, width}) => {
       <div style={{ marginRight: '20px' }}>
         
          <Box 
-          width="100%" 
-          height="80%"
-          mt="4" 
-          borderWidth="1px" 
-          borderRadius="lg" 
-          overflow="hidden"  
-          display="grid"
-          flexDirection="column"
-          alignItems="flex-start">
+           w="100vh" 
+           h="30vh"
+           mt="4" 
+           borderWidth="1px" 
+           borderRadius="lg" 
+           overflow="hidden"  
+           display="flex"
+           flexDirection="column"
+           alignItems="flex-start">
         {isLoading &&
-            <div className="flex justify-center items-center"><Loader width={45} height={45}/></div>
+          <Box display="flex" justifyContent="center" width="100%" height="100%" mt={20}>
+            <Spinner loadingText={'loading...'}/>
+          </Box>
         }
         <div style={{ display: 'inline-grid', gridTemplateColumns: 'repeat(18, 1fr)', gridGap: '3px' }}>  
-          { (sourceGrid !== undefined && isLoading === false) && sourceGrid.map((nft, index) => (
+          { (sourceGrid !== undefined && !isLoading) && sourceGrid.map((nft, index) => (
             <GridItem key={index} nft={nft} onDragStart={() => handleDragStart(index)} /> 
             )
           )}
         </div>
+        {(!isLoading && sourceGrid.length === 0) && 
+            <Box display="flex" justifyContent="center" width="100%" height="100%" mt={20}>
+            Nothing here yet.
+            </Box>
+          }
         </Box>
       </div>
       <div className='flex justify-center items-center column' style={{flexDirection: 'column'}}>
