@@ -210,7 +210,7 @@ const Canvas = ({height, width}) => {
       </div>
       <div className='flex justify-center items-center column' style={{flexDirection: 'column'}}>
         <div className='text-sm pt-3 pb-5 text-center' style={{width: '75%'}}>
-          Drag and drop squares from above into your canvas below. Click on a tile in the canvas to remove it. When your're finished, click Make Art.
+          Drag and drop tiles from above into your canvas below. Click on a tile in the canvas to remove it. When your canvas is full, click Make Art.
         </div>
         
         <div style={{ 
