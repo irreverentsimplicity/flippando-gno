@@ -21,7 +21,8 @@ export default function MyAssets() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-  
+        const actions = await Actions.getInstance();
+        const playerAddress = await actions.getWalletAddress();
         console.log("fetchUsedNFTs");
         const usedResponse = await actions.getUserNFTs(playerAddress, "used");
         console.log("fetchUsedNFTs response in My flips", usedResponse);
@@ -29,8 +30,8 @@ export default function MyAssets() {
         console.log("parseResponse", JSON.stringify(usedResponse, null, 2))
         if(parsedUsedResponse.userNFTs !== undefined && parsedUsedResponse.userNFTs.length !== 0){  
            setUsedNfts(parsedUsedResponse.userNFTs);
-           setIsLoadingUsedNFTs(false)
         }
+        setIsLoadingUsedNFTs(false)
       } catch (err) {
         console.log("error in fetching NFTs", err);
       }

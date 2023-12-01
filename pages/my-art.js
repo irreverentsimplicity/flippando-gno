@@ -15,12 +15,21 @@ import ArtGridLayout from '../components/ArtGridLayout';
 
 const FlippandoNFTs = () => {
   const [ownedNFTs, setOwnedNFTs] = useState([]);
+  const [enhancedNFTs, setEnhancedNFTs] = useState([]);
+
   const userBalances = useSelector(state => state.flippando.userBalances);
   const [isLoading, setIsLoading] = useState(false)
   
   useEffect(() => {
     getArtwork();
   }, []);
+
+  
+  useEffect( () => {
+    if(ownedNFTs.length > 0 && enhancedNFTs.length === 0){
+      fetchArtworkNFTsForAll(ownedNFTs);
+    }
+  }, [ownedNFTs, enhancedNFTs])
 
   const getArtwork = async () => {
     const actions = await Actions.getInstance();
@@ -34,7 +43,9 @@ const FlippandoNFTs = () => {
         let parsedResponse = JSON.parse(response);
         //console.log("getUserCompositeNFTs parseResponse", parsedResponse)
         if(parsedResponse.error === undefined){
-          fetchArtworkNFTsForAll(parsedResponse.userNFTs);
+          //fetchArtworkNFTsForAll(parsedResponse.userNFTs);
+          setOwnedNFTs(parsedResponse.userNFTs)
+          setIsLoading(false)
         }
       });
     } catch (error) {
@@ -65,9 +76,8 @@ const FlippandoNFTs = () => {
         compositeNFTsWithArtwork.push(compositeNFT);
       }
     }
-    
-    setOwnedNFTs(compositeNFTsWithArtwork);
-    setIsLoading(false)
+    setEnhancedNFTs(compositeNFTsWithArtwork);
+    setOwnedNFTs([])
   };
   
   
@@ -102,6 +112,16 @@ const FlippandoNFTs = () => {
         {(ownedNFTs.length !== 0 && !isLoading) &&
           <ArtGridLayout cards={ownedNFTs} />
         }
+        {(enhancedNFTs.length !== 0) &&
+          <ArtGridLayout cards={enhancedNFTs} />
+        }
+        {!isLoading && ownedNFTs.length === 0 && enhancedNFTs.length === 0 &&
+          <Box display="flex" justifyContent="center" width="100%" mt={8}>
+          <Text fontSize="lg" fontWeight="bold" textAlign="center">
+            There's nothing here yet
+          </Text>
+          </Box>
+        }
         </div>
         
         </div>
@@ -110,7 +130,6 @@ const FlippandoNFTs = () => {
     </div>
         <div className="col-span-5 pt-20">
             <Footer/>
-        
         </div>
     </div>
 
