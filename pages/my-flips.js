@@ -41,7 +41,8 @@ export default function MyAssets() {
   }, []);
 
   useEffect( () => {
-    if(userBasicNFTs !== undefined && userBasicNFTs.length !== 0){
+    console.log("userBasicNFTs", JSON.stringify(userBasicNFTs))
+    if(userBasicNFTs !== undefined){
       setIsLoadingNFTs(false)
     }
   }, [userBasicNFTs])

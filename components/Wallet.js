@@ -1,12 +1,15 @@
 import React from "react";
+import { FaWallet} from 'react-icons/fa';
+import { Icon } from "@chakra-ui/react";
 
 
 const Wallet = ({ userBalances }) => {
     return (
       <div className="grid grid-cols-5 pb-20 justify-end">
         <div className="col-span-5 flex justify-end pr-10">
-        <div className="rounded-md flex flex-col justify-center items-center mt-3 pl-3 pr-3 bg-gray-600">
-          <button className="text-sm font-medium gap-6 font-quantic text-white border-transparent focus:outline-none">
+        <div className="rounded-md flex flex-row justify-center items-center mt-3 p-2 bg-black-400border border-gray-300" style={{ borderWidth: '0.5px' }}>
+        <Icon as={FaWallet} w={6} h={6} alignSelf="left" color={'purple.300'} pr={1}/>
+          <button className="text-sm font-medium gap-6 text-white border-transparent focus:outline-none">
             {userBalances.availableBalance} liquid / {userBalances.lockedBalance} locked
             $FLIP
           </button>

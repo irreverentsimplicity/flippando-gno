@@ -18,9 +18,10 @@ import Hexagram1 from "./assets/hexagrams/hexagram1.svg";
 import Hexagram2 from "./assets/hexagrams/hexagram2.svg";
 import Hexagram4 from "./assets/hexagrams/hexagram4.svg";
 import Hexagram6 from "./assets/hexagrams/hexagram6.svg";
+//import logo from "./assets/flippando-logo.jpg";
 import SmallTile from "../components/SmallTile";
 import Menu from "../components/Menu";
-import Wallet from "../components/Wallet";
+import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Actions from "./util/actions";
 
@@ -535,7 +536,7 @@ export default function Home() {
           )}
           {/* we display a spinner while waiting for the nfts to load */}
           {value === 1 && (
-            <button disabled className="card_small_spinner">
+            <button disabled className={styles.card_small_spinner}>
             <svg
               aria-hidden="true"
               className="animate-spin text-blue-200 dark:text-blue-600 fill-blue-600"
@@ -690,10 +691,6 @@ export default function Home() {
 
   };
 
-  function capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
-
   const selectGameTileType = (selectedGameTileType) => {
     if (
       gameStatus.includes("Flippando initialized") ||
@@ -721,7 +718,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Wallet userBalances={userBalances} />
+      <Header userBalances={userBalances} />
     
       <div className="grid flex grid-cols-5">
       

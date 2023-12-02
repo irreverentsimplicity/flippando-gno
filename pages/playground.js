@@ -5,7 +5,8 @@ import Head from "next/head";
 import Menu from '../components/Menu';
 import Footer from '../components/Footer';
 import { useEffect, useState } from 'react';
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Text, VStack, Button } from "@chakra-ui/react";
+import Link from 'next/link';
 import { useSelector } from 'react-redux';
 import { useDrag, useDrop } from 'react-dnd';
 import SmallTile from '../components/SmallTile';
@@ -20,7 +21,7 @@ export default function Playground() {
   const [width, setWidth] = useState(4);
   const [height, setHeight] = useState(4);
   const userBalances = useSelector(state => state.flippando.userBalances);
-  
+  const [isArtMinted, setIsArtMinted] = useState(true)
   const artPayload = useSelector(state => state.flippando.artPayload);
 
 
@@ -45,6 +46,9 @@ export default function Playground() {
           console.log("createCompositeNFT response in Playground", response);
           let parsedResponse = JSON.parse(response);
           console.log("createCompositeNFT parseResponse", parsedResponse)
+          if(parsedResponse.error === undefined){
+            setIsArtMinted(true)
+          }
         });
       } catch (err) {
         console.log("error in calling createCompositeNFT", err);
@@ -78,12 +82,28 @@ export default function Playground() {
           <Canvas height={3} width={3}/>
       </div>
       <div  className="flex justify-center">
+      {!isArtMinted &&
       <button 
         disabled={false}
         onClick={() => { makeArt() }} 
         className="bg-gray-200 hover:bg-purple-900 hover:text-white text-black text-lg font-bold py-2 px-4 mr-2 ml-2 rounded-full font-quantico">
           Make Art
       </button>
+      }
+      {isArtMinted &&
+        <Box display="flex" justifyContent="center" width="100%" mt={8}>
+        <VStack p="6">
+          <Text fontSize="lg" fontWeight="bold" textAlign="center">
+            Your painting is now part of your collection.
+          </Text>
+          <Link href={'/my-art'} passHref>
+            <Button as="a" borderRadius="full">
+              Your Collection
+            </Button>
+          </Link>
+          </VStack>
+        </Box>
+      }
     </div>
     </div>
 

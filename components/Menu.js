@@ -1,6 +1,8 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import { Box, Link as ChakraLink, VStack } from '@chakra-ui/react';
+import { Box, Link as ChakraLink, VStack, Icon, Spacer } from '@chakra-ui/react';
+import { FaTwitter} from 'react-icons/fa';
+
 import Link from 'next/link';
 
 const MenuItem = ({ href, children }) => {
@@ -47,7 +49,7 @@ const MenuItem = ({ href, children }) => {
 
 const Menu = () => {
   return (
-    <Box width="200px" height="80vh" bg="gray.100" borderRadius="lg" p={2}>
+    <Box width="200px" height="80vh" bg="gray.100" borderRadius="lg" p={2}  display="flex" flexDirection="column">
       <VStack align="stretch" spacing={4}>
         <MenuItem href="/">Home</MenuItem>
         <MenuItem href="/flip">Flip</MenuItem>
@@ -57,6 +59,11 @@ const Menu = () => {
         <MenuItem href="/market">Market</MenuItem>
         <MenuItem href="/docs">What's this</MenuItem>
       </VStack>
+      <Spacer/>
+      <a href={'https://twitter.com/Flippand0'} target="_blank" rel="noopener noreferrer">
+        <Icon as={FaTwitter} w={8} h={8} alignSelf="right" color={'#bbbbbb'}/>
+      </a>
+
     </Box>
   );
 };

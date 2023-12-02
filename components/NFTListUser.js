@@ -6,14 +6,14 @@ import Spinner from '../components/Spinner';
 
 const NFTListUser = ({userNFTs, isLoadingUserNFTs, userArtworkNFTs, isLoadingUserArtworkNFTs}) => {
 
-  
+  console.log("isLoadingUserNFTs", isLoadingUserNFTs)
  
   const renderNFTs = () => {
     if (userNFTs !== undefined && userNFTs.length !== 0) {
       return (
         <ul style={{ display: "grid", gridTemplateColumns: "repeat(8, 1fr)", gridGap: "10px", padding: "20px" }}>
           {userNFTs.map((nft, index) => (
-            <li key={nft.tokenId}>
+            <li key={index}>
               <SmallTile tokenId={nft.tokenId} metadata={JSON.stringify(nft)} />
             </li>
           ))}
@@ -28,7 +28,7 @@ const NFTListUser = ({userNFTs, isLoadingUserNFTs, userArtworkNFTs, isLoadingUse
       return (
         <ul style={{ display: "grid", gridTemplateColumns: "repeat(8, 1fr)", gridGap: "10px", padding: "20px" }}>
           {userArtworkNFTs.map((nft, index) => (
-            <li key={nft.tokenId}>
+            <li key={index}>
               <SmallTile tokenId={nft.tokenId} metadata={JSON.stringify(nft)} />
             </li>
           ))}
