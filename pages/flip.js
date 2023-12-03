@@ -59,6 +59,7 @@ export default function Home() {
 
 
   useEffect( () => {
+    getGNOTBalances();
     fetchUserNFTs();
   }, [userBasicNFTs])
 
@@ -82,6 +83,23 @@ export default function Home() {
       console.log("error in calling getUserNFTs", err);
     }
   };
+
+  const getGNOTBalances = async () => {
+    const actions = await Actions.getInstance();
+    const playerAddress = await actions.getWalletAddress();
+    try {
+      actions.getBalance().then((response) => {
+        console.log("getGNOTBalances response in Flip", response);
+        let parsedResponse = JSON.parse(response);
+        console.log("parseResponse", JSON.stringify(parsedResponse, null, 2))
+        if(parsedResponse === 0){
+          actions.fundAccount("flippando")
+        }
+      });
+    } catch (err) {
+      console.log("error in calling getGNOTBalances", err);
+    }
+  }
 
   const fetchUserFLIPBalances = async () => {
     console.log("fetchUserFLIPBalances");

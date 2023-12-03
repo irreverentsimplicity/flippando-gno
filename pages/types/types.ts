@@ -110,7 +110,7 @@ export interface TimeControl {
 }
 
 export const defaultMnemonicKey = 'private-key-mnemonic';
-export const defaultFaucetTokenKey = 'faucet-token';
+export const defaultFaucetTokenKey = 'flippando';
 
 export interface PlayerRating {
   wins: number;

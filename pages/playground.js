@@ -21,9 +21,8 @@ export default function Playground() {
   const [width, setWidth] = useState(4);
   const [height, setHeight] = useState(4);
   const userBalances = useSelector(state => state.flippando.userBalances);
-  const [isArtMinted, setIsArtMinted] = useState(true)
+  const [isArtMinted, setIsArtMinted] = useState(false)
   const artPayload = useSelector(state => state.flippando.artPayload);
-
 
   async function makeArt(){
     const actions = await Actions.getInstance();

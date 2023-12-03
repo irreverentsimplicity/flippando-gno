@@ -27,8 +27,8 @@ import { UserFundedError } from '../types/errors';
 const wsURL: string = Config.GNO_WS_URL;
 const rpcURL: string = Config.GNO_JSONRPC_URL;
 const flippandoRealm: string = Config.GNO_FLIPPANDO_REALM;
-const faucetURL: string = Config.FAUCET_URL;
-const defaultGasWanted: Long = new Long(340_000_0);
+const faucetURL: string = "http://127.0.0.1:5050";
+const defaultGasWanted: Long = new Long(10000_000_0);
 const customTXFee = '2000000ugnot'
 
 const cleanUpRealmReturn = (ret: string) => {
@@ -111,7 +111,7 @@ class Actions {
       console.error('Could not create wallet from mnemonic');
     }
 
-    /*
+    
     // Faucet token initialization //
     let faucetToken: string | null = localStorage.getItem(
       defaultFaucetTokenKey
@@ -126,10 +126,10 @@ class Actions {
         if (e instanceof UserFundedError) {
           console.log('User already funded.');
         } else {
-          console.error('Could not fund user.');
+          console.log('Could not fund user.');
         }
       }
-    }*/
+    }
   }
 
   /**
@@ -459,7 +459,7 @@ class Actions {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'faucet-token': token
+        'faucet-token': 'flippando'
       },
       body: JSON.stringify({
         to: await this.wallet?.getAddress()
@@ -467,10 +467,15 @@ class Actions {
     };
 
     // Execute the request
-    const fundResponse = await fetch(faucetURL, requestOptions);
-    if (!fundResponse.ok) {
-      throw constructFaucetError(await fundResponse.text());
-    }
+    await fetch(faucetURL, requestOptions).then(fResponse => {
+      console.log("faucetURL", faucetURL)
+      console.log("fundResponse", JSON.stringify(fResponse, null, 2))
+      if (!fResponse.ok) {
+        console.log("fund error, ", fResponse.text());
+      }
+    })
+    
+    
   }
 }
 
