@@ -2,10 +2,6 @@ import { saveToLocalStorage } from './localstorage';
 import {
   defaultFaucetTokenKey,
   defaultMnemonicKey,
-  Game,
-  type GameSettings,
-  GameState,
-  Player,
 } from '../types/types';
 import { defaultTxFee, GnoJSONRPCProvider, GnoWallet, GnoWSProvider } from '@gnolang/gno-js-client';
 import {

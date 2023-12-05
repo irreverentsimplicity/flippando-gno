@@ -1,10 +1,7 @@
-/* pages/my-nfts.js */
-//import {ethers} from 'ethers';
 import styles from "../styles/Home.module.css";
 import Head from "next/head";
 import Menu from '../components/Menu';
 import Footer from '../components/Footer';
-import { useEffect, useState } from 'react';
 import { Box, Text } from "@chakra-ui/react";
 import { useSelector } from 'react-redux';
 import Wallet from "../components/Wallet";

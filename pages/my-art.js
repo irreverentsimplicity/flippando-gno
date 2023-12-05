@@ -8,7 +8,7 @@ import Spinner from '../components/Spinner';
 import Menu from '../components/Menu';
 import Wallet from '../components/Wallet';
 import Footer from '../components/Footer';
-import Actions from './util/actions';
+import Actions from '../util/actions';
 import { Box, Text } from "@chakra-ui/react";
 import ArtGridLayout from '../components/ArtGridLayout';
 

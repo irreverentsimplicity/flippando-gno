@@ -15,7 +15,7 @@ import Wallet from "../components/Wallet";
 import Grey from './assets/squares/grey.svg';
 import Image from 'next/image';
 import artNFT from './assets/artNFT.jpg';
-import Actions from "./util/actions";
+import Actions from "../util/actions";
 
 export default function Playground() {
   const [width, setWidth] = useState(4);

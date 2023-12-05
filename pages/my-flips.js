@@ -7,7 +7,7 @@ import Head from "next/head";
 import Menu from '../components/Menu';
 import Wallet from '../components/Wallet';
 import Footer from '../components/Footer';
-import Actions from "./util/actions";
+import Actions from "../util/actions";
 
 
 export default function MyAssets() {

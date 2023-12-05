@@ -23,7 +23,7 @@ import SmallTile from "../components/SmallTile";
 import Menu from "../components/Menu";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import Actions from "./util/actions";
+import Actions from "../util/actions";
 
 export default function Home() {
   

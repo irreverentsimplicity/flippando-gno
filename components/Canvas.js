@@ -7,7 +7,7 @@ import { Box } from "@chakra-ui/react";
 import Spinner from './Spinner';
 import { setArtPayload } from '../slices/flippandoSlice';
 import Loader from '../pages/assets/loader.svg';
-import Actions from '../pages/util/actions';
+import Actions from '../util/actions';
 
 const Square = ({ isOccupied, onDrop, onClick, nft }) => {
     const stringifiedNFT = JSON.stringify(nft.metadata);

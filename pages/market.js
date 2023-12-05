@@ -1,20 +1,10 @@
-/* pages/my-nfts.js */
-//import {ethers} from 'ethers';
 import styles from "../styles/Home.module.css";
 import Head from "next/head";
 import Menu from '../components/Menu';
 import Footer from '../components/Footer';
-import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from "react-redux";
 import { Box, Text } from "@chakra-ui/react";
-import { useDrag, useDrop } from 'react-dnd';
 import Wallet from "../components/Wallet";
-import SmallTile from '../components/SmallTile';
-import Canvas from '../components/Canvas';
-import Grey from './assets/squares/grey.svg';
-import Image from 'next/image';
-import artNFT from './assets/artNFT.jpg';
-import Actions from "./util/actions";
 
 export default function Market() {
 

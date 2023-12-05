@@ -1,7 +1,6 @@
 /* pages/_app.js */
 import '../styles/globals.css'
 import styles from '../styles/Home.module.css'
-import "@material-tailwind/react/tailwind.css";
 import Link from 'next/link'
 import { Provider } from 'react-redux';
 import {store} from '../store/store.js';
