@@ -51,7 +51,6 @@ const Menu = () => {
   return (
     <Box width="200px" height="80vh" bg="gray.100" borderRadius="lg" p={2}  display="flex" flexDirection="column">
       <VStack align="stretch" spacing={4}>
-        <MenuItem href="/">Home</MenuItem>
         <MenuItem href="/flip">Flip</MenuItem>
         <MenuItem href="/my-flips">My Flips</MenuItem>
         <MenuItem href="/playground">Playground</MenuItem>
