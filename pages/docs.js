@@ -81,21 +81,24 @@ export default function Tutorial() {
             Tokenomics
           </Text>
           <Text fontSize="lg" textAlign="left" mt={4} mb={4} mr={4}>
-            The $FLIP fungible token has an uncapped supply. In other words, as long as someone solves a board and generates a 
-            basic NFT, that basic NFT will always have 1 locked $FLIP token inside. The $FLIP token can be unlocked 
-            and made really fungible, only if someone else includes that basic NFT into a composite one. So the actual liquid 
-            supply is not enforced by anything other than the players behavior.
+            The $FLIP fungible token has an uncapped supply - and there will be no airdrop or premine. As long as someone solves 
+            a board and generates a basic NFT, that basic NFT will always have 1 locked $FLIP token inside. The $FLIP token 
+            can be unlocked  and made really fungible, only if someone else includes that basic NFT into a composite one. 
+            So the actual liquid supply is not enforced by anything other than the players behavior.
           </Text>
           <Text fontSize="lg" textAlign="left" mt={4} mb={4} mr={4}>
-            A composite NFT can be traded for $FLIP. There is an element of randomness affecting the supply, which is 
-            trieggered by a composite NFT sale event. When the trade is made and the buyer pays the requested amount, 
-            a part of that amount is burned. This amount is between 1% and 50% of the asking price, randomly chosen for 
-            each sale.
+            A composite NFT can be traded for $FLIP. Each composite NFT sale also triggers a fungible token supply reduction, 
+            using randomness in a specified range. When a trade is made and the buyer pays the requested amount, 
+            a part of that amount is burned. The burnable range subject to randomness is between 1% and 50% of the asking price.
             </Text>
             <Text fontSize="lg" textAlign="left" mt={4} mb={4} mr={4}>
-              Example: seller lists a composite NFT for 10 $FLIP. A buyer pays 10 $FLIP and gets the art. During the sale, 
-              the contract generates a random number between 1 and 50, let's say 25. So 25% off of $10 FLIP, 2.5 $FLIP 
-              gets burned, and the seller gets $7.5 FLIP.
+              Example: seller lists a composite NFT for 10 $FLIP. A buyer agrees to pay 10 $FLIP to get that NFT. 
+              When the sale is initiated, 
+              the contract generates a random number between 1 and 50, let's say 25. In our case, 25% off of $10 FLIP 
+              means 2.5 $FLIP. This amount gets burned, and the seller gets $7.5 FLIP.
+
+              Because the randomness range is between 1% and 50%, a seller can expect to receive between 99% and 50% of
+              the asking price.
           </Text>
           <Text fontSize="lg" textAlign="left" mt={4} mb={4} mr={4}>
               To recap: the potential supply is never capped, and it's a direct result of 1) solving boards and 2) creating art 
@@ -106,7 +109,8 @@ export default function Tutorial() {
           <Text fontSize="lg" textAlign="left" mt={4} mb={4} mr={4}>
             Board solvers are incentivized by the potential revenue for their painting blocks. Art collectors are incentivized
             by the actual designs (which are limitless) and by the fact that moving around goods decreases the $FLIP supply, hence 
-            accruing value to the fungible token. This dynamic
+            accruing value to the fungible token. This dynamic may create in time a positive feedback loop, that will
+            increase both engagement for NFT creation, and the value of the fungible token.
           </Text>
         </Box>
     </div>

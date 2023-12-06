@@ -123,6 +123,7 @@ export default function Home() {
 
   const updateLevel1Board = () => {
     let newArray = [...level1Board]; 
+    console.log("newArray ", JSON.stringify(newArray, null, 2))
     const zeroIndex = newArray.indexOf(0);
   
     if (zeroIndex !== -1) {
@@ -130,7 +131,7 @@ export default function Home() {
     } else {
       newArray.push(1);
     }
-  
+    console.log("newArray after update ", JSON.stringify(newArray, null, 2))
     setLevel1Board(newArray);
   };
 
@@ -546,6 +547,7 @@ export default function Home() {
     } else if (levels === 2) {
       levelsBoard = level2Board;
     }
+    
     return levelsBoard.map((value, index) => {
       return (
         <span key={index} >
@@ -574,7 +576,7 @@ export default function Home() {
             </svg>
           </button>
           )}
-          {value !== 0 && userBasicNFTs.length !== 0 && (
+          {value !== 0 && value !== 1 && userBasicNFTs.length !== 0 && (
             <SmallTile metadata={JSON.stringify(value)} />
           )}
         </span>
