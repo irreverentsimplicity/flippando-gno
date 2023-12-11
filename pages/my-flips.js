@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import NFTListUser from '../components/NFTlistUser'
+import NFTListUser from '../components/NFTListUser'
 import styles from "../styles/Home.module.css";
 import { Box, Text } from "@chakra-ui/react";
 import Head from "next/head";
