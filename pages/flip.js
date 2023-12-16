@@ -998,6 +998,46 @@ export default function Home() {
           <h1>Ongoing games</h1>
         </div>
          */}
+      
+    <title>8 Levels of Gray</title>
+    
+    <h2>8 Levels of Gray (Excluding Black and White)</h2>
+    <div style={{width: 20, height: 20, backgroundColor: '#101010'}}></div>
+    <div style={{width: 20, height: 20, backgroundColor: '#303030'}}></div>
+    <div style={{width: 20, height: 20, backgroundColor: '#505050'}}></div>
+    <div style={{width: 20, height: 20, backgroundColor: '#707070'}}></div>
+    <div style={{width: 20, height: 20, backgroundColor: '#909090'}}></div>
+    <div style={{width: 20, height: 20, backgroundColor: '#b0b0b0'}}></div>
+    <div style={{width: 20, height: 20, backgroundColor: '#d0d0d0'}}></div>
+    <div style={{width: 20, height: 20, backgroundColor: '#f0f0f0'}}></div>
+    <hr/>
+    <div style={{width: 20, height: 20, backgroundColor: '#800000'}}></div>
+    <div style={{width: 20, height: 20, backgroundColor: '#901010'}}></div>
+    <div style={{width: 20, height: 20, backgroundColor: '#a02020'}}></div>
+    <div style={{width: 20, height: 20, backgroundColor: '#b03030'}}></div>
+    <div style={{width: 20, height: 20, backgroundColor: '#c04040'}}></div>
+    <div style={{width: 20, height: 20, backgroundColor: '#d05050'}}></div>
+    <div style={{width: 20, height: 20, backgroundColor: '#e06060'}}></div>
+    <div style={{width: 20, height: 20, backgroundColor: '#f07070'}}></div>
+    <hr/>
+    <div style={{width: 20, height: 20, backgroundColor: '#008000'}}></div>
+    <div style={{width: 20, height: 20, backgroundColor: '#109010'}}></div>
+    <div style={{width: 20, height: 20, backgroundColor: '#20a020'}}></div>
+    <div style={{width: 20, height: 20, backgroundColor: '#30b030'}}></div>
+    <div style={{width: 20, height: 20, backgroundColor: '#40c040'}}></div>
+    <div style={{width: 20, height: 20, backgroundColor: '#50d050'}}></div>
+    <div style={{width: 20, height: 20, backgroundColor: '#60e060'}}></div>
+    <div style={{width: 20, height: 20, backgroundColor: '#70f070'}}></div>
+    <hr/>
+    <div style={{width: 20, height: 20, backgroundColor: '#000080'}}></div>
+    <div style={{width: 20, height: 20, backgroundColor: '#101090'}}></div>
+    <div style={{width: 20, height: 20, backgroundColor: '#2020a0'}}></div>
+    <div style={{width: 20, height: 20, backgroundColor: '#3030b0'}}></div>
+    <div style={{width: 20, height: 20, backgroundColor: '#4040c0'}}></div>
+    <div style={{width: 20, height: 20, backgroundColor: '#5050d0'}}></div>
+    <div style={{width: 20, height: 20, backgroundColor: '#6060e0'}}></div>
+    <div style={{width: 20, height: 20, backgroundColor: '#7070f0'}}></div>
+
         
 
       

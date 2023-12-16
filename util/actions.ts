@@ -413,7 +413,7 @@ class Actions {
     }
   
   /**
-   * Call the GetTokenURI function and return a JSON object
+   * Call the GetFlipBalances function and return a JSON object
    * @param tokenID string
    */
   async getFlipBalances(playerAddr: string): Promise<any> {
@@ -421,6 +421,16 @@ class Actions {
       playerAddr
     ]);
     //console.log("actions GetTokenURI response ", JSON.stringify(response))
+    return response;
+  }
+
+  /**
+   * Call the GetListings function and return a JSON object
+   * @param tokenID string
+   */
+  async getMarketPlaceListings(): Promise<any> {
+    const response = await this.callMethod('GetArtListings', []);
+    console.log("actions GetListings response ", JSON.stringify(response))
     return response;
   }
 

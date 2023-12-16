@@ -78,7 +78,7 @@ export default function Playground() {
           </Text>
         </Box>
       <div>
-          <Canvas height={3} width={3}/>
+          <Canvas height={2} width={2}/>
       </div>
       <div  className="flex justify-center">
       {!isArtMinted &&
