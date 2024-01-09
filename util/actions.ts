@@ -424,6 +424,56 @@ class Actions {
     return response;
   }
 
+
+  /**
+   * Call the ListMArketplaceNFT function, returns nil on success
+   * @param tokenID string
+   * @param seller string
+   * @param price string
+   */
+    async ListNFT(
+      compositeTokenId: string,
+      seller: string,
+      price: string,): Promise<any> {
+      const response = await this.callMethod('ListMarketplaceNFT', [
+        compositeTokenId, seller, price
+      ]);
+      console.log("actions ListMarketplaceNFT response ", JSON.stringify(response))
+      return response;
+    }
+
+  /**
+   * Call the RemoveMarketplaceNFT function, returns nil on success
+   * @param compositeTokenId string
+   * @param seller string
+   */
+  async RemoveNFTListing(
+    compositeTokenId: string,
+    seller: string,): Promise<any> {
+    const response = await this.callMethod('RemoveNFTListing', [
+      compositeTokenId, seller, 
+    ]);
+    console.log("actions RemoveNFTListing response ", JSON.stringify(response))
+    return response;
+  }  
+
+  /**
+   * Call the BuyMarketplaceNFT function, returns nil on success
+   * @param compositeTokenId string
+   * @param buyer string
+   */
+  async BuyNFT(
+    compositeTokenId: string,
+    buyer: string,): Promise<any> {
+    const response = await this.callMethod('BuyMarketplaceNFT', [
+      compositeTokenId, buyer, 
+    ]);
+    console.log("actions BuyMarketplaceNFT response ", JSON.stringify(response))
+    return response;
+  }
+  
+  
+  
   /**
    * Call the GetListings function and return a JSON object
    * @param tokenID string

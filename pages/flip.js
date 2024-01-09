@@ -10,6 +10,22 @@ import Color1 from "./assets/squares/Color1.svg";
 import Color14 from "./assets/squares/Color14.svg";
 import Color9 from "./assets/squares/Color9.svg";
 import Color5 from "./assets/squares/Color5.svg";
+import Grey1 from "./assets/squares/Grey1.svg";
+import Grey3 from "./assets/squares/Grey3.svg";
+import Grey5 from "./assets/squares/Grey5.svg";
+import Grey7 from "./assets/squares/Grey6.svg";
+import Red1 from "./assets/squares/Red1.svg";
+import Red3 from "./assets/squares/Red3.svg";
+import Red5 from "./assets/squares/Red5.svg";
+import Red7 from "./assets/squares/Red7.svg";
+import Green2 from "./assets/squares/Green2.svg";
+import Green4 from "./assets/squares/Green4.svg";
+import Green6 from "./assets/squares/Green6.svg";
+import Green8 from "./assets/squares/Green8.svg";
+import Blue1 from "./assets/squares/Blue1.svg";
+import Blue3 from "./assets/squares/Blue3.svg";
+import Blue5 from "./assets/squares/Blue5.svg";
+import Blue7 from "./assets/squares/Blue7.svg";
 import Dice4 from "./assets/dice/4.svg";
 import Dice3 from "./assets/dice/3.svg";
 import Dice5 from "./assets/dice/5.svg";
@@ -42,7 +58,7 @@ export default function Home() {
   const [testResponse, setTestResponse] = useState(null);
   const [flipBalance, setFlipBalance] = useState(0);
   const [lockedFlipBalance, setLockedFlipBalance] = useState(0);
-  const gameTileTypes = ["squareGrid", "dice", "hexagrams"];
+  const gameTileTypes = ["squareGrid", "greyGradient", "redGradient", "greenGradient", "blueGradient", "dice", "hexagrams"];
   const gameLevels = [16, 64];
   const [gameTileType, setGameTileType] = useState("squareGrid");
   const [gameLevel, setGameLevel] = useState(gameLevels[0]);
@@ -136,6 +152,7 @@ export default function Home() {
   };
 
   async function createNewGame(gameLevel, typeOfGame) {
+    console.log("typeOfGame ", typeOfGame)
     const actions = await Actions.getInstance();
     const playerAddress = await actions.getWalletAddress();
     try {
@@ -594,6 +611,14 @@ export default function Home() {
           ? "div"
           : gameTileType === "squareGrid"
           ? TileImages[value - 1].squareTile
+          : gameTileType === "greyGradient"
+          ? TileImages[value - 1].greyGradient
+          : gameTileType === "redGradient"
+          ? TileImages[value - 1].redGradient
+          : gameTileType === "greenGradient"
+          ? TileImages[value - 1].greenGradient
+          : gameTileType === "blueGradient"
+          ? TileImages[value - 1].blueGradient
           : gameTileType === "dice"
           ? TileImages[value - 1].diceTile
           : gameTileType === "hexagrams"
@@ -899,19 +924,8 @@ export default function Home() {
           <div className="col-span-3 flex flex-col items-center pt-10">
             {gameStatus.includes("undefined") && 
             (
-            <div className="mb-4 w-full flex justify-center">
-            {/*
+            <div className="mb-4 w-full flex justify-center items-center">
             
-            <p className="bold text-lg text-blue-800 pb-2 pt-4">Game type</p>
-            Tiles:{" "}
-            <GameLevels
-              options={gameLevels}
-              value={gameLevel}
-              onChange={handleGameLevelChange}
-            />
-            */}
-          
-          
             {gameTileTypes.map((gameTypeChoice, index) => (
               <div key={index}>
                 {gameTypeChoice === "squareGrid" && (
@@ -932,7 +946,6 @@ export default function Home() {
                     </div>
                   </a>
                 )}
-                
                 {gameTypeChoice === "dice" && (
                   <a href="#" onClick={() => selectGameTileType(gameTypeChoice)}>
                     <div
@@ -969,7 +982,81 @@ export default function Home() {
                     </div>
                   </a>
                 )}
-              </div>
+                  {gameTypeChoice === "greyGradient" && (
+                    <a href="#" onClick={() => selectGameTileType(gameTypeChoice)}>
+                      <div
+                        className={`${
+                          gameTileType === gameTypeChoice
+                            ? "flex justify-center p-2 m-2 rounded-lg shadow-lg bg-gray-300"
+                            : "flex justify-center p-2 m-2 rounded-lg bg-gray-100"
+                        }`}
+                      >
+                        <div className="grid grid-cols-2 gap-2">
+                          <Grey1 width={28} height={28} />
+                          <Grey5 width={28} height={28} />
+                          <Grey7 width={28} height={28} />
+                          <Grey3 width={28} height={28} />
+                        </div>
+                      </div>
+                    </a>
+                  )}
+                  {gameTypeChoice === "redGradient" && (
+                    <a href="#" onClick={() => selectGameTileType(gameTypeChoice)}>
+                      <div
+                        className={`${
+                          gameTileType === gameTypeChoice
+                            ? "flex justify-center p-2 m-2 rounded-lg shadow-lg bg-gray-300"
+                            : "flex justify-center p-2 m-2 rounded-lg bg-gray-100"
+                        }`}
+                      >
+                        <div className="grid grid-cols-2 gap-2">
+                          <Red1 width={28} height={28} />
+                          <Red5 width={28} height={28} />
+                          <Red7 width={28} height={28} />
+                          <Red3 width={28} height={28} />
+                        </div>
+                      </div>
+                    </a>
+                  )}
+
+                  {gameTypeChoice === "greenGradient" && (
+                    <a href="#" onClick={() => selectGameTileType(gameTypeChoice)}>
+                      <div
+                        className={`${
+                          gameTileType === gameTypeChoice
+                            ? "flex justify-center p-2 m-2 rounded-lg shadow-lg bg-gray-300"
+                            : "flex justify-center p-2 m-2 rounded-lg bg-gray-100"
+                        }`}
+                      >
+                        <div className="grid grid-cols-2 gap-2">
+                          <Green2 width={28} height={28} />
+                          <Green6 width={28} height={28} />
+                          <Green8 width={28} height={28} />
+                          <Green4 width={28} height={28} />
+                        </div>
+                      </div>
+                    </a>
+                  )}
+
+                  {gameTypeChoice === "blueGradient" && (
+                    <a href="#" onClick={() => selectGameTileType(gameTypeChoice)}>
+                      <div
+                        className={`${
+                          gameTileType === gameTypeChoice
+                            ? "flex justify-center p-2 m-2 rounded-lg shadow-lg bg-gray-300"
+                            : "flex justify-center p-2 m-2 rounded-lg bg-gray-100"
+                        }`}
+                      >
+                        <div className="grid grid-cols-2 gap-2">
+                          <Blue7 width={28} height={28} />
+                          <Blue3 width={28} height={28} />
+                          <Blue1 width={28} height={28} />
+                          <Blue5 width={28} height={28} />
+                        </div>
+                      </div>
+                    </a>
+                  )}
+                </div>
             ))}
             </div>
           )}
@@ -998,48 +1085,6 @@ export default function Home() {
           <h1>Ongoing games</h1>
         </div>
          */}
-      
-    <title>8 Levels of Gray</title>
-    
-    <h2>8 Levels of Gray (Excluding Black and White)</h2>
-    <div style={{width: 20, height: 20, backgroundColor: '#101010'}}></div>
-    <div style={{width: 20, height: 20, backgroundColor: '#303030'}}></div>
-    <div style={{width: 20, height: 20, backgroundColor: '#505050'}}></div>
-    <div style={{width: 20, height: 20, backgroundColor: '#707070'}}></div>
-    <div style={{width: 20, height: 20, backgroundColor: '#909090'}}></div>
-    <div style={{width: 20, height: 20, backgroundColor: '#b0b0b0'}}></div>
-    <div style={{width: 20, height: 20, backgroundColor: '#d0d0d0'}}></div>
-    <div style={{width: 20, height: 20, backgroundColor: '#f0f0f0'}}></div>
-    <hr/>
-    <div style={{width: 20, height: 20, backgroundColor: '#800000'}}></div>
-    <div style={{width: 20, height: 20, backgroundColor: '#901010'}}></div>
-    <div style={{width: 20, height: 20, backgroundColor: '#a02020'}}></div>
-    <div style={{width: 20, height: 20, backgroundColor: '#b03030'}}></div>
-    <div style={{width: 20, height: 20, backgroundColor: '#c04040'}}></div>
-    <div style={{width: 20, height: 20, backgroundColor: '#d05050'}}></div>
-    <div style={{width: 20, height: 20, backgroundColor: '#e06060'}}></div>
-    <div style={{width: 20, height: 20, backgroundColor: '#f07070'}}></div>
-    <hr/>
-    <div style={{width: 20, height: 20, backgroundColor: '#008000'}}></div>
-    <div style={{width: 20, height: 20, backgroundColor: '#109010'}}></div>
-    <div style={{width: 20, height: 20, backgroundColor: '#20a020'}}></div>
-    <div style={{width: 20, height: 20, backgroundColor: '#30b030'}}></div>
-    <div style={{width: 20, height: 20, backgroundColor: '#40c040'}}></div>
-    <div style={{width: 20, height: 20, backgroundColor: '#50d050'}}></div>
-    <div style={{width: 20, height: 20, backgroundColor: '#60e060'}}></div>
-    <div style={{width: 20, height: 20, backgroundColor: '#70f070'}}></div>
-    <hr/>
-    <div style={{width: 20, height: 20, backgroundColor: '#000080'}}></div>
-    <div style={{width: 20, height: 20, backgroundColor: '#101090'}}></div>
-    <div style={{width: 20, height: 20, backgroundColor: '#2020a0'}}></div>
-    <div style={{width: 20, height: 20, backgroundColor: '#3030b0'}}></div>
-    <div style={{width: 20, height: 20, backgroundColor: '#4040c0'}}></div>
-    <div style={{width: 20, height: 20, backgroundColor: '#5050d0'}}></div>
-    <div style={{width: 20, height: 20, backgroundColor: '#6060e0'}}></div>
-    <div style={{width: 20, height: 20, backgroundColor: '#7070f0'}}></div>
-
-        
-
       
     </div>
   );

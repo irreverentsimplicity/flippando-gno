@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Text, VStack, HStack, Button, Spacer, Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton } from "@chakra-ui/react";
+import { Box, Text, VStack, HStack, Button, Spacer, Alert, FormControl, FormLabel, Input, CloseButton } from "@chakra-ui/react";
+import Actions from '../util/actions';
 import Spinner from './Spinner';
 
 const ArtSmallTile = ({ size, artNFT, tokenID }) => {
-  console.log("svgData", JSON.stringify(artNFT))
+  //console.log("svgData", JSON.stringify(artNFT))
   return (
     <div style={{
       display: "flex",
@@ -24,9 +25,37 @@ const ArtCard = ({ title, text, artwork, numRows, numCols }) => {
   const tileSize = imageWidth / numCols; 
 
   const [showAlert, setShowAlert] = useState(false);
+  const [isListing, setIsListing] = useState(false);
+
   const handleButtonClick = () => {
     setShowAlert(true);
   };
+
+  const handleList = async (price, tokenId) => {
+    console.log("handleList ", price, tokenId)
+    
+    if (price !== "" && price !== null && price !== undefined) {
+      const actions = await Actions.getInstance();
+      const seller = await actions.getWalletAddress();
+
+      setIsListing(true)
+      
+      try {
+        actions.ListNFT(tokenId, seller, price).then((response) => {
+          console.log("ListNFT response in ArtCard.js", response);
+          let parsedResponse = JSON.parse(response);
+          //console.log("getUserCompositeNFTs parseResponse", parsedResponse)
+          if(parsedResponse.error === undefined){
+            setIsListing(false)
+            closeAlert()
+          }
+        });
+      } catch (error) {
+        console.error('Error listing Artwork:', error);
+        return null;
+      }
+    }
+  }
 
   const closeAlert = () => {
     setShowAlert(false);
@@ -68,13 +97,19 @@ const ArtCard = ({ title, text, artwork, numRows, numCols }) => {
           borderRadius="full"
           onClick={handleButtonClick}         
         >Transfer</Button>
-          <Button
-          bg="purple.900"               
-          color="white"               
-          _hover={{ bg: "blue.600"}}
-          borderRadius="full"   
-          onClick={handleButtonClick}           
-        >List</Button>
+        {!isListing &&
+            <Button
+            bg="purple.900"               
+            color="white"               
+            _hover={{ bg: "blue.600"}}
+            borderRadius="full"   
+            onClick={handleButtonClick}           
+          >List</Button>
+        }
+        {isListing &&
+          <Spinner />
+        }
+        
         </HStack>
       </VStack>
       {showAlert && (
@@ -91,13 +126,21 @@ const ArtCard = ({ title, text, artwork, numRows, numCols }) => {
         width="300px"
         transform="translate(-50%, -50%)"
         zIndex="999">
-          <AlertIcon boxSize="40px" mr={0} />
-          <AlertTitle mt={4} mb={1} fontSize="lg">
-            Coming soon!
-          </AlertTitle>
-          <AlertDescription maxWidth="sm">
-            We're working on this.
-          </AlertDescription>
+          <FormControl id="price">
+            <FormLabel htmlFor="price">Price wanted ($FLIP)</FormLabel>
+            <Input
+              type="text"
+              name="price"
+              placeholder="Enter price"
+              mb={4}
+            />
+            <Button
+              colorScheme="blue"
+              onClick={() => handleList(document.querySelector('input[name="price"]').value, artwork.tokenID)}
+            >
+              List on Market
+            </Button>
+          </FormControl>
           <CloseButton position="absolute" right="8px" top="8px" onClick={closeAlert} />
         </Alert>
       )}

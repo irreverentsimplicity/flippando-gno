@@ -41,6 +41,7 @@ export default function Market() {
       return null;
     }
   }
+  
   return (
     <div className={styles.container}>
       <Head>
