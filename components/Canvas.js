@@ -178,6 +178,30 @@ const Canvas = ({height, width}) => {
   return (
     <div className='flex items-center' style={{marginTop: 20, marginBottom: 20, flexDirection: 'column'}}>
             
+
+            <div className='flex justify-center items-center column' style={{flexDirection: 'column'}}>
+        
+        
+        <div style={{ 
+          display: 'inline-grid', 
+          gridTemplateColumns: `repeat(${width}, 1fr)`, 
+          gridTemplateRows: `repeat(${height}, 1fr)`, 
+          gridGap: '0px', 
+          border: '1px dashed #ccc' 
+        }}>
+          {canvas.map((nft, index) => (
+            <Square
+              key={index}
+              onClick={() => handleClick(index)}
+              isOccupied={nft.tokenId !== 0}
+              nft={nft}
+              onDrop={() => handleDrop(index)}
+            />
+          ))}
+        </div>
+
+      </div>
+
       <div style={{ marginRight: '20px' }}>
         
          <Box 
@@ -208,30 +232,7 @@ const Canvas = ({height, width}) => {
           }
         </Box>
       </div>
-      <div className='flex justify-center items-center column' style={{flexDirection: 'column'}}>
-        <div className='text-sm pt-3 pb-5 text-center' style={{width: '75%'}}>
-          Drag and drop tiles from above into your canvas below. Click on a tile in the canvas to remove it. When your canvas is full, click Make Art.
-        </div>
-        
-        <div style={{ 
-          display: 'inline-grid', 
-          gridTemplateColumns: `repeat(${width}, 1fr)`, 
-          gridTemplateRows: `repeat(${height}, 1fr)`, 
-          gridGap: '0px', 
-          border: '1px dashed #ccc' 
-        }}>
-          {canvas.map((nft, index) => (
-            <Square
-              key={index}
-              onClick={() => handleClick(index)}
-              isOccupied={nft.tokenId !== 0}
-              nft={nft}
-              onDrop={() => handleDrop(index)}
-            />
-          ))}
-        </div>
-
-      </div>
+      
     </div>
   );
 };

@@ -80,7 +80,11 @@ export default function Playground() {
       <div>
           <Canvas height={2} width={2}/>
       </div>
+      <div className='flex justify-center text-sm pt-3 pb-5 text-center' style={{width: '100%'}}>
+          Drag and drop tiles from above into the canvas at the top. Click on a tile in the canvas to remove it. When your canvas is full, click Make Art.
+        </div>
       <div  className="flex justify-center">
+      
       {!isArtMinted &&
       <button 
         disabled={false}
@@ -109,7 +113,6 @@ export default function Playground() {
     </div>
         <div className="col-span-5 pt-20">
             <Footer/>
-        
         </div>
     </div>
   );
