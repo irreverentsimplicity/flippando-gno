@@ -72,7 +72,7 @@ export default function Playground() {
 
 
     <div className="col-span-4">
-    <Box className="justify-end" borderBottom="1px solid white" mb={4}>
+        <Box className="justify-end" borderBottom="1px solid white" mb={4}>
           <Text fontSize="2xl" fontWeight="bold" textAlign="right" mb={4} mr={4}>
             Playground
           </Text>
@@ -80,10 +80,11 @@ export default function Playground() {
       <div>
           <Canvas height={2} width={2}/>
       </div>
-      <div className='flex justify-center text-sm pt-3 pb-5 text-center' style={{width: '100%'}}>
+      <div className='flex justify-center items-center text-sm pt-3 pb-5'>
           Drag and drop tiles from above into the canvas at the top. Click on a tile in the canvas to remove it. When your canvas is full, click Make Art.
-        </div>
-      <div  className="flex justify-center">
+      </div>
+
+      <div className="flex justify-center">
       
       {!isArtMinted &&
       <button 
