@@ -8,7 +8,7 @@ const MarketPlaceGrid = ({ listings }) => {
     <Grid templateColumns="repeat(3, 1fr)" gap={10}>
       {listings.map((listingData, index) => (
         <ListingCard key={index} 
-            artwork={listingData.tokenURI} 
+            artwork={listingData} 
             seller={listingData.seller} 
             price={listingData.price}
             numCols={2}/>

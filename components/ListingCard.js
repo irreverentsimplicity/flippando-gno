@@ -43,7 +43,7 @@ const ListingCard = ({ seller, price, artwork, numRows, numCols }) => {
       borderRadius="lg"
       overflow="hidden"
     >
-      {artwork === undefined &&
+      {artwork.artworkNFT === undefined &&
         <div style={{
         justifyContent: "center", alignItems: "center", display: 'flex', flexWrap: 'wrap', width: `${imageWidth}px` }}>
           <Spinner style={{backgroundColor: 'red'}} loadingText={'loading...'} />
@@ -56,11 +56,12 @@ const ListingCard = ({ seller, price, artwork, numRows, numCols }) => {
       </div>
       <Spacer />
       <VStack p="2">
-        <Text fontWeight="500" lineHeight="tight" isTruncated>
-          {price}
-        </Text>
-        <Text fontWeight="200" lineHeight="tight">{seller}</Text>
+        
+      <Text fontWeight="200" lineHeight="tight">by: {seller.substr(0, Math.floor((seller.length - 20) / 2)) + "..." + seller.substr(Math.ceil((seller.length + 20) / 2))}</Text>
         <HStack p="1" borderWidth="1px"borderRadius="full" borderColor="purple.200" bg="purple.200" width="100%" justifyContent="space-between">
+        <Text fontWeight="700" lineHeight="tight" color="black" isTruncated style={{marginLeft: 10}}>
+          {price} FLIP
+        </Text>
         <Button
           bg="purple.900"               
           color="white"               
@@ -68,13 +69,6 @@ const ListingCard = ({ seller, price, artwork, numRows, numCols }) => {
           borderRadius="full"
           onClick={handleButtonClick}         
         >Buy</Button>
-          <Button
-          bg="purple.900"               
-          color="white"               
-          _hover={{ bg: "blue.600"}}
-          borderRadius="full"   
-          onClick={handleButtonClick}           
-        >List</Button>
         </HStack>
       </VStack>
       {showAlert && (

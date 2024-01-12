@@ -9,16 +9,24 @@ import { Box, Text } from "@chakra-ui/react";
 import Wallet from "../components/Wallet";
 import Spinner from '../components/Spinner';
 import MarketPlaceGrid from "../components/MarketPlaceGrid";
+import { list } from 'postcss';
 
 export default function Market() {
 
   const userBalances = useSelector(state => state.flippando.userBalances);
+  const [enhancedNFTs, setEnhancedNFTs] = useState([]);
   const [listings, setListings] = useState([])
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     getListings();
   }, []);
+
+  useEffect( () => {
+    if(listings.length > 0 && enhancedNFTs.length === 0){
+      fetchArtworkNFTsForAll(listings);
+    }
+  }, [enhancedNFTs, listings])
 
   const getListings = async () => {
     const actions = await Actions.getInstance();
@@ -41,7 +49,35 @@ export default function Market() {
       return null;
     }
   }
+
+  const fetchArtworkNFTsForAll = async (compositeNFTs) => {
+    const actions = await Actions.getInstance();
+    const compositeNFTsWithArtwork = [];
   
+    for (const compositeNFT of compositeNFTs) {
+      console.log('compositeNFT', compositeNFT)
+      const bTokenIds = JSON.stringify(compositeNFT.tokenURI.bTokenIDs);
+      console.log('bTokenIds ', bTokenIds )
+      try {
+        const response = await actions.getArtworkNFTs(bTokenIds);
+        const parsedResponse = JSON.parse(response);
+        if (!parsedResponse.error) {
+          compositeNFTsWithArtwork.push({
+            ...compositeNFT,
+            artworkNFT: parsedResponse.userNFTs
+          });
+        } else {
+          compositeNFTsWithArtwork.push(compositeNFT);
+        }
+      } catch (error) {
+        console.error('Error retrieving basic NFTs for composite NFT:', error);
+        compositeNFTsWithArtwork.push(compositeNFT);
+      }
+    }
+    setEnhancedNFTs(compositeNFTsWithArtwork);
+    setListings([])
+  };
+
   return (
     <div className={styles.container}>
       <Head>
@@ -72,6 +108,9 @@ export default function Market() {
         <div className="col-span-4 flex justify-start">  
         {(listings.length !== 0 && !isLoading) &&
           <MarketPlaceGrid listings={listings} />
+        }
+        {(enhancedNFTs.length !== 0) &&
+          <MarketPlaceGrid listings={enhancedNFTs} />
         }
       </div>
     </div>
