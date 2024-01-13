@@ -3,7 +3,7 @@ import { Grid } from '@chakra-ui/react';
 import ArtCard from './ArtCard';
 
 const ArtGridLayout = ({ cards }) => {
-    console.log("cards in ArtGridLayout ", JSON.stringify(cards))
+    //console.log("cards in ArtGridLayout ", JSON.stringify(cards))
   return (
     <Grid templateColumns="repeat(3, 1fr)" gap={10}>
       {cards.map((cardData, index) => (

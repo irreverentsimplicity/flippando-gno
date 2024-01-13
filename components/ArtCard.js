@@ -89,14 +89,14 @@ const ArtCard = ({ title, text, artwork, numRows, numCols }) => {
           {title}
         </Text>
         <Text fontWeight="200" lineHeight="tight">{text}</Text>
-        <HStack p="1" borderWidth="1px"borderRadius="full" borderColor="purple.200" bg="purple.200" width="100%" justifyContent="space-between">
-        <Button
+        <HStack p="1" borderWidth="1px"borderRadius="full" borderColor="purple.200" bg="purple.200" width="100%" justifyContent="end">
+        {/*<Button
           bg="purple.900"               
           color="white"               
           _hover={{ bg: "blue.600"}}
           borderRadius="full"
           onClick={handleButtonClick}         
-        >Transfer</Button>
+        >Transfer</Button>*/}
         {!isListing &&
             <Button
             bg="purple.900"               
@@ -107,7 +107,13 @@ const ArtCard = ({ title, text, artwork, numRows, numCols }) => {
           >List</Button>
         }
         {isListing &&
-          <Spinner />
+          <Button
+          bg="purple.900"               
+          color="white"               
+          _hover={{ bg: "blue.600"}}
+          borderRadius="full"   
+          disabled={true}          
+        >Listing...</Button>
         }
         
         </HStack>

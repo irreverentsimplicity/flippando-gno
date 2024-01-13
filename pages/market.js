@@ -17,12 +17,15 @@ export default function Market() {
   const [enhancedNFTs, setEnhancedNFTs] = useState([]);
   const [listings, setListings] = useState([])
   const [isLoading, setIsLoading] = useState(true)
+  const [playerAddress, setPlayerAddress] = useState()
 
   useEffect(() => {
+    getPlayerAddress();
     getListings();
   }, []);
 
   useEffect( () => {
+    getPlayerAddress();
     if(listings.length > 0 && enhancedNFTs.length === 0){
       fetchArtworkNFTsForAll(listings);
     }
@@ -50,14 +53,20 @@ export default function Market() {
     }
   }
 
+  const getPlayerAddress = async() => {
+    const actions = await Actions.getInstance();
+    const playerAddress = await actions.getWalletAddress();
+    setPlayerAddress(playerAddress);
+  }
+
   const fetchArtworkNFTsForAll = async (compositeNFTs) => {
     const actions = await Actions.getInstance();
     const compositeNFTsWithArtwork = [];
   
     for (const compositeNFT of compositeNFTs) {
-      console.log('compositeNFT', compositeNFT)
+      //console.log('compositeNFT', compositeNFT)
       const bTokenIds = JSON.stringify(compositeNFT.tokenURI.bTokenIDs);
-      console.log('bTokenIds ', bTokenIds )
+      //console.log('bTokenIds ', bTokenIds )
       try {
         const response = await actions.getArtworkNFTs(bTokenIds);
         const parsedResponse = JSON.parse(response);
@@ -107,10 +116,10 @@ export default function Market() {
           }
         <div className="col-span-4 flex justify-start">  
         {(listings.length !== 0 && !isLoading) &&
-          <MarketPlaceGrid listings={listings} />
+          <MarketPlaceGrid listings={listings} playerAddress={playerAddress}/>
         }
         {(enhancedNFTs.length !== 0) &&
-          <MarketPlaceGrid listings={enhancedNFTs} />
+          <MarketPlaceGrid listings={enhancedNFTs} playerAddress={playerAddress}/>
         }
       </div>
     </div>

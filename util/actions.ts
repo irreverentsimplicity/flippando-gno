@@ -450,10 +450,10 @@ class Actions {
   async RemoveNFTListing(
     compositeTokenId: string,
     seller: string,): Promise<any> {
-    const response = await this.callMethod('RemoveNFTListing', [
+    const response = await this.callMethod('RemoveMarketplaceNFT', [
       compositeTokenId, seller, 
     ]);
-    console.log("actions RemoveNFTListing response ", JSON.stringify(response))
+    console.log("actions RemoveListing response ", JSON.stringify(response))
     return response;
   }  
 

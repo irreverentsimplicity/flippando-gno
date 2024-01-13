@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Text, VStack, HStack, Button, Spacer, Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton } from "@chakra-ui/react";
 import Spinner from './Spinner';
+import Actions from '../util/actions';
 
 const ArtSmallTile = ({ size, artNFT, tokenID }) => {
-  console.log("svgData", JSON.stringify(artNFT))
+  //console.log("svgData", JSON.stringify(artNFT))
   return (
     <div style={{
       display: "flex",
@@ -19,10 +20,12 @@ const ArtSmallTile = ({ size, artNFT, tokenID }) => {
   );
 };
 
-const ListingCard = ({ seller, price, artwork, numRows, numCols }) => {
+const ListingCard = ({ seller, playerAddress, price, artwork, numCols }) => {
   const imageWidth = 300; // Fixed image width
   const tileSize = imageWidth / numCols; 
-
+  
+  console.log("seller ", seller);
+  console.log("playerAddress ", playerAddress);
   const [showAlert, setShowAlert] = useState(false);
   const handleButtonClick = () => {
     setShowAlert(true);
@@ -30,6 +33,21 @@ const ListingCard = ({ seller, price, artwork, numRows, numCols }) => {
 
   const closeAlert = () => {
     setShowAlert(false);
+  };
+
+  const handleRemoveListing = async () => {
+    console.log("remove listing call")
+    const actions = await Actions.getInstance();
+        
+    try {
+        actions.RemoveNFTListing(artwork.tokenID, seller).then((response) => {
+        console.log("removeNFTListing response in ListingCard.js", response);
+        });
+    } catch (error) {
+        console.error('Error removing listing:', error);
+        return null;
+    }
+      
   };
 
   return (
@@ -62,6 +80,7 @@ const ListingCard = ({ seller, price, artwork, numRows, numCols }) => {
         <Text fontWeight="700" lineHeight="tight" color="black" isTruncated style={{marginLeft: 10}}>
           {price} FLIP
         </Text>
+        {seller !== playerAddress &&
         <Button
           bg="purple.900"               
           color="white"               
@@ -69,6 +88,16 @@ const ListingCard = ({ seller, price, artwork, numRows, numCols }) => {
           borderRadius="full"
           onClick={handleButtonClick}         
         >Buy</Button>
+        }
+        {seller === playerAddress &&
+        <Button
+          bg="purple.900"               
+          color="white"               
+          _hover={{ bg: "blue.600"}}
+          borderRadius="full"
+          onClick={handleRemoveListing}      
+        >Remove Listing</Button>
+        }
         </HStack>
       </VStack>
       {showAlert && (

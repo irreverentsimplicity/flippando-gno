@@ -24,7 +24,6 @@ const FlippandoNFTs = () => {
     getArtwork();
   }, []);
 
-  
   useEffect( () => {
     if(ownedNFTs.length > 0 && enhancedNFTs.length === 0){
       fetchArtworkNFTsForAll(ownedNFTs);
@@ -41,11 +40,37 @@ const FlippandoNFTs = () => {
       actions.getUserCompositeNFTs(playerAddress,).then((response) => {
         console.log("getUserCompositeNFTs response in my-art.js", response);
         let parsedResponse = JSON.parse(response);
-        //console.log("getUserCompositeNFTs parseResponse", parsedResponse)
+        console.log("getUserCompositeNFTs parseResponse", parsedResponse)
         if(parsedResponse.error === undefined){
-          //fetchArtworkNFTsForAll(parsedResponse.userNFTs);
-          setOwnedNFTs(parsedResponse.userNFTs)
-          setIsLoading(false)
+          let allCompositeNFTs = parsedResponse.userNFTs;
+          let userListings = [];
+          // get listings and filter
+          try {
+            console.log("getListings")
+            actions.getMarketPlaceListings().then((response) => {
+              console.log("getListings response in art.js", response);
+              let parsedResponse = JSON.parse(response);
+              //console.log("getListings parseResponse", parsedResponse)
+              if(parsedResponse.error === undefined){
+                userListings = parsedResponse.marketplaceListings;
+
+                if (userListings.length != 0){
+                  const filteredCompositeNFTs = allCompositeNFTs.filter(nft => 
+                    !userListings.some(listing => listing.tokenID === nft.tokenID)
+                  );
+                  setOwnedNFTs(filteredCompositeNFTs);
+                  setIsLoading(false)
+                }
+                else {
+                  setOwnedNFTs(allCompositeNFTs);
+                  setIsLoading(false)
+                }
+              }
+            });
+          } catch (error) {
+            console.error('Error retrieving Artwork:', error);
+          }
+          
         }
       });
     } catch (error) {
@@ -79,8 +104,6 @@ const FlippandoNFTs = () => {
     setEnhancedNFTs(compositeNFTsWithArtwork);
     setOwnedNFTs([])
   };
-  
-  
 
   return (
 

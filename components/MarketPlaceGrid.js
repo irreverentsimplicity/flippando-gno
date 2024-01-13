@@ -2,7 +2,7 @@
 import { Grid } from '@chakra-ui/react';
 import ListingCard from './ListingCard';
 
-const MarketPlaceGrid = ({ listings }) => {
+const MarketPlaceGrid = ({ listings, playerAddress }) => {
     console.log("cards in MarketPlaceGrid ", JSON.stringify(listings))
   return (
     <Grid templateColumns="repeat(3, 1fr)" gap={10}>
@@ -10,6 +10,7 @@ const MarketPlaceGrid = ({ listings }) => {
         <ListingCard key={index} 
             artwork={listingData} 
             seller={listingData.seller} 
+            playerAddress={playerAddress}
             price={listingData.price}
             numCols={2}/>
       ))}

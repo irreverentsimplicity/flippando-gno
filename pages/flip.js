@@ -34,7 +34,7 @@ import Hexagram1 from "./assets/hexagrams/hexagram1.svg";
 import Hexagram2 from "./assets/hexagrams/hexagram2.svg";
 import Hexagram4 from "./assets/hexagrams/hexagram4.svg";
 import Hexagram6 from "./assets/hexagrams/hexagram6.svg";
-//import logo from "./assets/flippando-logo.jpg";
+import { Text } from '@chakra-ui/react';
 import SmallTile from "../components/SmallTile";
 import Menu from "../components/Menu";
 import Header from "../components/Header";
@@ -76,6 +76,7 @@ export default function Home() {
 
   useEffect( () => {
     getGNOTBalances();
+    fetchUserFLIPBalances();
     fetchUserNFTs();
   }, [userBasicNFTs])
 
@@ -92,7 +93,6 @@ export default function Home() {
         if(parsedResponse.userNFTs !== undefined && parsedResponse.userNFTs.length !== 0){  
            //setNfts(parsedResponse.userNFTs)
            dispatch(setUserBasicNFTs(parsedResponse.userNFTs))
-           fetchUserFLIPBalances()
         }
       });
     } catch (err) {
@@ -149,6 +149,20 @@ export default function Home() {
     }
     console.log("newArray after update ", JSON.stringify(newArray, null, 2))
     setLevel1Board(newArray);
+  };
+
+  const updateLevel2Board = () => {
+    let newArray = [...level1Board]; 
+    console.log("newArray ", JSON.stringify(newArray, null, 2))
+    const zeroIndex = newArray.indexOf(0);
+  
+    if (zeroIndex !== -1) {
+      newArray[zeroIndex] = 1;
+    } else {
+      newArray.push(1);
+    }
+    console.log("newArray after update ", JSON.stringify(newArray, null, 2))
+    setLevel2Board(newArray);
   };
 
   async function createNewGame(gameLevel, typeOfGame) {
@@ -412,7 +426,13 @@ export default function Home() {
         console.log("parseResponse", parsedResponse)
         if(parsedResponse.error === undefined){
           setGameStatus("Board minted. Flippando is now in an undefined state.")
-          updateLevel1Board()
+          if(gameLevel === 16){
+            updateLevel1Board()
+          }
+          if(gameLevel === 64){
+            updateLevel2Board()
+          }
+          
           fetchUserNFTs()
           
         }
@@ -510,7 +530,7 @@ export default function Home() {
           console.log("totalUnsolvedTiles after turn " + totalUnsolvedTiles);
           console.log("totalUncoveredTiles after turn " + totalUncoveredTiles);
           console.log("solvedTiles after turn " + currentSolvedTiles);
-          if (tileMatrixCopy.length - currentSolvedTiles > maxNum) {
+          if (tileMatrixCopy.length - currentSolvedTiles > Math.sqrt(gameLevel)) {
             setGameStatus("Flippando deployed, id: " + currentGameId);
           } else if (tileMatrixCopy.length - currentSolvedTiles != 0) {
             // we may or may not reset the last tiles
@@ -552,17 +572,26 @@ export default function Home() {
 
   const renderLevels = (levels) => {
     let levelsBoard = [];
+    let level1NFTs, level2NFTs;
+    if(userBasicNFTs !== undefined && userBasicNFTs.length !== 0) {
+      level1NFTs = userBasicNFTs.filter(item => item.gameLevel === "16");
+      level2NFTs = userBasicNFTs.filter(item => item.gameLevel === "64");
+    }
     let i = 0;
     if (levels === 1) {
       levelsBoard = level1Board;
-      if(userBasicNFTs !== undefined && userBasicNFTs.length !== 0) {
-      //if (nfts.length !== 0) {
-        for (i = 0; i < userBasicNFTs.length; i++) {
-          levelsBoard[i] = userBasicNFTs[i];
+      if(level1NFTs !== undefined && level1NFTs.length !== 0) {
+        for (i = 0; i < level1NFTs.length; i++) {
+          levelsBoard[i] = level1NFTs[i];
         }
       }
     } else if (levels === 2) {
       levelsBoard = level2Board;
+      if(level2NFTs !== undefined && level2NFTs.length !== 0) {
+          for (i = 0; i < level2NFTs.length; i++) {
+            levelsBoard[i] = level2NFTs[i];
+          }
+        }
     }
     
     return levelsBoard.map((value, index) => {
@@ -924,142 +953,188 @@ export default function Home() {
           <div className="col-span-3 flex flex-col items-center pt-10">
             {gameStatus.includes("undefined") && 
             (
-            <div className="mb-4 w-full flex justify-center items-center">
-            
-            {gameTileTypes.map((gameTypeChoice, index) => (
-              <div key={index}>
-                {gameTypeChoice === "squareGrid" && (
-                  <a href="#" onClick={() => selectGameTileType(gameTypeChoice)}>
-                    <div
+              <div>
+                <Text fontSize="1xs" fontWeight="bold" textAlign="center" color="white">tile type</Text>
+              <div className="mb-4 w-full flex justify-center items-center">
+              
+                {gameTileTypes.map((gameTypeChoice, index) => (
+                  <div key={index}>
+                    {gameTypeChoice === "squareGrid" && (
+                      <a href="#" onClick={() => selectGameTileType(gameTypeChoice)}>
+                        <div
+                          className={`${
+                            gameTileType === gameTypeChoice
+                              ? "flex justify-center p-2 m-2 rounded-lg shadow-lg bg-gray-100"
+                              : "flex justify-center p-2 m-2 rounded-lg bg-gray-500"
+                          }`}
+                        >
+                          <div className="grid grid-cols-2 gap-2">
+                            <Color1 width={28} height={28} />
+                            <Color5 width={28} height={28} />
+                            <Color9 width={28} height={28} />
+                            <Color14 width={28} height={28} />
+                          </div>
+                        </div>
+                      </a>
+                    )}
+                    {gameTypeChoice === "dice" && (
+                      <a href="#" onClick={() => selectGameTileType(gameTypeChoice)}>
+                        <div
+                          className={`${
+                            gameTileType === gameTypeChoice
+                              ? "flex justify-center p-2 m-2 rounded-lg shadow-lg bg-gray-100"
+                              : "flex justify-center p-2 m-2 rounded-lg bg-gray-500"
+                          }`}
+                        >
+                          <div className="grid grid-cols-2 gap-2">
+                            <Dice4 width={28} height={28} />
+                            <Dice3 width={28} height={28} />
+                            <Dice6 width={28} height={28} />
+                            <Dice5 width={28} height={28} />
+                          </div>
+                        </div>
+                      </a>
+                    )}
+                    {gameTypeChoice === "hexagrams" && (
+                      <a href="#" onClick={() => selectGameTileType(gameTypeChoice)}>
+                        <div
+                          className={`${
+                            gameTileType === gameTypeChoice
+                              ? "flex justify-center p-2 m-2 rounded-lg shadow-lg bg-gray-100"
+                              : "flex justify-center p-2 m-2 rounded-lg bg-gray-500"
+                          }`}
+                        >
+                          <div className="grid grid-cols-2 gap-4">
+                            <Hexagram2 width={24} height={24} />
+                            <Hexagram4 width={24} height={24} />
+                            <Hexagram1 width={24} height={24} />
+                            <Hexagram6 width={24} height={24} />
+                          </div>
+                        </div>
+                      </a>
+                    )}
+                    {gameTypeChoice === "greyGradient" && (
+                      <a href="#" onClick={() => selectGameTileType(gameTypeChoice)}>
+                        <div
+                          className={`${
+                            gameTileType === gameTypeChoice
+                              ? "flex justify-center p-2 m-2 rounded-lg shadow-lg bg-gray-100"
+                              : "flex justify-center p-2 m-2 rounded-lg bg-gray-500"
+                          }`}
+                        >
+                          <div className="grid grid-cols-2 gap-2">
+                            <Grey1 width={28} height={28} />
+                            <Grey5 width={28} height={28} />
+                            <Grey7 width={28} height={28} />
+                            <Grey3 width={28} height={28} />
+                          </div>
+                        </div>
+                      </a>
+                    )}
+                    {gameTypeChoice === "redGradient" && (
+                      <a href="#" onClick={() => selectGameTileType(gameTypeChoice)}>
+                        <div
+                          className={`${
+                            gameTileType === gameTypeChoice
+                              ? "flex justify-center p-2 m-2 rounded-lg shadow-lg bg-gray-100"
+                              : "flex justify-center p-2 m-2 rounded-lg bg-gray-500"
+                          }`}
+                        >
+                          <div className="grid grid-cols-2 gap-2">
+                            <Red1 width={28} height={28} />
+                            <Red5 width={28} height={28} />
+                            <Red7 width={28} height={28} />
+                            <Red3 width={28} height={28} />
+                          </div>
+                        </div>
+                      </a>
+                    )}
+                    {gameTypeChoice === "greenGradient" && (
+                      <a href="#" onClick={() => selectGameTileType(gameTypeChoice)}>
+                        <div
+                          className={`${
+                            gameTileType === gameTypeChoice
+                              ? "flex justify-center p-2 m-2 rounded-lg shadow-lg bg-gray-100"
+                              : "flex justify-center p-2 m-2 rounded-lg bg-gray-500"
+                          }`}
+                        >
+                          <div className="grid grid-cols-2 gap-2">
+                            <Green2 width={28} height={28} />
+                            <Green6 width={28} height={28} />
+                            <Green8 width={28} height={28} />
+                            <Green4 width={28} height={28} />
+                          </div>
+                        </div>
+                      </a>
+                    )}
+                    {gameTypeChoice === "blueGradient" && (
+                      <a href="#" onClick={() => selectGameTileType(gameTypeChoice)}>
+                        <div
+                          className={`${
+                            gameTileType === gameTypeChoice
+                              ? "flex justify-center p-2 m-2 rounded-lg shadow-lg bg-gray-100"
+                              : "flex justify-center p-2 m-2 rounded-lg bg-gray-500"
+                          }`}
+                        >
+                          <div className="grid grid-cols-2 gap-2">
+                            <Blue7 width={28} height={28} />
+                            <Blue3 width={28} height={28} />
+                            <Blue1 width={28} height={28} />
+                            <Blue5 width={28} height={28} />
+                          </div>
+                        </div>
+                      </a>
+                    )}
+                  </div>
+                ))}
+                
+              </div>
+              <Text fontSize="1xs" fontWeight="bold" textAlign="center" color="white">board size</Text>
+                <div className="mb-4 w-full flex justify-center items-center">
+                  
+                
+                  <a href="#" onClick={() => handleGameLevelChange(16)}>
+                  <div
                       className={`${
-                        gameTileType === gameTypeChoice
-                          ? "flex justify-center p-2 m-2 rounded-lg shadow-lg bg-gray-300"
-                          : "flex justify-center p-2 m-2 rounded-lg bg-gray-100"
+                        gameLevel === 16
+                          ? "flex justify-center p-3 m-2 rounded-lg shadow-lg bg-gray-100 w-20"
+                          : "flex justify-center p-3 m-2 rounded-lg bg-gray-500 w-20"
                       }`}
                     >
-                      <div className="grid grid-cols-2 gap-2">
-                        <Color1 width={28} height={28} />
-                        <Color5 width={28} height={28} />
-                        <Color9 width={28} height={28} />
-                        <Color14 width={28} height={28} />
+                      <div>
+                        <Text fontSize="3xl" fontWeight="bold" textAlign="center" color="black">
+                          16
+                        </Text>
+                        <Text fontSize="4xs" fontWeight="normal" textAlign="center" color="black">
+                          tiles
+                        </Text>
                       </div>
                     </div>
                   </a>
-                )}
-                {gameTypeChoice === "dice" && (
-                  <a href="#" onClick={() => selectGameTileType(gameTypeChoice)}>
+                
+                
+                  <a href="#" onClick={() => handleGameLevelChange(64)}>
                     <div
                       className={`${
-                        gameTileType === gameTypeChoice
-                          ? "flex justify-center p-2 m-2 rounded-lg shadow-lg bg-gray-300"
-                          : "flex justify-center p-2 m-2 rounded-lg bg-gray-100"
+                        gameLevel === 64
+                          ? "flex justify-center p-3 m-2 rounded-lg shadow-lg bg-gray-100 w-20"
+                          : "flex justify-center p-3 m-2 rounded-lg bg-gray-500 w-20"
                       }`}
                     >
-                      <div className="grid grid-cols-2 gap-2">
-                        <Dice4 width={28} height={28} />
-                        <Dice3 width={28} height={28} />
-                        <Dice6 width={28} height={28} />
-                        <Dice5 width={28} height={28} />
+                      <div>
+                        <Text fontSize="3xl" fontWeight="bold" textAlign="center" color="black">
+                          64
+                        </Text>
+                        <Text fontSize="4xs" fontWeight="normal" textAlign="center" color="black">
+                          tiles
+                        </Text>
                       </div>
                     </div>
                   </a>
-                )}
-                {gameTypeChoice === "hexagrams" && (
-                  <a href="#" onClick={() => selectGameTileType(gameTypeChoice)}>
-                    <div
-                      className={`${
-                        gameTileType === gameTypeChoice
-                          ? "flex justify-center p-2 m-2 rounded-lg shadow-lg bg-gray-300"
-                          : "flex justify-center p-2 m-2 rounded-lg bg-gray-100"
-                      }`}
-                    >
-                      <div className="grid grid-cols-2 gap-4">
-                        <Hexagram2 width={24} height={24} />
-                        <Hexagram4 width={24} height={24} />
-                        <Hexagram1 width={24} height={24} />
-                        <Hexagram6 width={24} height={24} />
-                      </div>
-                    </div>
-                  </a>
-                )}
-                  {gameTypeChoice === "greyGradient" && (
-                    <a href="#" onClick={() => selectGameTileType(gameTypeChoice)}>
-                      <div
-                        className={`${
-                          gameTileType === gameTypeChoice
-                            ? "flex justify-center p-2 m-2 rounded-lg shadow-lg bg-gray-300"
-                            : "flex justify-center p-2 m-2 rounded-lg bg-gray-100"
-                        }`}
-                      >
-                        <div className="grid grid-cols-2 gap-2">
-                          <Grey1 width={28} height={28} />
-                          <Grey5 width={28} height={28} />
-                          <Grey7 width={28} height={28} />
-                          <Grey3 width={28} height={28} />
-                        </div>
-                      </div>
-                    </a>
-                  )}
-                  {gameTypeChoice === "redGradient" && (
-                    <a href="#" onClick={() => selectGameTileType(gameTypeChoice)}>
-                      <div
-                        className={`${
-                          gameTileType === gameTypeChoice
-                            ? "flex justify-center p-2 m-2 rounded-lg shadow-lg bg-gray-300"
-                            : "flex justify-center p-2 m-2 rounded-lg bg-gray-100"
-                        }`}
-                      >
-                        <div className="grid grid-cols-2 gap-2">
-                          <Red1 width={28} height={28} />
-                          <Red5 width={28} height={28} />
-                          <Red7 width={28} height={28} />
-                          <Red3 width={28} height={28} />
-                        </div>
-                      </div>
-                    </a>
-                  )}
-
-                  {gameTypeChoice === "greenGradient" && (
-                    <a href="#" onClick={() => selectGameTileType(gameTypeChoice)}>
-                      <div
-                        className={`${
-                          gameTileType === gameTypeChoice
-                            ? "flex justify-center p-2 m-2 rounded-lg shadow-lg bg-gray-300"
-                            : "flex justify-center p-2 m-2 rounded-lg bg-gray-100"
-                        }`}
-                      >
-                        <div className="grid grid-cols-2 gap-2">
-                          <Green2 width={28} height={28} />
-                          <Green6 width={28} height={28} />
-                          <Green8 width={28} height={28} />
-                          <Green4 width={28} height={28} />
-                        </div>
-                      </div>
-                    </a>
-                  )}
-
-                  {gameTypeChoice === "blueGradient" && (
-                    <a href="#" onClick={() => selectGameTileType(gameTypeChoice)}>
-                      <div
-                        className={`${
-                          gameTileType === gameTypeChoice
-                            ? "flex justify-center p-2 m-2 rounded-lg shadow-lg bg-gray-300"
-                            : "flex justify-center p-2 m-2 rounded-lg bg-gray-100"
-                        }`}
-                      >
-                        <div className="grid grid-cols-2 gap-2">
-                          <Blue7 width={28} height={28} />
-                          <Blue3 width={28} height={28} />
-                          <Blue1 width={28} height={28} />
-                          <Blue5 width={28} height={28} />
-                        </div>
-                      </div>
-                    </a>
-                  )}
+                
                 </div>
-            ))}
-            </div>
-          )}
+              </div>
+            )}
         </div>
                   
         
