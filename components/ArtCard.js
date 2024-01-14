@@ -43,7 +43,7 @@ const ArtCard = ({ title, text, artwork, numRows, numCols }) => {
       try {
         actions.ListNFT(tokenId, seller, price).then((response) => {
           console.log("ListNFT response in ArtCard.js", response);
-          let parsedResponse = JSON.parse(response);
+          //let parsedResponse = JSON.parse(response);
           //console.log("getUserCompositeNFTs parseResponse", parsedResponse)
           if(parsedResponse.error === undefined){
             setIsListing(false)

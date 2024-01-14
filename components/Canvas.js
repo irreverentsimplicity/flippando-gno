@@ -71,7 +71,7 @@ const GridItem = ({ onDragStart, nft }) => {
   );
 };
 
-const Canvas = ({height, width}) => {
+const Canvas = ({height, width, isArtMinted}) => {
     const placeHolderNFT = {tokenId: 0, metadata: {image: 'i'}};
     const [sourceGrid, setSourceGrid] = useState([]);
     const [canvas, setCanvas] = useState(Array(height*width).fill(placeHolderNFT));
@@ -117,6 +117,42 @@ const Canvas = ({height, width}) => {
     
         fetchNFTs();;
       }, []);
+
+    useEffect( () => {
+      if (isArtMinted) {
+        const fetchNFTs = async () => {
+        setIsLoading(true);
+
+          const actions = await Actions.getInstance();
+          const playerAddress = await actions.getWalletAddress();
+          try {
+            actions.getAllNFTs(playerAddress).then((response) => {
+              console.log("getAllNFTS response in Canvas", response);
+              let parsedResponse = JSON.parse(response);
+              console.log("parseResponse", parsedResponse)
+              if(parsedResponse.userNFTs !== undefined && parsedResponse.userNFTs.length !== 0){
+                  let nftData = []
+                  parsedResponse.userNFTs.map((nftItem) => {
+                    nftData.push({
+                      tokenId: nftItem.tokenId,
+                      metadata: nftItem,
+                    })
+                  })
+                
+                if(nftData.length !== 0){
+                  setSourceGrid(nftData);
+                }
+                
+              }
+              setIsLoading(false);
+            });
+          } catch (err) {
+            console.log("error in calling getAllNFTs", err);
+          }
+        }
+        fetchNFTs()
+      }
+    }, [isArtMinted])
 
   const handleDrop = (index) => {
     const updatedCanvas = [...canvas];

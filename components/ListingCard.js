@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Text, VStack, HStack, Button, Spacer, Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton } from "@chakra-ui/react";
+import {
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    ModalCloseButton,
+    useDisclosure,
+  } from '@chakra-ui/react'
+import { Box, Text, VStack, HStack, Button, Spacer } from "@chakra-ui/react";
 import Spinner from './Spinner';
 import Actions from '../util/actions';
 
@@ -26,13 +36,27 @@ const ListingCard = ({ seller, playerAddress, price, artwork, numCols }) => {
   
   console.log("seller ", seller);
   console.log("playerAddress ", playerAddress);
-  const [showAlert, setShowAlert] = useState(false);
-  const handleButtonClick = () => {
-    setShowAlert(true);
-  };
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  
+  const OverlayModal = () => (
+    <ModalOverlay
+      bg='blackAlpha.300'
+      backdropFilter='blur(10px) hue-rotate(90deg)'
+    />
+  )
 
-  const closeAlert = () => {
-    setShowAlert(false);
+  const handleBuyClick = async () => {
+    console.log("buy listing call")
+    const actions = await Actions.getInstance();
+        
+    try {
+        actions.BuyNFT(playerAddress, artwork.tokenID).then((response) => {
+        console.log("buyNFT response in ListingCard.js", response);
+        });
+    } catch (error) {
+        console.error('Error buying listing:', error);
+        
+    };
   };
 
   const handleRemoveListing = async () => {
@@ -86,7 +110,7 @@ const ListingCard = ({ seller, playerAddress, price, artwork, numCols }) => {
           color="white"               
           _hover={{ bg: "blue.600"}}
           borderRadius="full"
-          onClick={handleButtonClick}         
+          onClick={onOpen}         
         >Buy</Button>
         }
         {seller === playerAddress &&
@@ -100,30 +124,28 @@ const ListingCard = ({ seller, playerAddress, price, artwork, numCols }) => {
         }
         </HStack>
       </VStack>
-      {showAlert && (
-        <Alert 
-        status="info"
-        variant="solid"
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="center"
-        textAlign="center"
-        position="fixed" // or "absolute" depending on your layout
-        top="50%"
-        left="50%"
-        width="300px"
-        transform="translate(-50%, -50%)"
-        zIndex="999">
-          <AlertIcon boxSize="40px" mr={0} />
-          <AlertTitle mt={4} mb={1} fontSize="lg">
-            Coming soon!
-          </AlertTitle>
-          <AlertDescription maxWidth="sm">
-            We&aposre working on this.
-          </AlertDescription>
-          <CloseButton position="absolute" right="8px" top="8px" onClick={closeAlert} />
-        </Alert>
-      )}
+      {onOpen &&
+        <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader color={'black'}>Let's go!</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text color='black'>You will pay {price} FLIP for this NFT.</Text>
+            <Text fontSize="1xs" color='black'>A random percentage of the price sale, between 1% and 50% will be burned.</Text>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme='blue' mr={3} onClick={handleBuyClick}>
+              Buy
+            </Button>
+            <Button colorScheme='red' mr={3} onClick={onClose}>
+                Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      }
     </Box>
     </div>
   );

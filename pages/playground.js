@@ -78,7 +78,7 @@ export default function Playground() {
           </Text>
         </Box>
       <div>
-          <Canvas height={2} width={2}/>
+          <Canvas height={2} width={2} isArtMinted={isArtMinted}/>
       </div>
       <div className='flex justify-center items-center text-sm pt-3 pb-5'>
           Drag and drop tiles from above into the canvas at the top. Click on a tile in the canvas to remove it. When your canvas is full, click Make Art.

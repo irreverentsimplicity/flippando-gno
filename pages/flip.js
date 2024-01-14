@@ -1141,11 +1141,11 @@ export default function Home() {
         </div>
         {/* levels */}
         <div>
-           <p className="bold text-lg pb-2 pt-4">Level 1</p>
+           <p className="bold text-lg pb-2 pt-4">16 tiles flips</p>
             <div className="grid w-4/5 gap-y-2 gap-2 px-0 mx-0 pr-0 mr-0 grid-cols-4 grid-rows-2">
               {renderLevels(1)}
             </div>
-            <p className="bold text-lg pb-2 pt-4">Level 2</p>
+            <p className="bold text-lg pb-2 pt-4">64 tiles flips</p>
             <div className="grid w-4/5 gap-y-2 px-0 mx-0 pr-0 mr-0 grid-cols-4 grid-rows-4">
               {renderLevels(2)}
             </div>
