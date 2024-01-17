@@ -64,6 +64,9 @@ export default function Tutorial() {
           - full game management (recover and replay interrupted games)
           </Text>
           <Text fontSize="lg" textAlign="left" mt={4} mb={4}>
+          - VFR integration
+          </Text>
+          <Text fontSize="lg" textAlign="left" mt={4} mb={4}>
           - Adena integration and faucet improvements
           </Text>
           <Text fontSize="lg" textAlign="left" mt={4} mb={4}>
