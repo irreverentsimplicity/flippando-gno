@@ -26,8 +26,8 @@ export default function Tutorial() {
         </div>
 
 
-    <div className="col-span-4">
-        <Box className="justify-end" borderBottom="1px solid white" mb={4}>
+    <div className="col-span-4 mr-12 ml-12">
+        <Box className="justify-end" borderBottom="1px solid white" mb={4} >
           <Text fontSize="2xl" fontWeight="bold" textAlign="right" mb={4} mr={4}>
             Flippando - How it works?
           </Text>

@@ -56,7 +56,8 @@ const Menu = () => {
         <MenuItem href="/playground">Playground</MenuItem>
         <MenuItem href="/my-art">My Art</MenuItem>
         <MenuItem href="/market">Market</MenuItem>
-        <MenuItem href="/docs">What's this</MenuItem>
+        <MenuItem href="/docs">What is Flippando</MenuItem>
+        <MenuItem href="/roadmap">Roadmap</MenuItem>
       </VStack>
       <Spacer/>
       <a href={'https://twitter.com/Flippand0'} target="_blank" rel="noopener noreferrer">
