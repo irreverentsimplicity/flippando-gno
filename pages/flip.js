@@ -46,6 +46,7 @@ export default function Home() {
   const [gnoAddress, setGnoAddress] = useState();
   const [positions, setPositions] = useState([]);
   const [remainingTiles, setRemainingTiles] = useState([]);
+  const [userGames, setUserGames] = useState([]);
   const [cleanupEvent, setCleanupEvent] = useState(false);
   const [tileMatrix, setTileMatrix] = useState(Array(4 * 4).fill(0));
   const [uncoveredTileMatrix, setUncoveredTileMatrix] = useState(
@@ -75,10 +76,16 @@ export default function Home() {
 
 
   useEffect( () => {
+    getUserGamesByStatus();
     getGNOTBalances();
     fetchUserFLIPBalances();
     fetchUserNFTs();
+    
   }, [userBasicNFTs])
+
+  /*useEffect( () => {
+    getUserGamesByStatus();
+  }, [])*/
 
   const fetchUserNFTs = async () => {
     let userNFTs = [];
@@ -136,6 +143,24 @@ export default function Home() {
       console.log("error in calling fetchUserFLIPBalances", err);
     }
   };
+
+  const getUserGamesByStatus = async () => {
+    console.log("getUserGamesByStatus call in Flip");
+    const actions = await Actions.getInstance();
+    const playerAddress = await actions.getWalletAddress();
+    try {
+      actions.getUserGamesByStatus(playerAddress, "initialized").then((response) => {
+        console.log("getUserGamesByStatus response in Flip", response);
+        let parsedResponse = JSON.parse(response);
+        if (parsedResponse.length != 0) {
+          setUserGames(parsedResponse.userGames);
+        }
+        console.log("parseResponse", JSON.stringify(parsedResponse, null, 2))
+      });
+    } catch (err) {
+      console.log("error in calling getUserGamesByStatus", err);
+    }
+  }
 
   const updateLevel1Board = () => {
     let newArray = [...level1Board]; 
@@ -271,149 +296,6 @@ export default function Home() {
       console.log("error in calling flipTiles", err);
     }
     
-  }
-
-  async function playBlockchainGame(withPositions) {
-    if (flippandoAddress !== undefined) {
-      const provider = new ethers.providers.Web3Provider(
-        window.ethereum,
-        "any"
-      );
-      // Prompt user for account connections
-      await provider.send("eth_requestAccounts", []);
-      const signer = provider.getSigner();
-      //console.log("Account:", await signer.getAddress());
-      //console.log("flippandoAddress " + JSON.stringify(flippandoAddress, 2, null));
-      const contract = new ethers.Contract(
-        flippandoAddress,
-        Flippando.abi,
-        signer
-      );
-      const startBlockNumber = await provider.getBlockNumber();
-      provider.once("block", () => {
-        contract.on(
-          "GameState",
-          (id, gameStruct, chainPositions, blockNumber) => {
-            console.log("positions in event " + JSON.stringify(positions));
-            if (blockNumber <= startBlockNumber) {
-              console.log(
-                "old event, blockNumber " +
-                  blockNumber +
-                  ", startBlockNumber " +
-                  startBlockNumber
-              );
-              return;
-            }
-            console.log({
-              id: id,
-              gameStruct: JSON.stringify(gameStruct),
-              chainPositions: JSON.stringify(chainPositions),
-            });
-            console.log("positions in chain " + chainPositions);
-            // we check for positions in client to be the same as the positions in chain
-            // otherwise we will go through all the events emitted and alter the react state
-            // todo: how to get only the last event emitted
-            if (
-              positions[0] === chainPositions[0] &&
-              positions[1] === chainPositions[1]
-            ) {
-              // this is the blockchain solved matrix
-              var tileMatrixCopy = [...gameStruct[1]];
-              // we get non-zero values from chain
-              if (
-                gameStruct[0][chainPositions[0]] ===
-                  gameStruct[0][chainPositions[1]] &&
-                gameStruct[0][chainPositions[0]] !== 0 &&
-                gameStruct[0][chainPositions[1]] !== 0
-              ) {
-                // this is the blockchain solved matrix
-                setTileMatrix(gameStruct[1]);
-              }
-              // we get zero values from chain, we're in quantum state, and
-              // we don't have equal numbers, display quantum flickering visual
-              else if (
-                gameStruct[0][chainPositions[0]] ===
-                  gameStruct[0][chainPositions[1]] &&
-                gameStruct[0][chainPositions[0]] === 0 &&
-                gameStruct[0][chainPositions[1]] === 0
-              ) {
-                // add a timeout function, so the numbers are visible for a while
-                tileMatrixCopy[chainPositions[0]] = -2;
-                tileMatrixCopy[chainPositions[1]] = -2;
-                setTileMatrix(tileMatrixCopy);
-
-                // wait 2 secs, then update with the solved tile matrix
-                setTimeout(() => {
-                  console.log("Delayed for 2 seconds.");
-                  var tileMatrixCopy1 = [...gameStruct[1]];
-                  tileMatrixCopy1[chainPositions[0]] = 0;
-                  tileMatrixCopy1[chainPositions[1]] = 0;
-                  setTileMatrix(tileMatrixCopy1);
-                }, 1000);
-              } else {
-                // add a timeout function, so the numbers are visible for a while
-                tileMatrixCopy[chainPositions[0]] =
-                  gameStruct[0][chainPositions[0]];
-                tileMatrixCopy[chainPositions[1]] =
-                  gameStruct[0][chainPositions[1]];
-                setTileMatrix(tileMatrixCopy);
-
-                // wait 2 secs, then update with the solved tile matrix
-                setTimeout(() => {
-                  console.log("Delayed for 2 seconds.");
-                  var tileMatrixCopy1 = [...gameStruct[1]];
-                  tileMatrixCopy1[chainPositions[0]] = 0;
-                  tileMatrixCopy1[chainPositions[1]] = 0;
-                  setTileMatrix(tileMatrixCopy1);
-                }, 2000);
-              }
-            }
-            //setUncoveredTileMatrix(gameStruct[0]);
-          }
-        );
-
-        contract.on("GameSolved", (id, gameStruct, blockNumber) => {
-          console.log(
-            "game solved gameStruct " + JSON.stringify(gameStruct, null, 2)
-          );
-          if (blockNumber <= startBlockNumber) {
-            console.log(
-              "old event, blockNumber " +
-                blockNumber +
-                ", startBlockNumber " +
-                startBlockNumber
-            );
-            return;
-          }
-          setGameStatus("Flippando solved, all tiles uncovered. Congrats!");
-        });
-      });
-
-      const txResponse = await contract
-        .flip_tiles(currentGameId, withPositions)
-        .then((result) => {
-          console.log("txResponse " + JSON.stringify(result));
-          result
-            .wait()
-            .then((result) =>
-              console.log("wait result " + JSON.stringify(result))
-            )
-            .catch((error) => {
-              console.log("error " + JSON.stringify(error));
-              var tileMatrixCopy1 = [...tileMatrix];
-              tileMatrixCopy1[positions[0]] = 0;
-              tileMatrixCopy1[positions[1]] = 0;
-              setTileMatrix(tileMatrixCopy1);
-            });
-        })
-        .catch((error) => {
-          console.log("error " + JSON.stringify(error));
-          var tileMatrixCopy1 = [...tileMatrix];
-          tileMatrixCopy1[positions[0]] = 0;
-          tileMatrixCopy1[positions[1]] = 0;
-          setTileMatrix(tileMatrixCopy1);
-        });
-    }
   }
 
   async function mintNFT(gameId) {
@@ -633,6 +515,7 @@ export default function Home() {
   const renderBoard = () => {
     //var tileMatrix = Array(4 * 4).fill(0);
     //console.log("positions in renderBoard " + JSON.stringify(positions))
+    
     console.log("gameLevel " + gameLevel);
     return tileMatrix.map((value, index) => {
       const TileImage =
@@ -764,6 +647,19 @@ export default function Home() {
     });
 
   };
+
+  const renderUserGames = () => {
+    console.log("userGames ", JSON.stringify(userGames, null, 2));
+    
+    return userGames.map((userGame, index) => {
+      return (
+        <div key={index}>
+          <Text fontSize="md">{userGame.id}</Text>
+        </div>
+      )
+    })
+  
+  }
 
   const selectGameTileType = (selectedGameTileType) => {
     if (
@@ -1133,6 +1029,13 @@ export default function Home() {
                   </a>
                 
                 </div>
+                <Text fontSize="1xs" fontWeight="bold" textAlign="center" color="white">unfinished games</Text>
+                {userGames.length != 0 &&
+                  renderUserGames()
+                }
+                {userGames.length == 0 &&
+                  <Text fontSize="2xs" fontWeight="bold" textAlign="center" color="white">No unfinished games</Text>
+                }  
               </div>
             )}
         </div>

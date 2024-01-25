@@ -425,6 +425,16 @@ class Actions {
   }
 
 
+  async getUserGamesByStatus(playerAddr: string, gameStatus: string): Promise<any> {
+    const response  = await this.callMethod('GetUserGamesByStatus', [
+      playerAddr,
+      gameStatus
+    ]);
+    console.log("actions GetUserGamesByStatus response ", JSON.stringify(response))
+    return response;
+  }
+
+
   /**
    * Call the ListMArketplaceNFT function, returns nil on success
    * @param tokenID string
