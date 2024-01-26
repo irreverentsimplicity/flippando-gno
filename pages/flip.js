@@ -34,7 +34,7 @@ import Hexagram1 from "./assets/hexagrams/hexagram1.svg";
 import Hexagram2 from "./assets/hexagrams/hexagram2.svg";
 import Hexagram4 from "./assets/hexagrams/hexagram4.svg";
 import Hexagram6 from "./assets/hexagrams/hexagram6.svg";
-import { Text } from '@chakra-ui/react';
+import { Button, Text } from '@chakra-ui/react';
 import SmallTile from "../components/SmallTile";
 import Menu from "../components/Menu";
 import Header from "../components/Header";
@@ -43,9 +43,7 @@ import Actions from "../util/actions";
 
 export default function Home() {
   
-  const [gnoAddress, setGnoAddress] = useState();
   const [positions, setPositions] = useState([]);
-  const [remainingTiles, setRemainingTiles] = useState([]);
   const [userGames, setUserGames] = useState([]);
   const [cleanupEvent, setCleanupEvent] = useState(false);
   const [tileMatrix, setTileMatrix] = useState(Array(4 * 4).fill(0));
@@ -57,8 +55,6 @@ export default function Home() {
   );
   const [currentGameId, setCurrentGameId] = useState(null);
   const [testResponse, setTestResponse] = useState(null);
-  const [flipBalance, setFlipBalance] = useState(0);
-  const [lockedFlipBalance, setLockedFlipBalance] = useState(0);
   const gameTileTypes = ["squareGrid", "greyGradient", "redGradient", "greenGradient", "blueGradient", "dice", "hexagrams"];
   const gameLevels = [16, 64];
   const [gameTileType, setGameTileType] = useState("squareGrid");
@@ -229,6 +225,7 @@ export default function Home() {
     const actions = await Actions.getInstance();
     const playerAddress = await actions.getWalletAddress();
     const processedPositions = JSON.stringify(withPositions);
+    console.log('currentGameId in flipTiles ', currentGameId)
     
     try {
       actions.flipTiles(playerAddress, currentGameId, processedPositions).then((response) => {
@@ -655,11 +652,29 @@ export default function Home() {
       return (
         <div key={index}>
           <Text fontSize="md">{userGame.id}</Text>
+          <Button onClick={() => setCurrentGame(userGame.id)}>Replay</Button>
         </div>
       )
     })
   
   }
+
+  const setCurrentGame = (gameId)=> {
+    const currentGameObject = userGames.find(g => g.id === gameId);
+    console.log("currentGameObject ", currentGameObject)
+    // set game status
+    setGameStatus("Flippando initialized and reloaded, game id: " + currentGameObject.id)
+    // set current game level, 16 /64
+    setGameLevel(currentGameObject.solvedGameBoard.length)
+    // set current game type
+    setGameTileType(currentGameObject.tileType)
+    // set tileMatrix, solvedTimeMatrix
+    setTileMatrix(currentGameObject.solvedGameBoard)
+    setUncoveredTileMatrix(currentGameObject.gameBoard)
+    // set current game id
+    setCurrentGameId(currentGameObject.id)
+  }
+
 
   const selectGameTileType = (selectedGameTileType) => {
     if (
