@@ -671,8 +671,8 @@ export default function Home() {
       };
 
       const tilePropsBigBoard = {
-        width: "4",
-        height: "4",
+        width: "5",
+        height: "5",
       };
 
       return (

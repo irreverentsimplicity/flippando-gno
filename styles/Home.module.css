@@ -99,8 +99,8 @@
 }
 
 .empty_div_unfinished_games {
-  margin: -1px;
-  padding: -1px;  
+  margin: 0px;
+  padding: 0px;  
   max-height: 10px;
   min-height: 10px;
   max-width: 10px;
@@ -109,12 +109,12 @@
 }
 
 .empty_div_big_board_unfinished_games {
-  margin-bottom: -1px;
-  padding-bottom: -1px;
-  max-height: 4px;
-  max-height: 4px;
-  max-width: 4px;
-  min-height: 4px;
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+  max-height: 5px;
+  max-height: 5px;
+  max-width: 5px;
+  min-height: 5px;
 }
 
 .card_unfinished_games {
@@ -132,10 +132,10 @@
 .card_big_board_unfinished_games {
   margin: 0px;
   padding: 0px;
-  min-height: 4px;
-  max-height: 4px;
-  min-width: 4px;
-  max-width: 4px;
+  min-height: 5px;
+  max-height: 5px;
+  min-width: 5px;
+  max-width: 5px;
   text-align: center;
   border: 0.5px solid #acacac;
   transition: color 0.15s ease, border-color 0.15s ease;
