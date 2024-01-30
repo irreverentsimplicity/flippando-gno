@@ -89,7 +89,6 @@
   padding-bottom: -10px;
   min-height: 100px;
   min-width: 100px;
-  
 }
 
 .empty_div_big_board {
@@ -97,7 +96,49 @@
   padding-bottom: -10px;
   min-height: 50px;
   min-width: 50px;
-  
+}
+
+.empty_div_unfinished_games {
+  margin: -1px;
+  padding: -1px;  
+  max-height: 10px;
+  min-height: 10px;
+  max-width: 10px;
+  max-height: 10px;
+  background-color: yellow;
+}
+
+.empty_div_big_board_unfinished_games {
+  margin-bottom: -1px;
+  padding-bottom: -1px;
+  max-height: 4px;
+  max-height: 4px;
+  max-width: 4px;
+  min-height: 4px;
+}
+
+.card_unfinished_games {
+  margin: 0px;
+  padding: 0px;
+  max-height: 10px;
+  min-height: 10px;
+  max-width: 10px;
+  min-width: 10px;
+  text-align: center;
+  border: 0.5px solid #acacac;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.card_big_board_unfinished_games {
+  margin: 0px;
+  padding: 0px;
+  min-height: 4px;
+  max-height: 4px;
+  min-width: 4px;
+  max-width: 4px;
+  text-align: center;
+  border: 0.5px solid #acacac;
+  transition: color 0.15s ease, border-color 0.15s ease;
 }
 
 .card_big_board {
@@ -228,6 +269,20 @@
   background-position: center;
   height: 50px;
   width: 50px;
+}
+
+.unfinished_game_tile_image {
+  background-size: cover;
+  background-position: center;
+  height: 10px;
+  width: 10px;
+}
+
+.unfinished_game_tile_image_big_board {
+  background-size: cover;
+  background-position: center;
+  height: 2.5px;
+  width: 2.5px;
 }
 
 .tile {

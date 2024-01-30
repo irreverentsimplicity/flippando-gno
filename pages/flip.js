@@ -34,7 +34,7 @@ import Hexagram1 from "./assets/hexagrams/hexagram1.svg";
 import Hexagram2 from "./assets/hexagrams/hexagram2.svg";
 import Hexagram4 from "./assets/hexagrams/hexagram4.svg";
 import Hexagram6 from "./assets/hexagrams/hexagram6.svg";
-import { Button, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import SmallTile from "../components/SmallTile";
 import Menu from "../components/Menu";
 import Header from "../components/Header";
@@ -43,6 +43,8 @@ import Actions from "../util/actions";
 
 export default function Home() {
   
+
+  const [isLoadingUserGames, setIsLoadingUserGames] = useState(true);
   const [positions, setPositions] = useState([]);
   const [userGames, setUserGames] = useState([]);
   const [cleanupEvent, setCleanupEvent] = useState(false);
@@ -79,10 +81,6 @@ export default function Home() {
     
   }, [userBasicNFTs])
 
-  /*useEffect( () => {
-    getUserGamesByStatus();
-  }, [])*/
-
   const fetchUserNFTs = async () => {
     let userNFTs = [];
     console.log("fetchUserNFTs");
@@ -111,7 +109,7 @@ export default function Home() {
         console.log("getGNOTBalances response in Flip", response);
         let parsedResponse = JSON.parse(response);
         console.log("parseResponse", JSON.stringify(parsedResponse, null, 2))
-        if(parsedResponse === 0){
+        if(parsedResponse <= 1000000){
           actions.fundAccount("flippando")
         }
       });
@@ -144,17 +142,21 @@ export default function Home() {
     console.log("getUserGamesByStatus call in Flip");
     const actions = await Actions.getInstance();
     const playerAddress = await actions.getWalletAddress();
-    try {
-      actions.getUserGamesByStatus(playerAddress, "initialized").then((response) => {
-        console.log("getUserGamesByStatus response in Flip", response);
-        let parsedResponse = JSON.parse(response);
-        if (parsedResponse.length != 0) {
-          setUserGames(parsedResponse.userGames);
-        }
-        console.log("parseResponse", JSON.stringify(parsedResponse, null, 2))
-      });
-    } catch (err) {
-      console.log("error in calling getUserGamesByStatus", err);
+    if (isLoadingUserGames) {
+      try {
+        actions.getUserGamesByStatus(playerAddress, "initialized").then((response) => {
+          console.log("getUserGamesByStatus response in Flip", response);
+          let parsedResponse = JSON.parse(response);
+          if (parsedResponse.length != 0) {
+            setUserGames(parsedResponse.userGames);
+          }
+          setIsLoadingUserGames(false);
+          console.log("parseResponse", JSON.stringify(parsedResponse, null, 2))
+        });
+      } catch (err) {
+        console.log("error in calling getUserGamesByStatus", err);
+      }
+      
     }
   }
 
@@ -287,7 +289,6 @@ export default function Home() {
           setGameStatus("Flippando solved, all tiles uncovered. Congrats!");
         }
       
-
       });
     } catch (err) {
       console.log("error in calling flipTiles", err);
@@ -313,6 +314,8 @@ export default function Home() {
           }
           
           fetchUserNFTs()
+          setIsLoadingUserGames(true)
+          getUserGamesByStatus()
           
         }
       });
@@ -320,7 +323,6 @@ export default function Home() {
       console.log("error in calling mintNFT", err);
     }
   }
-
 
   // pure react code
   const playGame = (atPosition) => {
@@ -443,12 +445,6 @@ export default function Home() {
     );
   };
 
-  const getTilenumber = () => {
-    var min = Math.ceil(minNum);
-    var max = Math.floor(maxNum);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  };
-
   const renderLevels = (levels) => {
     let levelsBoard = [];
     let level1NFTs, level2NFTs;
@@ -534,12 +530,12 @@ export default function Home() {
           ? TileImages[value - 1].hexagramTile
           : null;
 
-      const tileProps = {
+      const tilePropsGame = {
         width: "100",
         height: "100",
       };
 
-      const tilePropsBigBoard = {
+      const tilePropsBigBoardGame = {
         width: "50",
         height: "50",
       };
@@ -616,8 +612,8 @@ export default function Home() {
                 backgroundColor: "white",
               }}
             >
-              {gameLevel == 16 && <TileImage {...tileProps} />}
-              {gameLevel == 64 && <TileImage {...tilePropsBigBoard} />}
+              {gameLevel == 16 && <TileImage {...tilePropsGame} />}
+              {gameLevel == 64 && <TileImage {...tilePropsBigBoardGame} />}
             </div>
           )}
           {value === 0 && positions.includes(index) && (
@@ -645,14 +641,143 @@ export default function Home() {
 
   };
 
+  const renderUnfinishedGame = (unfinishedGame) => {
+    //var tileMatrix = Array(4 * 4).fill(0);
+    //console.log("positions in renderBoard " + JSON.stringify(positions))
+    
+    console.log("gameLevel " + gameLevel);
+    return unfinishedGame.solvedGameBoard.map((value, index) => {
+      const TileImage = value === 0
+          ? "div"
+          : unfinishedGame.tileType === "squareGrid"
+          ? TileImages[value - 1].squareTile
+          : unfinishedGame.tileType === "greyGradient"
+          ? TileImages[value - 1].greyGradient
+          : unfinishedGame.tileType === "redGradient"
+          ? TileImages[value - 1].redGradient
+          : unfinishedGame.tileType === "greenGradient"
+          ? TileImages[value - 1].greenGradient
+          : unfinishedGame.tileType === "blueGradient"
+          ? TileImages[value - 1].blueGradient
+          : unfinishedGame.tileType === "dice"
+          ? TileImages[value - 1].diceTile
+          : unfinishedGame.tileType === "hexagrams"
+          ? TileImages[value - 1].hexagramTile
+          : null;
+
+      const tileProps = {
+        width: "10",
+        height: "10",
+      };
+
+      const tilePropsBigBoard = {
+        width: "4",
+        height: "4",
+      };
+
+      return (
+        <div
+          key={index}
+          className={
+            unfinishedGame.solvedGameBoard.length == 16 ? 
+            styles.empty_div_unfinished_games : styles.empty_div_big_board_unfinished_games
+          }
+        >
+          {value !== 0 && (
+            <div
+              className={
+                unfinishedGame.solvedGameBoard.lenghth == 16
+                  ? styles.unfinished_game_tile_image
+                  : styles.unfinished_game_tile_image_big_board
+              }
+              style={{
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "contain",
+                backgroundColor: "white",
+              }}
+            >
+              {unfinishedGame.solvedGameBoard.length == 16 && <TileImage {...tileProps} />}
+              {unfinishedGame.solvedGameBoard.length == 64 && <TileImage {...tilePropsBigBoard} />}
+            </div>
+          )}
+          {(value === 0) && (
+            <div
+              className={unfinishedGame.solvedGameBoard.length == 16 ? styles.card_unfinished_games : styles.card_big_board_unfinished_games}
+              style={{
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "contain",
+                backgroundColor: "white",
+              }}
+            ></div>
+          )}
+        </div>
+      );
+    });
+
+  };
+
   const renderUserGames = () => {
     console.log("userGames ", JSON.stringify(userGames, null, 2));
     
     return userGames.map((userGame, index) => {
+      
       return (
         <div key={index}>
-          <Text fontSize="md">{userGame.id}</Text>
-          <Button onClick={() => setCurrentGame(userGame.id)}>Replay</Button>
+          <Box borderBottom="1px solid white">
+          <Flex justifyContent="space-between">
+          <Flex gap="2">
+          <div className= "flex justify-center p-3 m-2 rounded-lg shadow-lg bg-gray-100 w-20">
+            <div>
+              <Text fontSize="3xl" fontWeight="bold" textAlign="center" color="black">
+              {userGame.solvedGameBoard.length === 16 ? '16' : '64'}
+              </Text>
+              <Text fontSize="4xs" fontWeight="normal" textAlign="center" color="black">
+                tiles
+              </Text>
+            </div>
+          </div>
+
+          <div className= "flex justify-center p-3 m-2 rounded-lg shadow-lg bg-gray-100 w-20">
+            <div>
+            <Text fontSize="3xl" fontWeight="bold" textAlign="center" color="black">
+            {userGame.solvedGameBoard.length === 16 ? '1' : '4'}  
+              </Text>
+              <Text fontSize="4xs" fontWeight="normal" textAlign="center" color="black">
+               $FLIP
+              </Text>
+               
+            </div>
+          </div>
+          
+          <div className= "flex flex-col justify-center p-3 m-2 rounded-lg shadow-lg bg-gray-100 w-20" >
+            <div style={{display: "flex", flexDirection: "space-between", alignContent: "center", justifyContent: "center"}}>
+              <div
+                className={
+                  userGame.solvedGameBoard.length == 16
+                    ? "grid gap-x-0 gap-y-0 grid-cols-4 p-0 m-0"
+                    : "grid gap-x-0 gap-y-0 grid-cols-8 p-0 m-0"
+                }>
+                  {renderUnfinishedGame(userGame)}
+              </div>
+              </div>
+            <div style={{marginTop: 10}}>
+            <Text fontSize={"2xs"} textAlign="center" color="black">
+              {userGame.solvedGameBoard.reduce((acc, val) => acc + (val !== 0 ? 1 : 0), 0) / userGame.solvedGameBoard.length * 100}%
+            </Text>
+            </div>
+          </div>
+          
+          </Flex>
+          <Flex alignItems="center" justifyContent="center">
+          <button 
+            className="rounded-full bg-gray-200 px-3.5 py-2.5 m-1 text-md hover:scale-100 font-semibold font-quantic text-black shadow-bg hover:bg-purple-900 hover:text-white border-none w-[140px] focus:outline-none"
+            onClick={() => setCurrentGame(userGame.id)}>
+              Finish flipping
+          </button>
+          </Flex>
+          </Flex>
+        </Box>
+          
         </div>
       )
     })
@@ -675,7 +800,6 @@ export default function Home() {
     setCurrentGameId(currentGameObject.id)
   }
 
-
   const selectGameTileType = (selectedGameTileType) => {
     if (
       gameStatus.includes("Flippando initialized") ||
@@ -686,7 +810,7 @@ export default function Home() {
         "Can't change game type in a middle of a game. Reload if you want to start over."
       );
     } else {
-      console.log(selectedGameTileType);
+      console.log("selectedGameTileType ", selectedGameTileType);
       setGameTileType(selectedGameTileType);
     }
   };
@@ -747,16 +871,15 @@ export default function Home() {
                 </div>
                 */}
               <div>
-                <a
-                  href="#"
-                  onClick={() => {
+                
+                  <button 
+                    className="rounded-full bg-gray-200 px-3.5 py-2.5 text-lg hover:scale-110 font-semibold font-quantic text-black shadow-bg hover:bg-purple-900 hover:text-white border-none w-[160px] focus:outline-none"
+                    onClick={() => {
                     createNewGame(gameLevel, gameTileType);
-                  }}
-                >
-                  <button className="rounded-full bg-gray-200 px-3.5 py-2.5 text-lg hover:scale-110 font-semibold font-quantic text-black shadow-bg hover:bg-purple-900 hover:text-white border-none w-[160px] focus:outline-none">
+                  }}>
                     Start a new flip                  
                   </button>
-                </a>
+                
               </div>
             </div>
           )}
@@ -1044,12 +1167,19 @@ export default function Home() {
                   </a>
                 
                 </div>
-                <Text fontSize="1xs" fontWeight="bold" textAlign="center" color="white">unfinished games</Text>
-                {userGames.length != 0 &&
+                <div style={{marginBottom: 20, marginTop: 40, borderBottom: 0.5, borderBottomColor: '#FFF'}}>
+                  <Text fontSize="1xs" fontWeight="bold" textAlign="center" color="white">unfinished flips</Text>
+                </div>
+                {isLoadingUserGames &&
+                  <Text fontSize="2xs" fontWeight="bold" textAlign="center" color="white">
+                    loading...
+                  </Text>
+                }
+                {!isLoadingUserGames && userGames.length != 0 &&
                   renderUserGames()
                 }
-                {userGames.length == 0 &&
-                  <Text fontSize="2xs" fontWeight="bold" textAlign="center" color="white">No unfinished games</Text>
+                {!isLoadingUserGames && userGames.length == 0 &&
+                  <Text fontSize="2xs" fontWeight="bold" textAlign="center" color="white">you have no unfinished games</Text>
                 }  
               </div>
             )}
