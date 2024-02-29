@@ -78,6 +78,11 @@ export default function Playground() {
           </Text>
         </Box>
       <div>
+        {
+          /* get height and width dynamically from backend, based on the logic implemented
+          in CreateCompositeNFT: 50 / 2 x 2 - 100 / 3 x 3 - 400 / 4 x 4 - 600 / 5 x 5 - 800 / 6 x 6 - 1000 / 7 x 7 - 1200 / 8 x 8 
+          */
+        }
           <Canvas height={2} width={2} isArtMinted={isArtMinted}/>
       </div>
       <div className='flex justify-center items-center text-sm pt-3 pb-5'>

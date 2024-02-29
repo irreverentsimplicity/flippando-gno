@@ -1,10 +1,13 @@
 import React from "react";
 import { FaWallet} from 'react-icons/fa';
 import { Icon } from "@chakra-ui/react";
+//import AdenaWallet from "./AdenaWallet";
 
 
 const Wallet = ({ userBalances }) => {
     return (
+      <div>
+      {/*<AdenaWallet/>*/}
       <div className="grid grid-cols-5 pb-20 justify-end">
         <div className="col-span-5 flex justify-end pr-10">
         <div className="rounded-md flex flex-row justify-center items-center mt-3 p-2 bg-black-400border border-gray-300" style={{ borderWidth: '0.5px' }}>
@@ -15,6 +18,7 @@ const Wallet = ({ userBalances }) => {
           </button>
         </div>
         </div>
+      </div>
       </div>
       )
 }

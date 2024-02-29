@@ -40,6 +40,7 @@ import Menu from "../components/Menu";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Actions from "../util/actions";
+//import AdenaWallet from "../components/AdenaWallet";
 
 export default function Home() {
   
@@ -71,7 +72,6 @@ export default function Home() {
   const userBasicNFTs = useSelector(state => state.flippando.userBasicNFTs);
 
   const dispatch = useDispatch();
-
 
   useEffect( () => {
     getUserGamesByStatus();
@@ -139,19 +139,19 @@ export default function Home() {
   };
 
   const getUserGamesByStatus = async () => {
-    console.log("getUserGamesByStatus call in Flip");
+    //console.log("getUserGamesByStatus call in Flip");
     const actions = await Actions.getInstance();
     const playerAddress = await actions.getWalletAddress();
     if (isLoadingUserGames) {
       try {
         actions.getUserGamesByStatus(playerAddress, "initialized").then((response) => {
-          console.log("getUserGamesByStatus response in Flip", response);
+          //console.log("getUserGamesByStatus response in Flip", response);
           let parsedResponse = JSON.parse(response);
           if (parsedResponse.length != 0) {
             setUserGames(parsedResponse.userGames);
           }
           setIsLoadingUserGames(false);
-          console.log("parseResponse", JSON.stringify(parsedResponse, null, 2))
+          //console.log("parseResponse", JSON.stringify(parsedResponse, null, 2))
         });
       } catch (err) {
         console.log("error in calling getUserGamesByStatus", err);
@@ -717,7 +717,7 @@ export default function Home() {
   };
 
   const renderUserGames = () => {
-    console.log("userGames ", JSON.stringify(userGames, null, 2));
+    //console.log("userGames ", JSON.stringify(userGames, null, 2));
     
     return userGames.map((userGame, index) => {
       

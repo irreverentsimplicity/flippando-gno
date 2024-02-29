@@ -95,6 +95,7 @@ class Actions {
     try {
       // Initialize the wallet using the saved mnemonic
       this.wallet = await GnoWallet.fromMnemonic(mnemonic);
+      console.log('saved mnemonic ', JSON.stringify(mnemonic))
       console.log(this.wallet);
       // Initialize the provider
       //this.provider = new GnoWSProvider(wsURL);
@@ -430,7 +431,7 @@ class Actions {
       playerAddr,
       gameStatus
     ]);
-    console.log("actions GetUserGamesByStatus response ", JSON.stringify(response))
+    //console.log("actions GetUserGamesByStatus response ", JSON.stringify(response))
     return response;
   }
 

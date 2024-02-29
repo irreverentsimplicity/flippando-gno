@@ -9,7 +9,8 @@ import { setArtPayload } from '../slices/flippandoSlice';
 import Loader from '../pages/assets/loader.svg';
 import Actions from '../util/actions';
 
-const Square = ({ isOccupied, onDrop, onClick, nft }) => {
+
+/*const Square = ({ isOccupied, onDrop, onClick, nft }) => {
     const stringifiedNFT = JSON.stringify(nft.metadata);
   const [{ isOver }, drop] = useDrop({
     accept: 'image',
@@ -34,6 +35,39 @@ const Square = ({ isOccupied, onDrop, onClick, nft }) => {
     >
       {isOccupied && <div><SmallTile metadata={stringifiedNFT} tokenId={nft.tokenId} /></div>}
       {(nft === null || nft === undefined) && !isOccupied && <div><Color7/></div>}
+    </div>
+  );
+};*/
+
+const Square = ({ isOccupied, onDrop, onClick, nft, canAcceptDrop, index }) => {
+  const [{ isOver }, drop] = useDrop(() => ({
+    accept: 'image', // Specify the types of items accepted
+    drop: canAcceptDrop ? onDrop : null, // Only call onDrop if canAcceptDrop is true
+    collect: monitor => ({
+      isOver: canAcceptDrop && monitor.isOver(), // Only show isOver effect if can accept drop
+    }),
+  }), [canAcceptDrop, onDrop]); // React to changes in canAcceptDrop and onDrop
+
+  // Convert NFT metadata to a string for display, assuming you need it as a prop for SmallTile
+  const stringifiedNFT = JSON.stringify(nft?.metadata);
+  console.log("inside Square, index, " + index + ", canAcceptDrop, " + canAcceptDrop, " isOver, " + isOver)
+  return (
+    <div
+      onClick={canAcceptDrop ? onClick: null}
+      ref={drop} // Use the ref from useDrop to make this div a drop target
+      style={{
+        width: '38px',
+        height: '38px',
+        border: '1px solid #ccc',
+        background: isOver ? 'lightgreen' : canAcceptDrop ? 'white' : 'gray', // Highlight on hover if over a droppable area
+        display: 'flex',
+        justifyContent: 'center',
+        zIndex: '100',
+        alignItems: 'center',
+      }}
+    >
+      {isOccupied && nft && <SmallTile metadata={stringifiedNFT} tokenId={nft.tokenId} />}
+      {(!nft || !isOccupied) && <Color7 />}
     </div>
   );
 };
@@ -72,13 +106,26 @@ const GridItem = ({ onDragStart, nft }) => {
 };
 
 const Canvas = ({height, width, isArtMinted}) => {
+
+    // Constants for the 8x8 grid
+    const gridWidth = 8;
+    const gridHeight = 8;
+
     const placeHolderNFT = {tokenId: 0, metadata: {image: 'i'}};
     const [sourceGrid, setSourceGrid] = useState([]);
     const [canvas, setCanvas] = useState(Array(height*width).fill(placeHolderNFT));
+    const [gridCanvas, setGridCanvas] = useState(Array(gridWidth*gridHeight).fill(placeHolderNFT));
     const [indexSourceGrid, setIndexSourceGrid] = useState(null);
     const [indexTrack, setIndexTrack] = useState([{}]);
     const [isLoading, setIsLoading] = useState(true);
     const dispatch = useDispatch();
+
+    // Calculate start and end for draggable area
+    const startRow = Math.floor((gridHeight - height) / 2);
+    const endRow = startRow + height;
+    const startCol = Math.floor((gridWidth - width) / 2);
+    const endCol = startCol + width;
+
 
     useEffect(() => {
         console.log("fetchNFTs")
@@ -213,8 +260,7 @@ const Canvas = ({height, width, isArtMinted}) => {
 
   return (
     <div className='flex items-center' style={{marginTop: 20, marginBottom: 20, flexDirection: 'column'}}>
-            
-
+            {/* 
             <div className='flex justify-center items-center column' style={{flexDirection: 'column'}}>
         
         
@@ -237,7 +283,37 @@ const Canvas = ({height, width, isArtMinted}) => {
         </div>
 
       </div>
+            */}
 
+<div className='flex justify-center items-center column' style={{flexDirection: 'column'}}>
+          <div style={{ 
+            display: 'inline-grid', 
+            background: 'red',
+            zIndex: '-1',
+            gridTemplateColumns: `repeat(${gridWidth}, 1fr)`, 
+            gridTemplateRows: `repeat(${gridHeight}, 1fr)`, 
+            gridGap: '1px', 
+            border: '1px dashed #ccc', 
+          }}>
+            {gridCanvas.map((nft, index) => {
+              const row = Math.floor(index / gridWidth);
+              const col = index % gridWidth;
+              const canAcceptDrop = row >= startRow && row < endRow && col >= startCol && col < endCol;
+              //console.log("index, " + index + ", canAcceptDrop " + canAcceptDrop)
+              return (
+                <Square
+                  key={index}
+                  index={index}
+                  onClick={() => handleClick(index)}
+                  isOccupied={nft.tokenId !== 0}
+                  nft={nft}
+                  onDrop={() => handleDrop(index)}
+                  canAcceptDrop={canAcceptDrop}
+                />
+              );
+            })}
+          </div>
+        </div>
       <div style={{ marginRight: '20px' }}>
         
          <Box 
