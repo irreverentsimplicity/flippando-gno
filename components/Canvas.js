@@ -50,7 +50,6 @@ const Square = ({ isOccupied, onDrop, onClick, nft, canAcceptDrop, index }) => {
 
   // Convert NFT metadata to a string for display, assuming you need it as a prop for SmallTile
   const stringifiedNFT = JSON.stringify(nft?.metadata);
-  console.log("inside Square, index, " + index + ", canAcceptDrop, " + canAcceptDrop, " isOver, " + isOver)
   return (
     <div
       onClick={canAcceptDrop ? onClick: null}
@@ -58,16 +57,15 @@ const Square = ({ isOccupied, onDrop, onClick, nft, canAcceptDrop, index }) => {
       style={{
         width: '38px',
         height: '38px',
-        border: '1px solid #ccc',
+        border: '0.5px solid #eee',
         background: isOver ? 'lightgreen' : canAcceptDrop ? 'white' : 'gray', // Highlight on hover if over a droppable area
         display: 'flex',
         justifyContent: 'center',
-        zIndex: '100',
         alignItems: 'center',
       }}
     >
       {isOccupied && nft && <SmallTile metadata={stringifiedNFT} tokenId={nft.tokenId} />}
-      {(!nft || !isOccupied) && <Color7 />}
+      {/*(!nft || !isOccupied) && <Color7 />*/}
     </div>
   );
 };
@@ -288,12 +286,11 @@ const Canvas = ({height, width, isArtMinted}) => {
 <div className='flex justify-center items-center column' style={{flexDirection: 'column'}}>
           <div style={{ 
             display: 'inline-grid', 
-            background: 'red',
-            zIndex: '-1',
+            background: 'gray',
             gridTemplateColumns: `repeat(${gridWidth}, 1fr)`, 
             gridTemplateRows: `repeat(${gridHeight}, 1fr)`, 
-            gridGap: '1px', 
-            border: '1px dashed #ccc', 
+            gridGap: '0.5px', 
+            border: '0.5px dashed #cdcdcd', 
           }}>
             {gridCanvas.map((nft, index) => {
               const row = Math.floor(index / gridWidth);

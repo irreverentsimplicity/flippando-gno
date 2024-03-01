@@ -83,7 +83,7 @@ export default function Playground() {
           in CreateCompositeNFT: 50 / 2 x 2 - 100 / 3 x 3 - 400 / 4 x 4 - 600 / 5 x 5 - 800 / 6 x 6 - 1000 / 7 x 7 - 1200 / 8 x 8 
           */
         }
-          <Canvas height={2} width={2} isArtMinted={isArtMinted}/>
+          <Canvas height={4} width={4} isArtMinted={isArtMinted}/>
       </div>
       <div className='flex justify-center items-center text-sm pt-3 pb-5'>
           Drag and drop tiles from above into the canvas at the top. Click on a tile in the canvas to remove it. When your canvas is full, click Make Art.
