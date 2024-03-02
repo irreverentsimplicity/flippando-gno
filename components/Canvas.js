@@ -123,6 +123,7 @@ const Canvas = ({height, width, isArtMinted}) => {
     const endRow = startRow + height;
     const startCol = Math.floor((gridWidth - width) / 2);
     const endCol = startCol + width;
+    let realIndex = -1;
 
 
     useEffect(() => {
@@ -296,12 +297,16 @@ const Canvas = ({height, width, isArtMinted}) => {
               const row = Math.floor(index / gridWidth);
               const col = index % gridWidth;
               const canAcceptDrop = row >= startRow && row < endRow && col >= startCol && col < endCol;
-              //console.log("index, " + index + ", canAcceptDrop " + canAcceptDrop)
+              if (canAcceptDrop) {
+                realIndex++;
+              }
+              
+              console.log("index, " + index + ", realIndex, " + realIndex + ", canAcceptDrop " + canAcceptDrop)
               return (
                 <Square
                   key={index}
-                  index={index}
-                  onClick={() => handleClick(index)}
+                  index={realIndex}
+                  onClick={() => handleClick(realIndex)}
                   isOccupied={nft.tokenId !== 0}
                   nft={nft}
                   onDrop={() => handleDrop(index)}
