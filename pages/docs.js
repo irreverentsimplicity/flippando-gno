@@ -78,6 +78,50 @@ export default function Tutorial() {
 
         <Box className="justify-start" borderBottom="1px solid gray" mt={8}>
           <Text fontSize="xl" fontWeight="bold" textAlign="left" mb={4} mr={4}>
+            Dynamic Canvas Size
+          </Text>
+          <Text fontSize="lg" textAlign="left" mt={4} mb={4} mr={4}>
+            The canvas used to make art (composite NFTs) is dynamic. Its size, and, implicitly, the resolution of the
+            composite NFTs, is based on the total number of unused basic NFTs. The smallest canvas size is 2x2 squares,
+            and the biggest is 8x8 squares.
+            </Text>
+            <Text fontSize="lg" textAlign="left" mt={4} mb={4} mr={4}
+              sx={{
+                ul: {
+                  listStyleType: 'disc', 
+                  marginLeft: '20px', 
+                  marginTop: '20px',
+                  color: 'white', 
+                },
+                li: {
+                  '::marker': {
+                    color: 'white', 
+                  },
+                },
+              }}
+            >
+              
+            In the beta version, we increment with 1 square, following this pattern:
+            
+            <ul>
+              <li>under 50 existing basic NFTs: canvas size is 2x2</li>
+              <li>between 50 and 100 existing basic NFTs: canvas size is 3x3</li>
+              <li>between 100 and 400 existing basic NFTs: canvas size is 4x4</li>
+              <li>between 400 and 600 existing basic NFTs: canvas size is 5x5</li>
+              <li>between 600 and 800 existing basic NFTs: canvas size is 6x6</li>
+              <li>between 800 and 1000 existing basic NFTs: canvas size is 7x7</li>
+              <li>over 1000 existing basic NFTs: canvas size is 8x8</li>
+            </ul>
+          </Text>
+          <Text fontSize="lg" textAlign="left" mt={4} mb={4} mr={4}>
+            The levels used to increase the canvas size are arbitrary, and subject to change based on the feedback we 
+             will receive from the actual players. We are also considering different layouts for the canvas (not only squares, but also rectangles,
+             or even irregular shapes). Future versions may also feature user defined canvas sizes.
+          </Text>
+        </Box>
+
+        <Box className="justify-start" borderBottom="1px solid gray" mt={8}>
+          <Text fontSize="xl" fontWeight="bold" textAlign="left" mb={4} mr={4}>
             Tokenomics
           </Text>
           <Text fontSize="lg" textAlign="left" mt={4} mb={4} mr={4}>
