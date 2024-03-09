@@ -18,11 +18,73 @@ import artNFT from './assets/artNFT.jpg';
 import Actions from "../util/actions";
 
 export default function Playground() {
-  const [width, setWidth] = useState(4);
-  const [height, setHeight] = useState(4);
+  const [width, setWidth] = useState(2); // defaults, changed on calling setExistingBasicNFTs
+  const [height, setHeight] = useState(2); // defaults, changed on calling setExistingBasicNFTs
+  const [existingBasicNFTs, setExistingBasicNFTs] = useState(0);
   const userBalances = useSelector(state => state.flippando.userBalances);
   const [isArtMinted, setIsArtMinted] = useState(false)
   const artPayload = useSelector(state => state.flippando.artPayload);
+
+  // fetch all existing basic NFTs, used for setting the playground size
+  useEffect(() => {
+    console.log("fetch all existing basic NFTs")
+    const fetchNFTs = async () => {
+      const actions = await Actions.getInstance();
+      
+      try {
+        actions.getAllNFTs("").then((response) => {
+          console.log("fetch all existing basic NFTs response in playground.js", response);
+          let parsedResponse = JSON.parse(response);
+          console.log("parseResponse", parsedResponse)
+          if(parsedResponse.userNFTs !== undefined && parsedResponse.userNFTs.length !== 0){
+              let existingNFTs = 0
+              parsedResponse.userNFTs.map((nftItem) => {
+                existingNFTs++;
+              })
+            
+            if(existingNFTs !== 0){
+              setExistingBasicNFTs(existingNFTs);
+              console.log(existingNFTs)
+              if(existingNFTs <= 50){
+                setHeight(2);
+                setWidth(2);
+              }
+              else if(existingNFTs > 50 && existingNFTs <= 100){
+                setHeight(3);
+                setWidth(3);
+              }
+              else if(existingNFTs > 100 && existingNFTs <= 400){
+                setHeight(4);
+                setWidth(4);
+              }
+              else if(existingNFTs > 400 && existingNFTs <= 600){
+                setHeight(5);
+                setWidth(5);
+              }
+              else if(existingNFTs > 600 && existingNFTs <= 800){
+                setHeight(6);
+                setWidth(6);
+              }
+              else if(existingNFTs > 800 && existingNFTs <= 1000){
+                setHeight(7);
+                setWidth(7);
+              }
+              else if(existingNFTs > 1000){
+                setHeight(8);
+                setWidth(8);
+              }
+            }
+            
+          }
+        });
+      } catch (err) {
+        console.log("error in calling fetch all existing basic NFTs", err);
+      }
+      
+    };
+
+    fetchNFTs();;
+  }, []);
 
   async function makeArt(){
     const actions = await Actions.getInstance();
@@ -83,7 +145,7 @@ export default function Playground() {
           in CreateCompositeNFT: 50 / 2 x 2 - 100 / 3 x 3 - 400 / 4 x 4 - 600 / 5 x 5 - 800 / 6 x 6 - 1000 / 7 x 7 - 1200 / 8 x 8 
           */
         }
-          <Canvas height={4} width={4} isArtMinted={isArtMinted}/>
+          <Canvas height={height} width={width} isArtMinted={isArtMinted}/>
       </div>
       <div className='flex justify-center items-center text-sm pt-3 pb-5'>
           Drag and drop tiles from above into the canvas at the top. Click on a tile in the canvas to remove it. When your canvas is full, click Make Art.
