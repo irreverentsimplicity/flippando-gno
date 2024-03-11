@@ -8,6 +8,7 @@ import Spinner from './Spinner';
 import { setArtPayload } from '../slices/flippandoSlice';
 import Loader from '../pages/assets/loader.svg';
 import Actions from '../util/actions';
+import { render } from 'react-dom';
 
 
 /*const Square = ({ isOccupied, onDrop, onClick, nft }) => {
@@ -123,7 +124,7 @@ const Canvas = ({height, width, isArtMinted}) => {
     const endRow = startRow + height;
     const startCol = Math.floor((gridWidth - width) / 2);
     const endCol = startCol + width;
-    let realIndex = -1;
+    
 
 
     useEffect(() => {
@@ -202,6 +203,7 @@ const Canvas = ({height, width, isArtMinted}) => {
 
   const handleDrop = (index) => {
     const updatedCanvas = [...canvas];
+    console.log('indexSourceGrid ' + indexSourceGrid);
     updatedCanvas[index] = sourceGrid[indexSourceGrid];
     console.log('updatedCanvas ' + JSON.stringify(updatedCanvas));
     setCanvas(updatedCanvas);
@@ -226,6 +228,7 @@ const Canvas = ({height, width, isArtMinted}) => {
     // update source grid with the actual nft
     // find position in index tracking
     const idxTuple = indexTrack.filter(obj => obj.canvasIndex === index);
+    console.log("handleClick index ", index)
     // remove the entry to avoid duplicates
     let indexTrackCopy = [...indexTrack];
     var trimmedArray = indexTrackCopy.filter(obj => obj.canvasIndex !== index);
@@ -257,32 +260,43 @@ const Canvas = ({height, width, isArtMinted}) => {
     }
   }
 
+  const renderCanvas = () => {
+    let realIndex = -1;
+    let clickableArray = [];
+
+    gridCanvas.map((nft, index) => {
+      const row = Math.floor(index / gridWidth);
+      const col = index % gridWidth;
+      const canAcceptDrop = row >= startRow && row < endRow && col >= startCol && col < endCol;
+
+      if (canAcceptDrop) {
+        realIndex++;
+        clickableArray[index] = realIndex;
+      }
+    });
+
+    return gridCanvas.map((nft, index) => {
+      const row = Math.floor(index / gridWidth);
+      const col = index % gridWidth;
+      const canAcceptDrop = row >= startRow && row < endRow && col >= startCol && col < endCol;
+
+        return (
+          <Square
+            key={index}
+            index={clickableArray[index]}
+            onClick={() => handleClick(clickableArray[index])}
+            isOccupied={nft.tokenId !== 0}
+            nft={nft}
+            onDrop={() => handleDrop(clickableArray[index])}
+            canAcceptDrop={canAcceptDrop}
+          />
+        );      
+    })
+  }
+
   return (
     <div className='flex items-center' style={{marginTop: 20, marginBottom: 20, flexDirection: 'column'}}>
-            {/* 
-            <div className='flex justify-center items-center column' style={{flexDirection: 'column'}}>
-        
-        
-        <div style={{ 
-          display: 'inline-grid', 
-          gridTemplateColumns: `repeat(${width}, 1fr)`, 
-          gridTemplateRows: `repeat(${height}, 1fr)`, 
-          gridGap: '0px', 
-          border: '1px dashed #ccc' 
-        }}>
-          {canvas.map((nft, index) => (
-            <Square
-              key={index}
-              onClick={() => handleClick(index)}
-              isOccupied={nft.tokenId !== 0}
-              nft={nft}
-              onDrop={() => handleDrop(index)}
-            />
-          ))}
-        </div>
-
-      </div>
-            */}
+           
 
 <div className='flex justify-center items-center column' style={{flexDirection: 'column'}}>
           <div style={{ 
@@ -293,27 +307,7 @@ const Canvas = ({height, width, isArtMinted}) => {
             gridGap: '0.5px', 
             border: '0.5px dashed #cdcdcd', 
           }}>
-            {gridCanvas.map((nft, index) => {
-              const row = Math.floor(index / gridWidth);
-              const col = index % gridWidth;
-              const canAcceptDrop = row >= startRow && row < endRow && col >= startCol && col < endCol;
-              if (canAcceptDrop) {
-                realIndex++;
-              }
-              
-              console.log("index, " + index + ", realIndex, " + realIndex + ", canAcceptDrop " + canAcceptDrop)
-              return (
-                <Square
-                  key={index}
-                  index={realIndex}
-                  onClick={() => handleClick(realIndex)}
-                  isOccupied={nft.tokenId !== 0}
-                  nft={nft}
-                  onDrop={() => handleDrop(index)}
-                  canAcceptDrop={canAcceptDrop}
-                />
-              );
-            })}
+            {renderCanvas()}
           </div>
         </div>
       <div style={{ marginRight: '20px' }}>
