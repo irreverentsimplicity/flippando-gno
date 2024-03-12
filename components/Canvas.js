@@ -11,35 +11,6 @@ import Actions from '../util/actions';
 import { render } from 'react-dom';
 
 
-/*const Square = ({ isOccupied, onDrop, onClick, nft }) => {
-    const stringifiedNFT = JSON.stringify(nft.metadata);
-  const [{ isOver }, drop] = useDrop({
-    accept: 'image',
-    drop: () => onDrop(),
-    collect: (monitor) => ({
-      isOver: monitor.isOver(),
-    }),
-  }); 
-
-  return (
-    <div onClick={onClick}
-      ref={drop}
-      style={{
-        width: '38px',
-        height: '38px',
-        border: '0px solid #ccc',
-        background: isOver ? 'lightblue' : 'white',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      {isOccupied && <div><SmallTile metadata={stringifiedNFT} tokenId={nft.tokenId} /></div>}
-      {(nft === null || nft === undefined) && !isOccupied && <div><Color7/></div>}
-    </div>
-  );
-};*/
-
 const Square = ({ isOccupied, onDrop, onClick, nft, canAcceptDrop, index }) => {
   const [{ isOver }, drop] = useDrop(() => ({
     accept: 'image', // Specify the types of items accepted
@@ -65,7 +36,9 @@ const Square = ({ isOccupied, onDrop, onClick, nft, canAcceptDrop, index }) => {
         alignItems: 'center',
       }}
     >
-      {isOccupied && nft && <SmallTile metadata={stringifiedNFT} tokenId={nft.tokenId} />}
+      {isOccupied && <div><SmallTile metadata={stringifiedNFT} tokenId={nft.tokenId} /></div>}
+      {/*(nft === null || nft === undefined) && !isOccupied && <div><Color7/></div>*/}
+      {/*isOccupied && nft && <SmallTile metadata={stringifiedNFT} tokenId={nft.tokenId} />*/}
       {/*(!nft || !isOccupied) && <Color7 />*/}
     </div>
   );
@@ -125,8 +98,6 @@ const Canvas = ({height, width, isArtMinted}) => {
     const startCol = Math.floor((gridWidth - width) / 2);
     const endCol = startCol + width;
     
-
-
     useEffect(() => {
         console.log("fetchNFTs")
         const fetchNFTs = async () => {
@@ -234,12 +205,14 @@ const Canvas = ({height, width, isArtMinted}) => {
     var trimmedArray = indexTrackCopy.filter(obj => obj.canvasIndex !== index);
     setIndexTrack(trimmedArray);
     const updatedSourceGrid = [...sourceGrid];
-    updatedSourceGrid[idxTuple[0].gridIndex] = canvas[index];
-    setSourceGrid(updatedSourceGrid);
-    // empty canvas
-    const updatedCanvas = [...canvas];
-    updatedCanvas[index] = placeHolderNFT;
-    setCanvas(updatedCanvas);
+    if(idxTuple[0]?.gridIndex !== undefined){
+      updatedSourceGrid[idxTuple[0].gridIndex] = canvas[index];
+      setSourceGrid(updatedSourceGrid);
+      // empty canvas
+      const updatedCanvas = [...canvas];
+      updatedCanvas[index] = placeHolderNFT;
+      setCanvas(updatedCanvas);
+    }
 
   }
 
@@ -279,14 +252,15 @@ const Canvas = ({height, width, isArtMinted}) => {
       const row = Math.floor(index / gridWidth);
       const col = index % gridWidth;
       const canAcceptDrop = row >= startRow && row < endRow && col >= startCol && col < endCol;
-
+      console.log("nft in map ", JSON.stringify(canvas[clickableArray[index]]))
+      let canvasNFT = canvas[clickableArray[index]]
         return (
           <Square
             key={index}
             index={clickableArray[index]}
             onClick={() => handleClick(clickableArray[index])}
-            isOccupied={nft.tokenId !== 0}
-            nft={nft}
+            isOccupied={canvasNFT !== undefined && canvasNFT.tokenId !== 0 ?  true : false}
+            nft={canvasNFT}
             onDrop={() => handleDrop(clickableArray[index])}
             canAcceptDrop={canAcceptDrop}
           />
