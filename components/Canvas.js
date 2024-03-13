@@ -30,7 +30,7 @@ const Square = ({ isOccupied, onDrop, onClick, nft, canAcceptDrop, index }) => {
         width: '38px',
         height: '38px',
         border: '0.5px solid #eee',
-        background: isOver ? 'lightgreen' : canAcceptDrop ? 'white' : 'gray', // Highlight on hover if over a droppable area
+        background: isOver ? 'lightgreen' : canAcceptDrop ? 'white' : '#bbb', // Highlight on hover if over a droppable area
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
@@ -99,7 +99,7 @@ const Canvas = ({height, width, isArtMinted}) => {
     const endCol = startCol + width;
     
     useEffect(() => {
-        console.log("fetchNFTs")
+        //console.log("fetchNFTs")
         const fetchNFTs = async () => {
             
           setIsLoading(true);
@@ -108,9 +108,9 @@ const Canvas = ({height, width, isArtMinted}) => {
           const playerAddress = await actions.getWalletAddress();
           try {
             actions.getAllNFTs(playerAddress).then((response) => {
-              console.log("getAllNFTS response in Canvas", response);
+              //console.log("getAllNFTS response in Canvas", response);
               let parsedResponse = JSON.parse(response);
-              console.log("parseResponse", parsedResponse)
+              //console.log("parseResponse", parsedResponse)
               if(parsedResponse.userNFTs !== undefined && parsedResponse.userNFTs.length !== 0){
                   let nftData = []
                   parsedResponse.userNFTs.map((nftItem) => {
@@ -145,9 +145,9 @@ const Canvas = ({height, width, isArtMinted}) => {
           const playerAddress = await actions.getWalletAddress();
           try {
             actions.getAllNFTs(playerAddress).then((response) => {
-              console.log("getAllNFTS response in Canvas", response);
+              //console.log("getAllNFTS response in Canvas", response);
               let parsedResponse = JSON.parse(response);
-              console.log("parseResponse", parsedResponse)
+              //console.log("parseResponse", parsedResponse)
               if(parsedResponse.userNFTs !== undefined && parsedResponse.userNFTs.length !== 0){
                   let nftData = []
                   parsedResponse.userNFTs.map((nftItem) => {
@@ -174,9 +174,7 @@ const Canvas = ({height, width, isArtMinted}) => {
 
   const handleDrop = (index) => {
     const updatedCanvas = [...canvas];
-    console.log('indexSourceGrid ' + indexSourceGrid);
     updatedCanvas[index] = sourceGrid[indexSourceGrid];
-    console.log('updatedCanvas ' + JSON.stringify(updatedCanvas));
     setCanvas(updatedCanvas);
     checkAndPrepareArtPayload(updatedCanvas);
     const updatedSourceGrid = [...sourceGrid];
@@ -199,7 +197,6 @@ const Canvas = ({height, width, isArtMinted}) => {
     // update source grid with the actual nft
     // find position in index tracking
     const idxTuple = indexTrack.filter(obj => obj.canvasIndex === index);
-    console.log("handleClick index ", index)
     // remove the entry to avoid duplicates
     let indexTrackCopy = [...indexTrack];
     var trimmedArray = indexTrackCopy.filter(obj => obj.canvasIndex !== index);
@@ -217,7 +214,6 @@ const Canvas = ({height, width, isArtMinted}) => {
   }
 
   const checkAndPrepareArtPayload = (updatedCanvas) => {
-    console.log("checkAndPrepare updatedCanvas " + JSON.stringify(updatedCanvas, null, 2))
     let tokenIds = [];
     updatedCanvas.map( (nft, index) => {
       console.log("nft ", JSON.stringify(nft, null, 2))
@@ -226,9 +222,7 @@ const Canvas = ({height, width, isArtMinted}) => {
         }
         
     });
-    console.log("tokenIds ", JSON.stringify(tokenIds, null, 2))
     if (tokenIds.length === (height*width)){
-        console.log("canvas filled")
         dispatch(setArtPayload([height, width, tokenIds]));
     }
   }
@@ -252,7 +246,6 @@ const Canvas = ({height, width, isArtMinted}) => {
       const row = Math.floor(index / gridWidth);
       const col = index % gridWidth;
       const canAcceptDrop = row >= startRow && row < endRow && col >= startCol && col < endCol;
-      console.log("nft in map ", JSON.stringify(canvas[clickableArray[index]]))
       let canvasNFT = canvas[clickableArray[index]]
         return (
           <Square
