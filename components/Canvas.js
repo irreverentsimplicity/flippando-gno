@@ -2,13 +2,11 @@ import { useEffect, useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { useDispatch } from 'react-redux';
 import SmallTile from '../components/SmallTile';
-import Color7 from '../pages/assets/squares/Color7.svg';
 import { Box } from "@chakra-ui/react";
 import Spinner from './Spinner';
 import { setArtPayload } from '../slices/flippandoSlice';
 import Loader from '../pages/assets/loader.svg';
 import Actions from '../util/actions';
-import { render } from 'react-dom';
 
 
 const Square = ({ isOccupied, onDrop, onClick, nft, canAcceptDrop, index }) => {
@@ -99,7 +97,7 @@ const Canvas = ({height, width, isArtMinted}) => {
     const endCol = startCol + width;
     
     useEffect(() => {
-        //console.log("fetchNFTs")
+        console.log("fetchNFTs")
         const fetchNFTs = async () => {
             
           setIsLoading(true);
