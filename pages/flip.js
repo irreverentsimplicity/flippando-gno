@@ -69,6 +69,7 @@ export default function Home() {
   const [level2Board, setLevel2Board] = useState(new Array(16).fill(0));
   //const [nfts, setNfts] = useState([]);
   const userBalances = useSelector(state => state.flippando.userBalances);
+  const [userGnotBalances, setUserGnotBalances] = useState("unknown")
   const userBasicNFTs = useSelector(state => state.flippando.userBasicNFTs);
 
   const dispatch = useDispatch();
@@ -109,6 +110,7 @@ export default function Home() {
         console.log("getGNOTBalances response in Flip", response);
         let parsedResponse = JSON.parse(response);
         console.log("parseResponse", JSON.stringify(parsedResponse, null, 2))
+        setUserGnotBalances(parsedResponse)
         if(parsedResponse <= 1000000){
           actions.fundAccount("flippando")
         }
@@ -827,7 +829,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Header userBalances={userBalances} />
+      <Header userBalances={userBalances} userGnotBalances={userGnotBalances}/>
     
       <div className="grid flex grid-cols-5">
       

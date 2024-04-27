@@ -3,7 +3,7 @@ import { Flex, Box, Text, Spacer, Image } from '@chakra-ui/react';
 import Wallet from "./Wallet";
 
 
-const Header = ({ userBalances }) => {
+const Header = ({ userBalances, userGnotBalances }) => {
     return (
         <Flex align="center" p="4" bg="transparent" boxShadow="sm">
           <Box display="flex" alignItems="flex-start" flexDirection={"column"}>
@@ -11,7 +11,7 @@ const Header = ({ userBalances }) => {
             <Text fontSize="xs" fontWeight="italic">Estoy flippando en colores</Text>
           </Box>
           <Spacer />
-          <Wallet userBalances={userBalances} />
+          <Wallet userBalances={userBalances} userGnotBalances={userGnotBalances} />
         </Flex>
       );
 }
