@@ -110,7 +110,7 @@ export default function Home() {
         console.log("getGNOTBalances response in Flip", response);
         let parsedResponse = JSON.parse(response);
         console.log("parseResponse", JSON.stringify(parsedResponse, null, 2))
-        setUserGnotBalances(parsedResponse)
+        setUserGnotBalances(parsedResponse/1000000)
         if(parsedResponse <= 1000000){
           actions.fundAccount("flippando")
         }
