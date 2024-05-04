@@ -37,6 +37,7 @@ const flippandoSlice = createSlice({
     },
     artPayload: [],
     userBalances: {},
+    userGnotBalances: undefined,
     userBasicNFTs: [],
     userArtNFTs: [],
     networkSplit: [{near: 24}, 
@@ -61,6 +62,10 @@ const flippandoSlice = createSlice({
     setUserBalances(state, action) {
       console.log("slice userBalances ", JSON.stringify(action.payload))
       state.userBalances = action.payload;
+    },
+    setUserGnotBalances(state, action) {
+      console.log("slice userGnotBalances ", JSON.stringify(action.payload))
+      state.userGnotBalances = action.payload;
     },
     setUserBasicNFTs(state, action) {
       console.log("slice userBasicNFTs ", JSON.stringify(action.payload))
@@ -106,7 +111,7 @@ const flippandoSlice = createSlice({
   },
 });
 
-export const { setBlockchain, setNetwork, setArtPayload, setUserBalances, setUserBasicNFTs, setUserArtNFTs } = flippandoSlice.actions;
+export const { setBlockchain, setNetwork, setArtPayload, setUserBalances, setUserGnotBalances, setUserBasicNFTs, setUserArtNFTs } = flippandoSlice.actions;
 
 export default flippandoSlice;
 

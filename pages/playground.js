@@ -11,7 +11,7 @@ import { useSelector } from 'react-redux';
 import { useDrag, useDrop } from 'react-dnd';
 import SmallTile from '../components/SmallTile';
 import Canvas from '../components/Canvas';
-import Wallet from "../components/Wallet";
+import Header from "../components/Header";
 import Grey from './assets/squares/grey.svg';
 import Image from 'next/image';
 import artNFT from './assets/artNFT.jpg';
@@ -22,6 +22,7 @@ export default function Playground() {
   const [height, setHeight] = useState(2); // defaults, changed on calling setExistingBasicNFTs
   const [existingBasicNFTs, setExistingBasicNFTs] = useState(0);
   const userBalances = useSelector(state => state.flippando.userBalances);
+  const userGnotBalances = useSelector(state => state.flippando.userGnotBalances);
   const [isArtMinted, setIsArtMinted] = useState(false)
   const artPayload = useSelector(state => state.flippando.artPayload);
 
@@ -119,12 +120,8 @@ export default function Playground() {
 
   return (
     <div className={styles.container}>
-      <Head>
-        <title>Flippando</title>
-        <meta name="description" content="Entry point" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <Wallet userBalances={userBalances} />
+      
+      <Header userBalances={userBalances} userGnotBalances={userGnotBalances}/>
       
       <div className="grid flex grid-cols-5">
       

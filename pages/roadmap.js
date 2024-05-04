@@ -1,23 +1,17 @@
 import styles from "../styles/Home.module.css";
-import Head from "next/head";
 import Menu from '../components/Menu';
 import Footer from '../components/Footer';
 import { Box, Text } from "@chakra-ui/react";
 import { useSelector } from 'react-redux';
-import Wallet from "../components/Wallet";
+import Header from "../components/Header";
 
 export default function Tutorial() {
   const userBalances = useSelector(state => state.flippando.userBalances);
-  
+  const userGnotBalances = useSelector(state => state.flippando.userGnotBalances);
 
   return (
     <div className={styles.container}>
-      <Head>
-        <title>Flippando</title>
-        <meta name="description" content="Entry point" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <Wallet userBalances={userBalances} />
+      <Header userBalances={userBalances} userGnotBalances={userGnotBalances}/>
       
       <div className="grid flex grid-cols-5">
       

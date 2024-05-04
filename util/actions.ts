@@ -24,6 +24,7 @@ const wsURL: string = Config.GNO_WS_URL;
 const rpcURL: string = Config.GNO_JSONRPC_URL;
 const flippandoRealm: string = Config.GNO_FLIPPANDO_REALM;
 const faucetURL: string = "http://127.0.0.1:5050";
+//const faucetURL: string = "https://faucet.flippando.xyz";
 const defaultGasWanted: Long = new Long(1000_000_0);
 const customTXFee = '2000000ugnot'
 
@@ -520,30 +521,41 @@ class Actions {
    * @private
    */
   private async fundAccount(token: string): Promise<void> {
-    // Prepare the request options
-    console.log(token);
+    console.log("Token:", token);
     const requestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'faucet-token': 'flippando'
-      },
-      body: JSON.stringify({
-        to: await this.wallet?.getAddress()
-      })
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            // Uncomment or add other headers as needed
+            'faucet-token': token, // Assuming 'token' should be sent in the request headers
+        },
+        body: JSON.stringify({
+            to: await this.wallet?.getAddress()
+        })
     };
 
-    // Execute the request
-    await fetch(faucetURL, requestOptions).then(fResponse => {
-      console.log("faucetURL", faucetURL)
-      console.log("fundResponse", JSON.stringify(fResponse, null, 2))
-      if (!fResponse.ok) {
-        console.log("fund error, ", fResponse.text());
-      }
-    })
-    
-    
-  }
+    // Ensure faucetURL is defined and correct
+    if (!faucetURL) {
+        console.error("Faucet URL is undefined.");
+        return;
+    }
+
+    try {
+        const response = await fetch(faucetURL, requestOptions);
+        const data = await response.json(); // Assuming the server responds with JSON
+        console.log("Faucet URL:", faucetURL);
+        console.log("Fund Response:", JSON.stringify(data, null, 2));
+        
+        if (!response.ok) {
+            // Log more detailed error information
+            console.error("Fund error:", data.message || "Unknown error");
+        }
+    } catch (error) {
+        // Catch network errors, parsing errors, etc.
+        console.error("Error during fetch:", error);
+    }
+}
+
 }
 
 export default Actions;

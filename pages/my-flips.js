@@ -3,9 +3,8 @@ import { useSelector, useDispatch } from "react-redux";
 import NFTListUser from '../components/NFTListUser'
 import styles from "../styles/Home.module.css";
 import { Box, Text } from "@chakra-ui/react";
-import Head from "next/head";
+import Header from "../components/Header";
 import Menu from '../components/Menu';
-import Wallet from '../components/Wallet';
 import Footer from '../components/Footer';
 import Actions from "../util/actions";
 
@@ -13,6 +12,7 @@ import Actions from "../util/actions";
 export default function MyAssets() {
 
   const userBalances = useSelector(state => state.flippando.userBalances);
+  const userGnotBalances = useSelector(state => state.flippando.userGnotBalances);
   const userBasicNFTs = useSelector(state => state.flippando.userBasicNFTs);
   const [isLoadingNFTs, setIsLoadingNFTs] = useState(true)
   const [usedNfts, setUsedNfts] = useState([])
@@ -49,12 +49,7 @@ export default function MyAssets() {
   
   return (
     <div className={styles.container}>
-      <Head>
-        <title>Flippando</title>
-        <meta name="description" content="Entry point" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <Wallet userBalances={userBalances}/>
+      <Header userBalances={userBalances} userGnotBalances={userGnotBalances}/>
       
       <div className="grid flex grid-cols-5">
       

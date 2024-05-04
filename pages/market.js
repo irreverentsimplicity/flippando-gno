@@ -1,12 +1,11 @@
 import {useEffect, useState} from 'react';
 import { useSelector, useDispatch } from "react-redux";
 import styles from "../styles/Home.module.css";
-import Head from "next/head";
 import Menu from '../components/Menu';
 import Footer from '../components/Footer';
 import Actions from '../util/actions';
 import { Box, Text } from "@chakra-ui/react";
-import Wallet from "../components/Wallet";
+import Header from "../components/Header";
 import Spinner from '../components/Spinner';
 import MarketPlaceGrid from "../components/MarketPlaceGrid";
 import { list } from 'postcss';
@@ -14,6 +13,7 @@ import { list } from 'postcss';
 export default function Market() {
 
   const userBalances = useSelector(state => state.flippando.userBalances);
+  const userGnotBalances = useSelector(state => state.flippando.userGnotBalances);
   const [enhancedNFTs, setEnhancedNFTs] = useState([]);
   const [listings, setListings] = useState([])
   const [isLoading, setIsLoading] = useState(true)
@@ -89,12 +89,7 @@ export default function Market() {
 
   return (
     <div className={styles.container}>
-      <Head>
-        <title>Flippando</title>
-        <meta name="description" content="Entry point" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <Wallet userBalances={userBalances} />
+      <Header userBalances={userBalances} userGnotBalances={userGnotBalances}/>
       
       <div className="grid flex grid-cols-5">
       

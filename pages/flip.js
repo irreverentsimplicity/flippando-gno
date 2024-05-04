@@ -3,7 +3,7 @@ import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import {setUserBalances, setUserBasicNFTs, setUserArtNFTs} from '../slices/flippandoSlice';
+import {setUserBalances, setUserBasicNFTs, setUserGnotBalances, setUserArtNFTs} from '../slices/flippandoSlice';
 import GameLevels from "../components/GameLevels";
 import TileImages from "../components/TileImages";
 import Color1 from "./assets/squares/Color1.svg";
@@ -69,7 +69,7 @@ export default function Home() {
   const [level2Board, setLevel2Board] = useState(new Array(16).fill(0));
   //const [nfts, setNfts] = useState([]);
   const userBalances = useSelector(state => state.flippando.userBalances);
-  const [userGnotBalances, setUserGnotBalances] = useState("unknown")
+  const userGnotBalances = useSelector(state => state.flippando.userGnotBalances);
   const userBasicNFTs = useSelector(state => state.flippando.userBasicNFTs);
 
   const dispatch = useDispatch();
@@ -110,7 +110,8 @@ export default function Home() {
         console.log("getGNOTBalances response in Flip", response);
         let parsedResponse = JSON.parse(response);
         console.log("parseResponse", JSON.stringify(parsedResponse, null, 2))
-        setUserGnotBalances(parsedResponse/1000000)
+        //setUserGnotBalances(parsedResponse/1000000)
+        dispatch(setUserGnotBalances(parsedResponse/1000000))
         if(parsedResponse <= 1000000){
           actions.fundAccount("flippando")
         }
