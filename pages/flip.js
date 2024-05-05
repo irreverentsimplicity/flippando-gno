@@ -40,6 +40,7 @@ import Menu from "../components/Menu";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Actions from "../util/actions";
+import { getGNOTBalances, fetchUserFLIPBalances } from "../util/tokenActions";
 //import AdenaWallet from "../components/AdenaWallet";
 
 export default function Home() {
@@ -70,17 +71,29 @@ export default function Home() {
   //const [nfts, setNfts] = useState([]);
   const userBalances = useSelector(state => state.flippando.userBalances);
   const userGnotBalances = useSelector(state => state.flippando.userGnotBalances);
+  const rpcEndpoint = useSelector(state => state.flippando.rpcEndpoint);
+  //const [networkChanged, setNetworkChanged] = useState(false)
   const userBasicNFTs = useSelector(state => state.flippando.userBasicNFTs);
 
   const dispatch = useDispatch();
 
+  console.log(typeof dispatch); 
+
+  useEffect( () => {
+      console.log("rpcEndpoint in useEffect, flip.js ", rpcEndpoint)
+      getGNOTBalances(dispatch);
+      fetchUserFLIPBalances(dispatch);
+      fetchUserNFTs();
+      getUserGamesByStatus();
+  }, [rpcEndpoint])
+
   useEffect( () => {
     getUserGamesByStatus();
-    getGNOTBalances();
-    fetchUserFLIPBalances();
+    getGNOTBalances(dispatch);
+    fetchUserFLIPBalances(dispatch);
     fetchUserNFTs();
     
-  }, [userBasicNFTs])
+  }, [])
 
   const fetchUserNFTs = async () => {
     let userNFTs = [];
@@ -102,6 +115,7 @@ export default function Home() {
     }
   };
 
+  /*
   const getGNOTBalances = async () => {
     const actions = await Actions.getInstance();
     const playerAddress = await actions.getWalletAddress();
@@ -139,7 +153,7 @@ export default function Home() {
     } catch (err) {
       console.log("error in calling fetchUserFLIPBalances", err);
     }
-  };
+  };*/
 
   const getUserGamesByStatus = async () => {
     //console.log("getUserGamesByStatus call in Flip");

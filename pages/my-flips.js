@@ -7,6 +7,7 @@ import Header from "../components/Header";
 import Menu from '../components/Menu';
 import Footer from '../components/Footer';
 import Actions from "../util/actions";
+import { getGNOTBalances, fetchUserFLIPBalances } from "../util/tokenActions";
 
 
 export default function MyAssets() {
@@ -17,6 +18,16 @@ export default function MyAssets() {
   const [isLoadingNFTs, setIsLoadingNFTs] = useState(true)
   const [usedNfts, setUsedNfts] = useState([])
   const [isLoadingUsedNFTs, setIsLoadingUsedNFTs] = useState(true)
+
+  const rpcEndpoint = useSelector(state => state.flippando.rpcEndpoint);
+
+  const dispatch = useDispatch()
+  
+  useEffect( () => {
+      console.log("rpcEndpoint in useEffect, my-flips.js ", rpcEndpoint)
+      getGNOTBalances(dispatch);
+      fetchUserFLIPBalances(dispatch);
+  }, [rpcEndpoint])
 
   useEffect(() => {
     const fetchData = async () => {

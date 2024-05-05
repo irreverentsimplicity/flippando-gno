@@ -2,12 +2,21 @@ import styles from "../styles/Home.module.css";
 import Menu from '../components/Menu';
 import Footer from '../components/Footer';
 import { Box, Text } from "@chakra-ui/react";
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { useEffect } from "react";
 import Header from "../components/Header";
+import { getGNOTBalances, fetchUserFLIPBalances } from "../util/tokenActions";
 
 export default function Tutorial() {
   const userBalances = useSelector(state => state.flippando.userBalances);
   const userGnotBalances = useSelector(state => state.flippando.userGnotBalances);
+  const rpcEndpoint = useSelector(state => state.flippando.rpcEndpoint);
+  const dispatch = useDispatch()
+  useEffect( () => {
+    console.log("rpcEndpoint in useEffect, docs.js ", rpcEndpoint)
+    getGNOTBalances(dispatch);
+    fetchUserFLIPBalances(dispatch);
+}, [rpcEndpoint])
 
   return (
     <div className={styles.container}>

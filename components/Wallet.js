@@ -1,17 +1,37 @@
 import React, {useState} from "react";
 import { FaWallet} from 'react-icons/fa';
 import { Icon, Select } from "@chakra-ui/react";
+import { useSelector, useDispatch } from "react-redux";
+import { setRpcEndpoint } from "../slices/flippandoSlice";
+import Actions from "../util/actions";
 //import AdenaWallet from "./AdenaWallet";
 
 
 const Wallet = ({ userBalances, userGnotBalances }) => {
 
-    const [network, setNetwork] = useState('Ethereum'); // Default network
-
-    const handleNetworkChange = (event) => {
-      setNetwork(event.target.value);
-      console.log("event.target.value, ", event.target.value)
-      // Additional logic to update the network can be implemented here
+    const dispatch = useDispatch();
+    const rpcEndpoint = useSelector(state => state.flippando.rpcEndpoint);
+    
+    const handleNetworkChange = async (event) => {
+      const newNetwork = event.target.value;
+      console.log("newNetwork, ", newNetwork)
+      dispatch(setRpcEndpoint(newNetwork))
+      const actionsInstance = await Actions.getInstance();
+      let faucetUrl = "";
+      let flippandoRealm = "";
+      if (newNetwork === "http://localhost:26657"){
+        faucetUrl = "http://127.0.0.1:5050";
+        flippandoRealm = "gno.land/r/demo/flippando"
+      } else if (newNetwork === "https://rpc.flippando.xyz") {
+        faucetUrl = "https://faucet.flippando.xyz";
+        flippandoRealm = "gno.land/r/demo/flippando"
+      } else if (newNetwork === "https://portal-loop.gnoteam.com"){
+        faucetUrl = "https://faucet.flippando.xyz";
+        flippandoRealm = "gno.land/r/demo/flippando/v1"
+      }
+      actionsInstance.setFaucetUrl(faucetUrl);
+      actionsInstance.setFlippandoRealm(flippandoRealm);
+      actionsInstance.setRpcUrl(newNetwork);
     };
 
     return (
@@ -34,7 +54,7 @@ const Wallet = ({ userBalances, userGnotBalances }) => {
           </div>
         </div>
         <div className="col-span-5 flex justify-end pr-10 pt-2">
-          <Select onChange={handleNetworkChange} value={network}
+          <Select onChange={handleNetworkChange} value={rpcEndpoint}
           size="sm"
           fontSize="sm"
           backgroundColor="purple.700"
@@ -42,8 +62,9 @@ const Wallet = ({ userBalances, userGnotBalances }) => {
           borderColor="purple.500"
           _hover={{ bg: 'purple.600' }}
           _focus={{ boxShadow: 'outline' }}>
-          <option value="flippando" selected>Flippando RPC</option>
-          <option value="portal-loop">Portal Loop RPC</option>
+          <option value="http://localhost:26657">Local node</option>
+          <option value="https://rpc.flippando.xyz" >Flippando RPC</option>
+          <option value="https://portal-loop.gnoteam.com">Portal Loop RPC</option>
         </Select>
         </div>
       </div>

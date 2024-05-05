@@ -10,6 +10,7 @@ import Footer from '../components/Footer';
 import Actions from '../util/actions';
 import { Box, Text } from "@chakra-ui/react";
 import ArtGridLayout from '../components/ArtGridLayout';
+import { getGNOTBalances, fetchUserFLIPBalances } from '../util/tokenActions';
 
 
 const FlippandoNFTs = () => {
@@ -19,7 +20,17 @@ const FlippandoNFTs = () => {
   const userBalances = useSelector(state => state.flippando.userBalances);
   const userGnotBalances = useSelector(state => state.flippando.userGnotBalances);
   const [isLoading, setIsLoading] = useState(false)
+
+  const rpcEndpoint = useSelector(state => state.flippando.rpcEndpoint);
+
+  const dispatch = useDispatch()
   
+  useEffect( () => {
+      console.log("rpcEndpoint in useEffect, my-art.js ", rpcEndpoint)
+      getGNOTBalances(dispatch);
+      fetchUserFLIPBalances(dispatch);
+  }, [rpcEndpoint]);
+
   useEffect(() => {
     getArtwork();
   }, []);

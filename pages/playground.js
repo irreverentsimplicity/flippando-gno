@@ -5,6 +5,7 @@ import Head from "next/head";
 import Menu from '../components/Menu';
 import Footer from '../components/Footer';
 import { useEffect, useState } from 'react';
+import { useDispatch } from "react-redux";
 import { Box, Text, VStack, Button } from "@chakra-ui/react";
 import Link from 'next/link';
 import { useSelector } from 'react-redux';
@@ -16,6 +17,7 @@ import Grey from './assets/squares/grey.svg';
 import Image from 'next/image';
 import artNFT from './assets/artNFT.jpg';
 import Actions from "../util/actions";
+import { getGNOTBalances, fetchUserFLIPBalances } from "../util/tokenActions";
 
 export default function Playground() {
   const [width, setWidth] = useState(2); // defaults, changed on calling setExistingBasicNFTs
@@ -25,6 +27,16 @@ export default function Playground() {
   const userGnotBalances = useSelector(state => state.flippando.userGnotBalances);
   const [isArtMinted, setIsArtMinted] = useState(false)
   const artPayload = useSelector(state => state.flippando.artPayload);
+
+  const rpcEndpoint = useSelector(state => state.flippando.rpcEndpoint);
+
+  const dispatch = useDispatch()
+  
+  useEffect( () => {
+      console.log("rpcEndpoint in useEffect, market.js ", rpcEndpoint)
+      getGNOTBalances(dispatch);
+      fetchUserFLIPBalances(dispatch);
+  }, [rpcEndpoint])
 
   // fetch all existing basic NFTs, used for setting the playground size
   useEffect(() => {

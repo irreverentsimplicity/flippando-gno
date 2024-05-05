@@ -13,6 +13,8 @@ import { generateMnemonic } from './crypto';
 import Long from 'long';
 import Config from './config';
 import { constructFaucetError } from './errors';
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 import {
   ErrorTransform
@@ -21,9 +23,9 @@ import { UserFundedError } from '../types/errors';
 
 // ENV values //
 const wsURL: string = Config.GNO_WS_URL;
-const rpcURL: string = Config.GNO_JSONRPC_URL;
-const flippandoRealm: string = Config.GNO_FLIPPANDO_REALM;
-const faucetURL: string = "http://127.0.0.1:5050";
+//const rpcURL: string = Config.GNO_JSONRPC_URL;
+//const flippandoRealm: string = Config.GNO_FLIPPANDO_REALM;
+//const faucetURL: string = Config.FAUCET_URL;
 //const faucetURL: string = "https://faucet.flippando.xyz";
 const defaultGasWanted: Long = new Long(1000_000_0);
 const customTXFee = '2000000ugnot'
@@ -57,8 +59,38 @@ class Actions {
   private provider: GnoWSProvider | null = null;
   private providerJSON: GnoJSONRPCProvider | null = null;
   private faucetToken: string | null = null;
+  private rpcURL: string = Config.GNO_JSONRPC_URL;  
+  private flippandoRealm: string = Config.GNO_FLIPPANDO_REALM;
+  private faucetURL: string = Config.FAUCET_URL;
   
   private constructor() {}
+
+  public setRpcUrl(newRpcUrl: string): void {
+    this.rpcURL = newRpcUrl;
+    this.reinitializeProvider();
+  }
+
+  public setFaucetUrl(newFaucetUrl: string): void {
+    this.faucetURL = newFaucetUrl;
+  }
+
+  public setFlippandoRealm(newFlippandoRealm: string): void {
+    this.flippandoRealm = newFlippandoRealm;
+  }
+
+  private async reinitializeProvider(): Promise<void> {
+    try {
+        // Reinitialize the JSON RPC provider with the new URL
+        this.providerJSON = new GnoJSONRPCProvider(this.rpcURL);
+        if (this.wallet) {
+            this.wallet.connect(this.providerJSON);
+        }
+        console.log("Provider reinitialized with new URL:", this.rpcURL);
+    } catch (e) {
+        console.error("Failed to reinitialize provider:", e);
+    }
+  }
+
 
   /**
    * Fetches the Actions instance. If no instance is
@@ -100,7 +132,7 @@ class Actions {
       console.log(this.wallet);
       // Initialize the provider
       //this.provider = new GnoWSProvider(wsURL);
-      this.providerJSON = new GnoJSONRPCProvider(rpcURL)
+      this.providerJSON = new GnoJSONRPCProvider(this.rpcURL)
       console.log(this.providerJSON);
       // Connect the wallet to the provider
       this.wallet.connect(this.providerJSON);
@@ -187,13 +219,13 @@ class Actions {
         const gkArgs = args?.map((arg) => '-args ' + arg).join(' ') ?? '';
         console.log(
           `$ gnokey maketx call -broadcast ` +
-            `-pkgpath ${flippandoRealm} -gas-wanted ${gasWanted} -gas-fee ${defaultTxFee} ` +
+            `-pkgpath ${this.flippandoRealm} -gas-wanted ${gasWanted} -gas-fee ${defaultTxFee} ` +
             `-func ${method} ${gkArgs} test`
         );
       }
             
       const resp = (await this.wallet?.callMethod(
-        flippandoRealm,
+        this.flippandoRealm,
         method,
         args,
         TransactionEndpoint.BROADCAST_TX_COMMIT,
@@ -237,12 +269,12 @@ class Actions {
     if (gkLog) {
       const quotesEscaped = expr.replace(/'/g, `'\\''`);
       console.info(
-        `$ gnokey query vm/qeval --data '${flippandoRealm}'$'\\n''${quotesEscaped}'`
+        `$ gnokey query vm/qeval --data '${this.flippandoRealm}'$'\\n''${quotesEscaped}'`
       );
     }
 
     const resp = (await this.provider?.evaluateExpression(
-      flippandoRealm,
+      this.flippandoRealm,
       expr
     )) as string;
 
@@ -484,8 +516,6 @@ class Actions {
     return response;
   }
   
-  
-  
   /**
    * Call the GetListings function and return a JSON object
    * @param tokenID string
@@ -535,15 +565,15 @@ class Actions {
     };
 
     // Ensure faucetURL is defined and correct
-    if (!faucetURL) {
+    if (!this.faucetURL) {
         console.error("Faucet URL is undefined.");
         return;
     }
 
     try {
-        const response = await fetch(faucetURL, requestOptions);
+        const response = await fetch(this.faucetURL, requestOptions);
         const data = await response.json(); // Assuming the server responds with JSON
-        console.log("Faucet URL:", faucetURL);
+        console.log("Faucet URL:", this.faucetURL);
         console.log("Fund Response:", JSON.stringify(data, null, 2));
         
         if (!response.ok) {

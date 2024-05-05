@@ -29,6 +29,7 @@ const flippandoSlice = createSlice({
     blockchainName: undefined,
     testnet: true,
     mainnet: false,
+    rpcEndpoint: "http://localhost:26657",
     adr: {
       flippandoAddress: undefined,
       flipAddress: undefined,
@@ -66,6 +67,10 @@ const flippandoSlice = createSlice({
     setUserGnotBalances(state, action) {
       console.log("slice userGnotBalances ", JSON.stringify(action.payload))
       state.userGnotBalances = action.payload;
+    },
+    setRpcEndpoint(state, action) {
+      console.log("slice setRpcEndpoint ", JSON.stringify(action.payload))
+      state.rpcEndpoint = action.payload;
     },
     setUserBasicNFTs(state, action) {
       console.log("slice userBasicNFTs ", JSON.stringify(action.payload))
@@ -111,7 +116,15 @@ const flippandoSlice = createSlice({
   },
 });
 
-export const { setBlockchain, setNetwork, setArtPayload, setUserBalances, setUserGnotBalances, setUserBasicNFTs, setUserArtNFTs } = flippandoSlice.actions;
+export const { 
+  setBlockchain, 
+  setNetwork, 
+  setArtPayload, 
+  setUserBalances, 
+  setUserGnotBalances, 
+  setUserBasicNFTs, 
+  setUserArtNFTs,
+  setRpcEndpoint } = flippandoSlice.actions;
 
 export default flippandoSlice;
 

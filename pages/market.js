@@ -8,7 +8,7 @@ import { Box, Text } from "@chakra-ui/react";
 import Header from "../components/Header";
 import Spinner from '../components/Spinner';
 import MarketPlaceGrid from "../components/MarketPlaceGrid";
-import { list } from 'postcss';
+import { getGNOTBalances, fetchUserFLIPBalances } from '../util/tokenActions';
 
 export default function Market() {
 
@@ -18,6 +18,15 @@ export default function Market() {
   const [listings, setListings] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [playerAddress, setPlayerAddress] = useState()
+  const rpcEndpoint = useSelector(state => state.flippando.rpcEndpoint);
+
+  const dispatch = useDispatch()
+  
+  useEffect( () => {
+      console.log("rpcEndpoint in useEffect, market.js ", rpcEndpoint)
+      getGNOTBalances(dispatch);
+      fetchUserFLIPBalances(dispatch);
+  }, [rpcEndpoint])
 
   useEffect(() => {
     getPlayerAddress();
