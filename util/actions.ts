@@ -273,17 +273,17 @@ class Actions {
       );
     }
 
-    const resp = (await this.provider?.evaluateExpression(
+    const resp = (await this.providerJSON?.evaluateExpression(
       this.flippandoRealm,
       expr
     )) as string;
 
     if (gkLog) {
-      console.info('response:', parsedJSONOrRaw(resp, true));
+      console.info('evaluateExpression response:', parsedJSONOrRaw(resp, true));
     }
 
     // Parse the response
-    return resp;
+    return parsedJSONOrRaw(resp, true);
   }
 
   /**
@@ -402,9 +402,10 @@ class Actions {
   async GetFLIPBalance(
     playerAddr: string,
   ): Promise<any> {
-    const response = await this.callMethod('GetFLIPBalance', [
-      playerAddr
-    ]);
+    //const response = await this.callMethod('GetFLIPBalance', [
+    //  playerAddr
+    //]);
+    const response = await this.evaluateExpression("GetFLIPBalance(\"" + playerAddr + "\")")
     console.log("actions GetFLIPBalance response ", JSON.stringify(response))
     return response;
   }
@@ -417,11 +418,12 @@ class Actions {
     playerAddr: string,
     readyToUse: string,
   ): Promise<any> {
-    const response = await this.callMethod('GetUserBasicNFTs', [
-      playerAddr,
-      readyToUse
-    ]);
-    //console.log("actions GetUserBasicNFTs response ", JSON.stringify(response))
+    //const response = await this.callMethod('GetUserBasicNFTs', [
+    //  playerAddr,
+    //  readyToUse
+    //]);
+    const response = await this.evaluateExpression("GetUserBasicFlipNFTs(\"" + playerAddr + "\", \"" + readyToUse +"\")")
+    console.log("actions GetUserBasicNFTs response ", JSON.stringify(response))
     return response;
   }
 
