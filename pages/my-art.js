@@ -136,7 +136,7 @@ const FlippandoNFTs = () => {
         {!isLoading && ownedNFTs.length === 0 && enhancedNFTs.length === 0 &&
           <Box display="flex" justifyContent="center" width="100%" mt={8}>
           <Text fontSize="lg" fontWeight="bold" textAlign="center">
-            There's nothing here yet
+            Nothing here yet
           </Text>
           </Box>
         }
