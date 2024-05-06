@@ -462,11 +462,12 @@ class Actions {
 
 
   async getUserGamesByStatus(playerAddr: string, gameStatus: string): Promise<any> {
-    const response  = await this.callMethod('GetUserGamesByStatus', [
-      playerAddr,
-      gameStatus
-    ]);
-    //console.log("actions GetUserGamesByStatus response ", JSON.stringify(response))
+    //const response  = await this.callMethod('GetUserGamesByStatus', [
+    //  playerAddr,
+    //  gameStatus
+    //]);
+    const response = await this.evaluateExpression("GetUserGamesByStatus(\"" + playerAddr + "\", \"" + gameStatus +"\")")
+    console.log("actions GetUserGamesByStatus response ", JSON.stringify(response))
     return response;
   }
 
