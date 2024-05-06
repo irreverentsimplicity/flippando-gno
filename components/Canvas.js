@@ -1,11 +1,14 @@
+/* eslint-disable @next/next/no-img-element */
 import { useEffect, useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { useDispatch } from 'react-redux';
 import SmallTile from '../components/SmallTile';
-import { Box } from "@chakra-ui/react";
+import { Box, Text, Link, Switch, FormControl, FormLabel } from "@chakra-ui/react";
+import NextLink from 'next/link';
 import Spinner from './Spinner';
 import { setArtPayload } from '../slices/flippandoSlice';
 import Loader from '../pages/assets/loader.svg';
+//import Hacker from '../pages/assets/hacker_pixelated_64.jpeg'
 import Actions from '../util/actions';
 
 
@@ -88,6 +91,8 @@ const Canvas = ({height, width, isArtMinted}) => {
     const [indexSourceGrid, setIndexSourceGrid] = useState(null);
     const [indexTrack, setIndexTrack] = useState([{}]);
     const [isLoading, setIsLoading] = useState(true);
+    const [assistiveMode, setAssistiveMode] = useState(false);
+    const [assistiveImage, setAssistiveImage] = useState(false);
     const dispatch = useDispatch();
 
     // Calculate start and end for draggable area
@@ -260,20 +265,78 @@ const Canvas = ({height, width, isArtMinted}) => {
   }
 
   return (
-    <div className='flex items-center' style={{marginTop: 20, marginBottom: 20, flexDirection: 'column'}}>
-           
+    <div className='flex items-center' style={{marginTop: 20, marginBottom: 20, flexDirection: 'column'}}>     
 
-<div className='flex justify-center items-center column' style={{flexDirection: 'column'}}>
+<div className='flex justify-center items-center column' style={{flexDirection: 'column', position: 'relative'}}>
+<div style={{ display: 'flex', flexDirection: 'row', width: '100%', justifyContent: "flex-end" }}>
+<FormControl display='flex' alignItems='center' style={{ width: 'auto' }}>
+  <FormLabel htmlFor='assistive-mode' mb='2' fontSize='xs'>
+    Assistive Mode
+  </FormLabel>
+  <Switch size='md' id='assistive-mode' mb='2' onChange={(event) => {
+    setAssistiveMode(event.target.checked)
+    setAssistiveImage(false)
+  }
+  }/>
+</FormControl>
+</div>
+<div style={{
+    display: "flex",
+    flexDirection: 'row',
+    justifyContent: assistiveMode ? 'flex-start' : 'center', // Adjust based on assistiveMode
+    alignItems: 'center', // Centers items vertically
+    width: "100%"
+}}>
+        
           <div style={{ 
-            display: 'inline-grid', 
-            background: 'gray',
-            gridTemplateColumns: `repeat(${gridWidth}, 1fr)`, 
-            gridTemplateRows: `repeat(${gridHeight}, 1fr)`, 
-            gridGap: '0.5px', 
-            border: '0.5px dashed #cdcdcd', 
-          }}>
-            {renderCanvas()}
+              display: 'inline-grid', 
+              background: 'gray',
+              gridTemplateColumns: `repeat(${gridWidth}, 1fr)`, 
+              gridTemplateRows: `repeat(${gridHeight}, 1fr)`, 
+              gridGap: '0.5px', 
+              border: '0.5px dashed #cdcdcd', 
+              position: 'relative',
+            }}>
+              {renderCanvas()}
+              {assistiveImage && assistiveMode &&
+                <img src="/assets/hacker_pixelated_64.jpeg" alt="helper" style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                opacity: 0.3, // Semi-transparent
+                pointerEvents: 'none' // Allows clicks to pass through to the grid
+                }}/>
+              }
           </div>
+        
+        {assistiveMode &&
+          <div style={{marginLeft: 10}}>
+            <a onClick={() => setAssistiveImage(true)}>
+           <img src="/assets/hacker_pixelated_64.jpeg" alt="helper" style={{
+            width: '309px',
+            height: '309px',
+          }}/>
+          </a>
+          </div>
+        }
+      </div>
+          {height <= 2 &&
+          <Text fontSize='xs' style={{paddingTop: 20}}>
+            You are on the minimum canvas size. There must be more basic NFT minted for a larger size. Read more <Link as={NextLink} color='teal.500' href='/docs'>here</Link>.  
+          </Text>
+          }
+          {height > 2 && height <=7 &&
+          <Text fontSize='xs' style={{paddingTop: 20}}>
+            You are not playing on the maximum canvas size. Read more <Link as={NextLink} color='teal.500' href='/docs'></Link>.  
+          </Text>
+          }
+          {height > 7 &&
+          <Text fontSize='xs' style={{paddingTop: 20}}>
+            You are playing on the maximum canvas size, your art will have the best resolution.  
+          </Text>
+          }
         </div>
       <div style={{ marginRight: '20px' }}>
         
