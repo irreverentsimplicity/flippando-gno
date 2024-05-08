@@ -7,8 +7,8 @@ import { Box, Text, Link, Switch, FormControl, FormLabel } from "@chakra-ui/reac
 import NextLink from 'next/link';
 import Spinner from './Spinner';
 import { setArtPayload } from '../slices/flippandoSlice';
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import Loader from '../pages/assets/loader.svg';
-//import Hacker from '../pages/assets/hacker_pixelated_64.jpeg'
 import Actions from '../util/actions';
 
 
@@ -100,6 +100,10 @@ const Canvas = ({height, width, isArtMinted}) => {
     const endRow = startRow + height;
     const startCol = Math.floor((gridWidth - width) / 2);
     const endCol = startCol + width;
+
+    // used for assitive image array
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const images = ["/assets/hacker_pixelated_64.jpeg", "/assets/hacker_green_pixelated_64.jpeg"];
     
     useEffect(() => {
         console.log("fetchNFTs")
@@ -264,6 +268,14 @@ const Canvas = ({height, width, isArtMinted}) => {
     })
   }
 
+  const handleNext = () => {
+    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+  };
+
+  const handlePrev = () => {
+      setCurrentImageIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
+  };
+
   return (
     <div className='flex items-center' style={{marginTop: 20, marginBottom: 20, flexDirection: 'column'}}>     
 
@@ -280,7 +292,7 @@ const Canvas = ({height, width, isArtMinted}) => {
   }/>
 </FormControl>
 </div>
-<div style={{
+      <div style={{
     display: "flex",
     flexDirection: 'row',
     justifyContent: assistiveMode ? 'flex-start' : 'center', // Adjust based on assistiveMode
@@ -299,7 +311,7 @@ const Canvas = ({height, width, isArtMinted}) => {
             }}>
               {renderCanvas()}
               {assistiveImage && assistiveMode &&
-                <img src="/assets/hacker_pixelated_64.jpeg" alt="helper" style={{
+                <img src={images[currentImageIndex]}  alt="helper" style={{
                 position: 'absolute',
                 top: 0,
                 left: 0,
@@ -314,11 +326,27 @@ const Canvas = ({height, width, isArtMinted}) => {
         {assistiveMode &&
           <div style={{marginLeft: 10}}>
             <a onClick={() => setAssistiveImage(true)}>
-           <img src="/assets/hacker_pixelated_64.jpeg" alt="helper" style={{
+           <img src={images[currentImageIndex]} alt="helper" style={{
             width: '309px',
             height: '309px',
           }}/>
           </a>
+          <button style={{
+              position: 'absolute',
+              top: '50%',
+              left: 320,
+              transform: 'translateY(-50%)'
+          }} onClick={handlePrev}>
+              <FaArrowLeft />
+          </button>
+          <button style={{
+              position: 'absolute',
+              top: '50%',
+              right: 2,
+              transform: 'translateY(-50%)'
+          }} onClick={handleNext}>
+              <FaArrowRight />
+          </button>
           </div>
         }
       </div>

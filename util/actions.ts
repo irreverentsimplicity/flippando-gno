@@ -402,9 +402,6 @@ class Actions {
   async GetFLIPBalance(
     playerAddr: string,
   ): Promise<any> {
-    //const response = await this.callMethod('GetFLIPBalance', [
-    //  playerAddr
-    //]);
     const response = await this.evaluateExpression("GetFLIPBalance(\"" + playerAddr + "\")")
     console.log("actions GetFLIPBalance response ", JSON.stringify(response))
     return response;
@@ -418,10 +415,6 @@ class Actions {
     playerAddr: string,
     readyToUse: string,
   ): Promise<any> {
-    //const response = await this.callMethod('GetUserBasicNFTs', [
-    //  playerAddr,
-    //  readyToUse
-    //]);
     const response = await this.evaluateExpression("GetUserBasicFlipNFTs(\"" + playerAddr + "\", \"" + readyToUse +"\")")
     console.log("actions GetUserBasicNFTs response ", JSON.stringify(response))
     return response;
@@ -432,7 +425,7 @@ class Actions {
    * @param forPlayer string - current player
    */
   async getAllNFTs(forPlayer: string): Promise<any> {
-    const response = await this.callMethod('GetAllBasicNFTs', [forPlayer]);
+    const response = await this.evaluateExpression("GetAllBasicNFTs(\"" + forPlayer + "\")")
     //console.log("actions GetAllBasicNFTs response ", JSON.stringify(response))
     return response;
   }
