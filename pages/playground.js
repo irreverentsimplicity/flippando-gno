@@ -36,6 +36,7 @@ export default function Playground() {
       console.log("rpcEndpoint in useEffect, market.js ", rpcEndpoint)
       getGNOTBalances(dispatch);
       fetchUserFLIPBalances(dispatch);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rpcEndpoint])
 
   // fetch all existing basic NFTs, used for setting the playground size

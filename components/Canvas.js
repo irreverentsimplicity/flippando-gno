@@ -283,7 +283,7 @@ const Canvas = ({height, width, isArtMinted}) => {
 <div style={{ display: 'flex', flexDirection: 'row', width: '100%', justifyContent: "flex-end" }}>
 <FormControl display='flex' alignItems='center' style={{ width: 'auto' }}>
   <FormLabel htmlFor='assistive-mode' mb='2' fontSize='xs'>
-    Assistive Mode
+    Airdrop Mode
   </FormLabel>
   <Switch size='md' id='assistive-mode' mb='2' onChange={(event) => {
     setAssistiveMode(event.target.checked)
