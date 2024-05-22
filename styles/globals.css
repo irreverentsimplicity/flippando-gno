@@ -31,7 +31,10 @@
 
 .logo-img {
     background-color: #000000;
-    padding: 6;
+    padding: 6px;
+    margin-bottom: 4px;
+    margin-left: 4px;
+    width: 80px;
 }
 .logo-hat {
 fill: #FFFFFF;
