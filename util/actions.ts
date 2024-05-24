@@ -28,7 +28,7 @@ const wsURL: string = Config.GNO_WS_URL;
 //const faucetURL: string = Config.FAUCET_URL;
 //const faucetURL: string = "https://faucet.flippando.xyz";
 const defaultGasWanted: Long = new Long(1000_000_0);
-const customTXFee = '2000000ugnot'
+const customTXFee = '1000000ugnot'
 
 const cleanUpRealmReturn = (ret: string) => {
   return ret.slice(2, -9).replace(/\\"/g, '"');
@@ -160,6 +160,19 @@ class Actions {
         }
       }
     }
+  }
+
+  /**
+   * Destroys the Actions instance, and closes any running services
+   */
+  public destroy() {
+    if (!this.provider) {
+      // Nothing to close
+      return;
+    }
+
+    // Close out the WS connection
+    //this.provider.closeConnection();
   }
 
   /**
@@ -436,7 +449,8 @@ class Actions {
    * @param bTokenIds string - stringified array of tokenIds
    */
     async getArtworkNFTs(bTokenIds: string): Promise<any> {
-      const response = await this.callMethod('GetBasicNFTsByTokenId', [bTokenIds]);
+      const response = await this.evaluateExpression("GetBasicNFTsByTokenId(\"" + bTokenIds + "\")")
+      //const response = await this.callMethod('GetBasicNFTsByTokenId', [bTokenIds]);
       console.log("actions getArtworkNFTs response ", JSON.stringify(response))
       return response;
     }
@@ -446,9 +460,10 @@ class Actions {
    * @param tokenID string
    */
   async getFlipBalances(playerAddr: string): Promise<any> {
-    const response = await this.callMethod('GetFlipBalances', [
-      playerAddr
-    ]);
+    const response = await this.evaluateExpression("GetFlipBalances(\"" + playerAddr + "\")")
+    //const response = await this.callMethod('GetFlipBalances', [
+    //  playerAddr
+    //]);
     //console.log("actions GetTokenURI response ", JSON.stringify(response))
     return response;
   }
@@ -517,31 +532,18 @@ class Actions {
    * @param tokenID string
    */
   async getMarketPlaceListings(): Promise<any> {
-    const response = await this.callMethod('GetArtListings', []);
+    const response = await this.evaluateExpression("GetArtListings()")
+    //const response = await this.callMethod('GetArtListings', []);
     console.log("actions GetListings response ", JSON.stringify(response))
     return response;
   }
 
   async getUserCompositeNFTs(playerAddr: string): Promise<any> {
-    const response = await this.callMethod('GetUserCompositeFlipNFTs', [playerAddr]);
+    const response = await this.evaluateExpression("GetUserCompositeFlipNFTs(\"" + playerAddr + "\")")
     console.log("actions getUserCompositeNFTS ", JSON.stringify(response, null, 2));
     return response;
   }
   
-
-  /**
-   * Destroys the Actions instance, and closes any running services
-   */
-  public destroy() {
-    if (!this.provider) {
-      // Nothing to close
-      return;
-    }
-
-    // Close out the WS connection
-    //this.provider.closeConnection();
-  }
-
   /**
    * Pings the faucet to fund the account before playing
    * @private
@@ -553,7 +555,7 @@ class Actions {
         headers: {
             'Content-Type': 'application/json',
             // Uncomment or add other headers as needed
-            'faucet-token': token, // Assuming 'token' should be sent in the request headers
+            //'faucet-token': token, // Assuming 'token' should be sent in the request headers
         },
         body: JSON.stringify({
             to: await this.wallet?.getAddress()

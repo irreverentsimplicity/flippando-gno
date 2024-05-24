@@ -12,7 +12,7 @@ export const getGNOTBalances = async (dispatch) => {
         console.log("parseResponse", JSON.stringify(parsedResponse, null, 2))
         //setUserGnotBalances(parsedResponse/1000000)
         dispatch(setUserGnotBalances(parsedResponse/1000000))
-        if(parsedResponse <= 1000000){
+        if(parsedResponse <= 80000000){
           actions.fundAccount("flippando")
         }
       });
