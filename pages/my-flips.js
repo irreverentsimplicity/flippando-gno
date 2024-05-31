@@ -35,7 +35,7 @@ export default function MyAssets() {
         const actions = await Actions.getInstance();
         const playerAddress = await actions.getWalletAddress();
         console.log("fetchUsedNFTs");
-        const usedResponse = await actions.getUserNFTs(playerAddress, "yes");
+        const usedResponse = await actions.getUserNFTs(playerAddress, "no");
         console.log("fetchUsedNFTs response in My flips", usedResponse);
         let parsedUsedResponse = JSON.parse(usedResponse);
         console.log("parseResponse", JSON.stringify(usedResponse, null, 2))

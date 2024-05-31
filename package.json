@@ -12,7 +12,7 @@
     "@chakra-ui/react": "^2.8.2",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@gnolang/gno-js-client": "^1.1.6",
+    "@gnolang/gno-js-client": "^1.2.3",
     "@gnolang/tm2-js-client": "^1.1.4",
     "@material-tailwind/react": "2.1.5",
     "@reduxjs/toolkit": "^1.9.5",

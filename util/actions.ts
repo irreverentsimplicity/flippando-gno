@@ -27,8 +27,8 @@ const wsURL: string = Config.GNO_WS_URL;
 //const flippandoRealm: string = Config.GNO_FLIPPANDO_REALM;
 //const faucetURL: string = Config.FAUCET_URL;
 //const faucetURL: string = "https://faucet.flippando.xyz";
-const defaultGasWanted: Long = new Long(1000_000_0);
-const customTXFee = '1000000ugnot'
+const defaultGasWanted: Long = new Long(600_000_0);
+const customTXFee = '100000ugnot'
 
 const cleanUpRealmReturn = (ret: string) => {
   return ret.slice(2, -9).replace(/\\"/g, '"');
@@ -244,7 +244,7 @@ class Actions {
         TransactionEndpoint.BROADCAST_TX_COMMIT,
         undefined,
         {
-          gasFee: customTXFee,
+          gasFee: defaultTxFee,
           gasWanted: gasWanted
         }
       )) as BroadcastTxCommitResult;

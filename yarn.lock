@@ -2046,20 +2046,20 @@
   "resolved" "https://registry.npmjs.org/@floating-ui/utils/-/utils-0.1.6.tgz"
   "version" "0.1.6"
 
-"@gnolang/gno-js-client@^1.1.6":
-  "integrity" "sha512-9Vgk6RF3EnbvoNa7tFj4BpxFeza+leWxQzEimO4R6zPBQkpcCeJW4U/k5KeeEwvyhovJb0qu//ofP3YzCV8lMg=="
-  "resolved" "https://registry.npmjs.org/@gnolang/gno-js-client/-/gno-js-client-1.1.7.tgz"
-  "version" "1.1.7"
+"@gnolang/gno-js-client@^1.2.3":
+  "integrity" "sha512-xD5NNjezIoQRguL6Td8r2SfDly/ZinFqzwafsTt4hhK2gnGGwqmwZ3DQn0kcJO2HRrR6xePx5mNxGvAQTsVCmw=="
+  "resolved" "https://registry.npmjs.org/@gnolang/gno-js-client/-/gno-js-client-1.2.3.tgz"
+  "version" "1.2.3"
   dependencies:
     "@cosmjs/ledger-amino" "^0.32.0"
-    "@gnolang/tm2-js-client" "^1.1.5"
+    "@gnolang/tm2-js-client" "^1.2.0"
     "long" "^5.2.3"
     "protobufjs" "^7.2.3"
 
-"@gnolang/tm2-js-client@^1.1.4", "@gnolang/tm2-js-client@^1.1.5":
-  "integrity" "sha512-BgHfGHRLK/xLCl9rZuSUjmF8BBdNTiPMsoQ86A6C/oGOgPoQD1qfwPcTPoZvt5e+HxTtFSizrkvhh9FRDnRp2g=="
-  "resolved" "https://registry.npmjs.org/@gnolang/tm2-js-client/-/tm2-js-client-1.1.5.tgz"
-  "version" "1.1.5"
+"@gnolang/tm2-js-client@^1.1.4", "@gnolang/tm2-js-client@^1.2.0":
+  "integrity" "sha512-PjE2QT6tb1SGeY4lkT0MCh7S1aowJBj519NoaQWG9lK3VIYi4DbrVpuplg/e4RSb4b2g1Zo/6rWCtsLHdXT9Jg=="
+  "resolved" "https://registry.npmjs.org/@gnolang/tm2-js-client/-/tm2-js-client-1.2.0.tgz"
+  "version" "1.2.0"
   dependencies:
     "@cosmjs/amino" "^0.32.0"
     "@cosmjs/crypto" "^0.32.0"
@@ -2069,7 +2069,7 @@
     "long" "^5.2.3"
     "protobufjs" "^7.2.3"
     "uuid" "^9.0.1"
-    "ws" "^8.13.0"
+    "ws" "^8.16.0"
 
 "@humanwhocodes/config-array@^0.9.2":
   "integrity" "sha512-ObyMyWxZiCu/yTisA7uzx81s40xR2fD5Cg/2Kq7G02ajkNubJf6BopgDTmDyc3U7sXpNKM8cYOw7s7Tyr+DnCw=="
@@ -2899,13 +2899,6 @@
     "electron-to-chromium" "^1.4.202"
     "node-releases" "^2.0.6"
     "update-browserslist-db" "^1.0.5"
-
-"bufferutil@^4.0.1":
-  "integrity" "sha512-jduaYOYtnio4aIAyc6UbvPCVcgq7nYpVnucyxr6eCYg/Woad9Hf/oxxBRDnGGjPfjUm6j5O/uBWhIu4iLebFaw=="
-  "resolved" "https://registry.npmjs.org/bufferutil/-/bufferutil-4.0.6.tgz"
-  "version" "4.0.6"
-  dependencies:
-    "node-gyp-build" "^4.3.0"
 
 "call-bind@^1.0.0", "call-bind@^1.0.2":
   "integrity" "sha512-7O+FbCihrB5WGbFYesctwmTKae6rOiIzmz1icreWJ+0aA7LJfuqhEso2T9ncpcFtzMQtzXf2QGGueWJGTYsqrA=="
@@ -4402,11 +4395,6 @@
     "@next/swc-win32-ia32-msvc" "12.1.6"
     "@next/swc-win32-x64-msvc" "12.1.6"
 
-"node-gyp-build@^4.3.0":
-  "integrity" "sha512-amJnQCcgtRVw9SvoebO3BKGESClrfXGCUTX9hSn1OuGQTQBOZmVd0Z0OlecpuRksKvbsUqALE8jls/ErClAPuQ=="
-  "resolved" "https://registry.npmjs.org/node-gyp-build/-/node-gyp-build-4.4.0.tgz"
-  "version" "4.4.0"
-
 "node-releases@^2.0.6":
   "integrity" "sha512-PiVXnNuFm5+iYkLBNeq5211hvO38y63T0i2KKh2KnUs3RpzJ+JtODFjkD8yjLwnDkTYF1eKXheUwdssR+NRZdg=="
   "resolved" "https://registry.npmjs.org/node-releases/-/node-releases-2.0.6.tgz"
@@ -5399,13 +5387,6 @@
   "resolved" "https://registry.npmjs.org/use-sync-external-store/-/use-sync-external-store-1.2.0.tgz"
   "version" "1.2.0"
 
-"utf-8-validate@>=5.0.2":
-  "integrity" "sha512-Yek7dAy0v3Kl0orwMlvi7TPtiCNrdfHNd7Gcc/pLq4BLXqfAmd0J7OWMizUQnTTJsyjKn02mU7anqwfmUP4J8Q=="
-  "resolved" "https://registry.npmjs.org/utf-8-validate/-/utf-8-validate-5.0.9.tgz"
-  "version" "5.0.9"
-  dependencies:
-    "node-gyp-build" "^4.3.0"
-
 "util-deprecate@^1.0.1", "util-deprecate@^1.0.2":
   "integrity" "sha1-RQ1Nyfpw3nMnYvvS1KKJgUGaDM8="
   "resolved" "https://registry.npmjs.org/util-deprecate/-/util-deprecate-1.0.2.tgz"
@@ -5461,10 +5442,10 @@
   "resolved" "https://registry.npmjs.org/wrappy/-/wrappy-1.0.2.tgz"
   "version" "1.0.2"
 
-"ws@^8.13.0":
-  "integrity" "sha512-wEBG1ftX4jcglPxgFCMJmZ2PLtSbJ2Peg6TmpJFTbe9GZYOQCDPdMYu/Tm0/bGZkw8paZnJY45J4K2PZrLYq8g=="
-  "resolved" "https://registry.npmjs.org/ws/-/ws-8.14.2.tgz"
-  "version" "8.14.2"
+"ws@^8.16.0":
+  "integrity" "sha512-uJq6108EgZMAl20KagGkzCKfMEjxmKvZHG7Tlq0Z6nOky7YF7aq4mOx6xK8TJ/i1LeK4Qus7INktacctDgY8Ow=="
+  "resolved" "https://registry.npmjs.org/ws/-/ws-8.17.0.tgz"
+  "version" "8.17.0"
 
 "xtend@^4.0.2":
   "integrity" "sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ=="
