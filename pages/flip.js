@@ -103,11 +103,14 @@ export default function Home() {
     try {
       actions.getUserNFTs(playerAddress, "yes").then((response) => {
         console.log("getUserNFTS response in Flip", response);
-        let parsedResponse = JSON.parse(response);
-        console.log("parseResponse", JSON.stringify(response, null, 2))
-        if(parsedResponse.userNFTs !== undefined && parsedResponse.userNFTs.length !== 0){  
-           //setNfts(parsedResponse.userNFTs)
-           dispatch(setUserBasicNFTs(parsedResponse.userNFTs))
+          if (response !== undefined){
+          let parsedResponse = JSON.parse(response);
+          
+          if(parsedResponse.userNFTs !== undefined && parsedResponse.userNFTs.length !== 0){  
+            //setNfts(parsedResponse.userNFTs)
+            console.log("parseResponse", JSON.stringify(response, null, 2))
+            dispatch(setUserBasicNFTs(parsedResponse.userNFTs))
+          }
         }
       });
     } catch (err) {
@@ -163,11 +166,15 @@ export default function Home() {
       try {
         actions.getUserGamesByStatus(playerAddress, "initialized").then((response) => {
           //console.log("getUserGamesByStatus response in Flip", response);
-          let parsedResponse = JSON.parse(response);
-          if (parsedResponse.length != 0) {
-            setUserGames(parsedResponse.userGames);
+          if (response !== undefined){
+            let parsedResponse = JSON.parse(response);
+            if (parsedResponse.length != 0) {
+              setUserGames(parsedResponse.userGames);
+            }
+            setIsLoadingUserGames(false);
           }
           setIsLoadingUserGames(false);
+          
           //console.log("parseResponse", JSON.stringify(parsedResponse, null, 2))
         });
       } catch (err) {

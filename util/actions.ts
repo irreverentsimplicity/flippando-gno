@@ -27,17 +27,27 @@ const wsURL: string = Config.GNO_WS_URL;
 //const flippandoRealm: string = Config.GNO_FLIPPANDO_REALM;
 //const faucetURL: string = Config.FAUCET_URL;
 //const faucetURL: string = "https://faucet.flippando.xyz";
-const defaultGasWanted: Long = new Long(600_000_0);
+const defaultGasWanted: Long = new Long(800_000_0);
 const customTXFee = '100000ugnot'
 
-const cleanUpRealmReturn = (ret: string) => {
-  return ret.slice(2, -9).replace(/\\"/g, '"');
+const cleanUpRealmReturn = (ret: string, callType: string) => {
+  // maketx adds and extra quote at the end of the string
+  // so we need to have 2 slice values, one from 9 chars, for eval transaction
+  // and one from 11 chars, for maketx
+  console.log("ret ", ret)
+  if (callType == "maketx"){
+    return ret.slice(2, -11).replace(/\\"/g, '"');
+  }
+  else if (callType == "eval"){
+    return ret.slice(2, -9).replace(/\\"/g, '"');
+  }
 };
-const decodeRealmResponse = (resp: string) => {
-  return cleanUpRealmReturn(atob(resp));
+const decodeRealmResponse = (resp: string, callType: string) => {
+  console.log("resp in decodeResponse ", resp)
+  return cleanUpRealmReturn(atob(resp), callType);
 };
-const parsedJSONOrRaw = (data: string, nob64 = false) => {
-  const decoded = nob64 ? cleanUpRealmReturn(data) : decodeRealmResponse(data);
+const parsedJSONOrRaw = (data: string, nob64 = false, callType: string) => {
+  const decoded = nob64 ? cleanUpRealmReturn(data, callType) : decodeRealmResponse(data, callType);
   try {
     return JSON.parse(decoded);
   } finally {
@@ -249,11 +259,11 @@ class Actions {
         }
       )) as BroadcastTxCommitResult;
       if (gkLog) {
-        console.info('response:', JSON.stringify(resp));
+        console.info('response in call:', JSON.stringify(resp));
         const respData = resp.deliver_tx.ResponseBase.Data;
         if (respData !== null) {
-          console.info('response (parsed):', parsedJSONOrRaw(respData));
-          return parsedJSONOrRaw(respData);
+          console.info('response (parsed):', parsedJSONOrRaw(respData, false, "maketx"));
+          return parsedJSONOrRaw(respData, false, "maketx");
         }
       }
       return resp;
@@ -292,11 +302,11 @@ class Actions {
     )) as string;
 
     if (gkLog) {
-      console.info('evaluateExpression response:', parsedJSONOrRaw(resp, true));
+      console.info('evaluateExpression response:', parsedJSONOrRaw(resp, true, "eval"));
     }
 
     // Parse the response
-    return parsedJSONOrRaw(resp, true);
+    return parsedJSONOrRaw(resp, true, "eval");
   }
 
   /**

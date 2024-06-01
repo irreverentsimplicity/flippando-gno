@@ -27,13 +27,15 @@ export const getGNOTBalances = async (dispatch) => {
     const playerAddress = await actions.getWalletAddress();
     try {
       actions.GetFLIPBalance(playerAddress).then((response) => {
-        console.log("fetchUserFLIPBalances response in Flip", response);
-        let parsedResponse = JSON.parse(response);
-        console.log("parseResponse", JSON.stringify(response, null, 2))
-        if(parsedResponse.lockedBalance !== undefined && parsedResponse.availableBalance !== undefined){  
-           //setLockedFlipBalance(parsedResponse.lockedBalance)
-           //setFlipBalance(parsedResponse.availableBalance)
-           dispatch(setUserBalances(parsedResponse))
+        if (response !== undefined){
+          console.log("fetchUserFLIPBalances response in Flip", response);
+          let parsedResponse = JSON.parse(response);
+          console.log("parseResponse", JSON.stringify(response, null, 2))
+          if(parsedResponse.lockedBalance !== undefined && parsedResponse.availableBalance !== undefined){  
+            //setLockedFlipBalance(parsedResponse.lockedBalance)
+            //setFlipBalance(parsedResponse.availableBalance)
+            dispatch(setUserBalances(parsedResponse))
+          }
         }
       });
     } catch (err) {
