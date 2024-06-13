@@ -56,7 +56,7 @@ export default function Airdrop() {
             When?
           </Text>
           <Text fontSize="lg" textAlign="left" mt={4} mb={4} mr={4}>
-           The airdrop will start on June 8th, 2024. The claim window will be open for 1 week.
+           The airdrop will start on June 19th, 2024. The claim window will be open for 1 week.
           </Text>
         </Box>
 
@@ -182,7 +182,7 @@ export default function Airdrop() {
             When again?
           </Text>
           <Text fontSize="lg" textAlign="left" mt={4} mb={4} mr={4}>
-           The airdrop will start on June 8th, 2024. The claim window will be open for 1 week. We already told you that.
+           The airdrop will start on June 19th, 2024. The claim window will be open for 1 week. We already told you that.
           </Text>
         </Box>
         
