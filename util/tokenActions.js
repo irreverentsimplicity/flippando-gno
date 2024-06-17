@@ -32,8 +32,9 @@ export const getGNOTBalances = async (dispatch) => {
           let parsedResponse = JSON.parse(response);
           console.log("parseResponse", JSON.stringify(response, null, 2))
           if(parsedResponse.lockedBalance !== undefined && parsedResponse.availableBalance !== undefined){  
-            //setLockedFlipBalance(parsedResponse.lockedBalance)
-            //setFlipBalance(parsedResponse.availableBalance)
+            // get rid of FLIP and convert to FLIP from uflip
+            parsedResponse.lockedBalance = (parseInt(parsedResponse.lockedBalance.slice(0, -4)) / 1000).toString();
+            parsedResponse.availableBalance = (parseInt(parsedResponse.availableBalance) / 1000).toString();
             dispatch(setUserBalances(parsedResponse))
           }
         }

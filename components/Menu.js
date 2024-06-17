@@ -57,7 +57,7 @@ const Menu = () => {
         <MenuItem href="/my-art">My Art</MenuItem>
         <MenuItem href="/market">Market</MenuItem>
         <MenuItem href="/docs">What is Flippando</MenuItem>
-        <MenuItem href="/airdrop">Airdrop</MenuItem>
+        <MenuItem href="/airdrop">Airdropti</MenuItem>
         <MenuItem href="/roadmap">Roadmap</MenuItem>
       </VStack>
       <Spacer/>

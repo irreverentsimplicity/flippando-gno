@@ -8,7 +8,7 @@ import Menu from '../components/Menu';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Actions from '../util/actions';
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Text, filter } from "@chakra-ui/react";
 import ArtGridLayout from '../components/ArtGridLayout';
 import { getGNOTBalances, fetchUserFLIPBalances } from '../util/tokenActions';
 
@@ -41,6 +41,11 @@ const FlippandoNFTs = () => {
     }
   }, [ownedNFTs, enhancedNFTs])
 
+  const reloadArtworkData = async () => {
+    console.log("reload artwork data")
+    await getArtwork()
+  }
+
   const getArtwork = async () => {
     const actions = await Actions.getInstance();
     const playerAddress = await actions.getWalletAddress();
@@ -52,36 +57,41 @@ const FlippandoNFTs = () => {
         console.log("getUserCompositeNFTs response in my-art.js", response);
         let parsedResponse = JSON.parse(response);
         console.log("getUserCompositeNFTs parseResponse", parsedResponse)
-        if(parsedResponse.error === undefined){
+        if(parsedResponse.error === undefined && parsedResponse.userNFTs.length !== 0){
           let allCompositeNFTs = parsedResponse.userNFTs;
           let userListings = [];
           // get listings and filter
           try {
             console.log("getListings")
             actions.getMarketPlaceListings().then((response) => {
-              console.log("getListings response in art.js", response);
+             // console.log("getListings response in art.js", response);
               let parsedResponse = JSON.parse(response);
-              //console.log("getListings parseResponse", parsedResponse)
+              console.log("getListings parseResponse in art.js", parsedResponse)
               if(parsedResponse.error === undefined){
                 userListings = parsedResponse.marketplaceListings;
-
+                
                 if (userListings.length != 0){
-                  const filteredCompositeNFTs = allCompositeNFTs.filter(nft => 
+                  const filteredCompositeNFTs = allCompositeNFTs.filter(nft =>   
                     !userListings.some(listing => listing.tokenID === nft.tokenID)
                   );
+                  console.log("filteredCompositeNFTS: ", JSON.stringify(filteredCompositeNFTs))
                   setOwnedNFTs(filteredCompositeNFTs);
+                  setEnhancedNFTs([])
                   setIsLoading(false)
+                  //return filteredCompositeNFTs;
                 }
                 else {
                   setOwnedNFTs(allCompositeNFTs);
+                  console.log("allCompositeNFTs: ", JSON.stringify(allCompositeNFTs))
                   setIsLoading(false)
+                  //return allCompositeNFTs;
                 }
               }
             });
           } catch (error) {
             console.error('Error retrieving Artwork:', error);
+            return null
           }
-          
         }
       });
     } catch (error) {
@@ -139,10 +149,15 @@ const FlippandoNFTs = () => {
           }
         <div className="col-span-4 flex justify-start">  
         {(ownedNFTs.length !== 0 && !isLoading) &&
-          <ArtGridLayout cards={ownedNFTs} />
+          <ArtGridLayout cards={ownedNFTs} onTrigger={() => {
+            null
+          } 
+          }/>
         }
         {(enhancedNFTs.length !== 0) &&
-          <ArtGridLayout cards={enhancedNFTs} />
+          <ArtGridLayout cards={enhancedNFTs} onTrigger={() => {
+            reloadArtworkData() 
+          }} />
         }
         {!isLoading && ownedNFTs.length === 0 && enhancedNFTs.length === 0 &&
           <Box display="flex" justifyContent="center" width="100%" mt={8}>

@@ -20,12 +20,21 @@ const ArtSmallTile = ({ size, artNFT, tokenID }) => {
   );
 };
 
-const ArtCard = ({ title, text, artwork, numRows, numCols }) => {
+const ArtCard = ({ title, text, artwork, numRows, numCols, onTrigger }) => {
   const imageWidth = 300; // Fixed image width
   const tileSize = imageWidth / numCols; 
 
   const [showAlert, setShowAlert] = useState(false);
+  const [showErrorAlert, setShowErrorAlert] = useState(false);
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const [isListing, setIsListing] = useState(false);
+
+  const handleTrigger = () => {
+    if (onTrigger) {
+        onTrigger();
+    }
+  };
 
   const handleButtonClick = () => {
     setShowAlert(true);
@@ -45,14 +54,25 @@ const ArtCard = ({ title, text, artwork, numRows, numCols }) => {
           console.log("ListNFT response in ArtCard.js", response);
           //let parsedResponse = JSON.parse(response);
           console.log("Listing parsedResponse", response)
-          if(response === undefined){
+          if(response === ""){
             setIsListing(false)
             closeAlert()
+            setShowSuccessAlert(true)
+            handleTrigger()
+          }
+          else if (response.error !== undefined) {
+            console.log('ListNFT error message: ', response.error)
+            setIsListing(false)
+            closeAlert()
+            setErrorMessage(response.error)
+            setShowErrorAlert(true)
           }
         });
       } catch (error) {
         console.error('Error listing Artwork:', error);
-        return null;
+        setIsListing(false)
+        closeAlert()
+        //return null;
       }
     }
   }
@@ -148,6 +168,42 @@ const ArtCard = ({ title, text, artwork, numRows, numCols }) => {
             </Button>
           </FormControl>
           <CloseButton position="absolute" right="8px" top="8px" onClick={closeAlert} />
+        </Alert>
+      )}
+      {showErrorAlert && (
+        <Alert 
+        status="warning"
+        variant="solid"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        textAlign="center"
+        position="fixed" // or "absolute" depending on your layout
+        top="50%"
+        left="50%"
+        width="300px"
+        transform="translate(-50%, -50%)"
+        zIndex="1000">
+          <div style={{marginTop: '45px', marginBlock: '20px'}}>{errorMessage} We&apos;re on it.</div>
+          <CloseButton position="absolute" right="8px" top="8px" onClick={() => setShowErrorAlert(false)} />
+        </Alert>
+      )}
+       {showSuccessAlert && (
+        <Alert 
+        status="info"
+        variant="solid"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        textAlign="center"
+        position="fixed" // or "absolute" depending on your layout
+        top="50%"
+        left="50%"
+        width="300px"
+        transform="translate(-50%, -50%)"
+        zIndex="1000">
+          <div style={{marginTop: '45px', marginBlock: '20px'}}>Your NFT has been listed.</div>
+          <CloseButton position="absolute" right="8px" top="8px" onClick={() => setShowSuccessAlert(false)} />
         </Alert>
       )}
     </Box>

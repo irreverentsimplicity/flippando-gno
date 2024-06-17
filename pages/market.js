@@ -40,6 +40,17 @@ export default function Market() {
     }
   }, [enhancedNFTs, listings])
 
+
+  const reloadMarketData = async () => {
+    setEnhancedNFTs([])
+    console.log("reload market data")
+    getListings().then( response => {
+      if (response !== undefined && response.length !== 0) {
+        fetchArtworkNFTsForAll(response);
+      }
+    })
+  }
+
   const getListings = async () => {
     const actions = await Actions.getInstance();
     setIsLoading(true)
@@ -54,6 +65,7 @@ export default function Market() {
           //fetchArtworkNFTsForAll(parsedResponse.userNFTs);
           setListings(parsedResponse.marketplaceListings)
           setIsLoading(false)
+          return parsedResponse.marketplaceListings
         }
       });
     } catch (error) {
@@ -120,10 +132,10 @@ export default function Market() {
           }
         <div className="col-span-4 flex justify-start">  
         {(listings.length !== 0 && !isLoading) &&
-          <MarketPlaceGrid listings={listings} playerAddress={playerAddress}/>
+          <MarketPlaceGrid listings={listings} playerAddress={playerAddress} triggerReload={() => reloadMarketData()}/>
         }
         {(enhancedNFTs.length !== 0) &&
-          <MarketPlaceGrid listings={enhancedNFTs} playerAddress={playerAddress}/>
+          <MarketPlaceGrid listings={enhancedNFTs} playerAddress={playerAddress} triggerReload={() => reloadMarketData()}/>
         }
       </div>
     </div>

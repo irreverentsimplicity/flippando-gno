@@ -36,7 +36,7 @@ const cleanUpRealmReturn = (ret: string, callType: string) => {
   // and one from 11 chars, for maketx
   console.log("ret ", ret)
   if (callType == "maketx"){
-    return ret.slice(2, -11).replace(/\\"/g, '"');
+    return ret.slice(2, -9).replace(/\\"/g, '"');
   }
   else if (callType == "eval"){
     return ret.slice(2, -9).replace(/\\"/g, '"');
@@ -270,6 +270,9 @@ class Actions {
     } 
     catch (err) {
       if(err !== undefined){
+        if (gkLog) {
+          console.log('err:', err);
+        }
         let error: TM2Error;
       const ex = err as { log?: string; message?: string } | undefined;
       if (
@@ -280,7 +283,7 @@ class Actions {
         error = ErrorTransform(err as TM2Error);
       }
       if (gkLog) {
-        console.log('error:', error);
+        console.log('error in maketx:', error);
       }
       throw error;
     }
@@ -496,16 +499,26 @@ class Actions {
    * @param seller string
    * @param price string
    */
-    async ListNFT(
-      compositeTokenId: string,
-      seller: string,
-      price: string,): Promise<any> {
+  async ListNFT(
+    compositeTokenId: string,
+    seller: string,
+    price: string,
+  ): Promise<any> {
+    try {
       const response = await this.callMethod('ListMarketplaceNFT', [
         compositeTokenId, seller, price
       ]);
-      console.log("actions ListMarketplaceNFT response ", JSON.stringify(response))
+      console.log("actions ListMarketplaceNFT response ", JSON.stringify(response));
       return response;
+    } catch (error) {
+      // Log the error
+      console.error('Error in ListNFT:', error);
+  
+      // Return a custom error message 
+      return { error: 'An error occurred while listing this NFT.', details: error.message != undefined ? error.message : "no details"};
     }
+  }
+  
 
   /**
    * Call the RemoveMarketplaceNFT function, returns nil on success
@@ -530,11 +543,20 @@ class Actions {
   async BuyNFT(
     compositeTokenId: string,
     buyer: string,): Promise<any> {
-    const response = await this.callMethod('BuyMarketplaceNFT', [
-      compositeTokenId, buyer, 
-    ]);
-    console.log("actions BuyMarketplaceNFT response ", JSON.stringify(response))
-    return response;
+      try {
+        const response = await this.callMethod('BuyMarketplaceNFT', [
+          compositeTokenId, buyer, 
+        ]);
+        console.log("actions BuyMarketplaceNFT response ", JSON.stringify(response));
+        return response;
+      } catch (error) {
+        // Log the error
+        console.error('Error in BuyNFT:', error);
+    
+        // Return a custom error message 
+        return { error: 'An error occurred while buying this NFT.', details: error.message != undefined ? error.message : "no details"};
+      }
+
   }
   
   /**

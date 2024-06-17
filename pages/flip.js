@@ -323,6 +323,7 @@ export default function Home() {
   async function mintNFT(gameId) {
     const actions = await Actions.getInstance();
     const playerAddress = await actions.getWalletAddress();
+    setGameStatus("Hang on, we're minting this...");
     try {
       actions.createNFT(playerAddress, gameId).then((response) => {
         console.log("mintNFT response in Flip", response);
@@ -338,13 +339,15 @@ export default function Home() {
           }
           
           fetchUserNFTs()
+          getGNOTBalances(dispatch);
+          fetchUserFLIPBalances(dispatch);
           setIsLoadingUserGames(true)
           getUserGamesByStatus()
-          
         }
       });
     } catch (err) {
       console.log("error in calling mintNFT", err);
+      setGameStatus("There was an error minting this NFT.");
     }
   }
 
@@ -924,6 +927,7 @@ export default function Home() {
           {(gameStatus.includes("Flippando initialized") ||
             gameStatus.includes("Flippando deployed") ||
             gameStatus.includes("Flippando is heating") ||
+            gameStatus.includes("Hang on") ||
             gameStatus.includes("Flippando solved")) && (
             <div
               className={
@@ -935,7 +939,7 @@ export default function Home() {
               {renderBoard()}
             </div>
           )}
-          {gameStatus.includes("Flippando solved") && (
+          {(gameStatus.includes("Flippando solved") || gameStatus.includes("Hang on")) && (
             <div>
               <div className={styles.mintButton}>
                 <button
@@ -947,13 +951,6 @@ export default function Home() {
                   Mint this NFT
                 </button>
               </div>
-              {/** 
-              <div>
-              <a href="#" onClick={() => { createNewGame(gameLevel, 'sponsored') }} >
-                    <button className='rounded-md bg-[#47A992] px-3.5 py-2.5 hover:scale-110 text-lg font-quantic font-semibold text-white shadow-sm hover:bg-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 border-none w-[140px] focus:outline-none'>Sponsored <p>Game</p> </button>
-                    </a>
-                </div>
-                 */}
               <div>
                 <a
                   href="#"

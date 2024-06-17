@@ -9,7 +9,7 @@ import {
     ModalCloseButton,
     useDisclosure,
   } from '@chakra-ui/react'
-import { Box, Text, VStack, HStack, Button, Spacer } from "@chakra-ui/react";
+import { Alert, Box, Text, VStack, HStack, Button, Spacer, CloseButton } from "@chakra-ui/react";
 import Spinner from './Spinner';
 import Actions from '../util/actions';
 
@@ -30,13 +30,20 @@ const ArtSmallTile = ({ size, artNFT, tokenID }) => {
   );
 };
 
-const ListingCard = ({ seller, playerAddress, price, artwork, numCols }) => {
+const ListingCard = ({ seller, playerAddress, price, artwork, numCols, onRemoveListing, onBuy }) => {
   const imageWidth = 300; // Fixed image width
   const tileSize = imageWidth / numCols; 
   
   console.log("seller ", seller);
   console.log("playerAddress ", playerAddress);
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const [buyButtonLabel, setBuyButtonLabel] = useState("Buy")
+  const [removeListingButtonLabel, setRemoveListingButtonLabel] = useState("Remove listing")
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false)
+  const [totalFlip, setTotalFlip] = useState((price/1000).toString())
+  const [flipPaid, setFlipPaid] = useState("")
+  const [flipBurned, setFlipBurned] = useState("")
+  
   
   const OverlayModal = () => (
     <ModalOverlay
@@ -48,31 +55,47 @@ const ListingCard = ({ seller, playerAddress, price, artwork, numCols }) => {
   const handleBuyClick = async () => {
     console.log("buy listing call")
     const actions = await Actions.getInstance();
-        
+    setBuyButtonLabel("Buying...")
     try {
         actions.BuyNFT(playerAddress, artwork.tokenID).then((response) => {
-        console.log("buyNFT response in ListingCard.js", response);
+          console.log("buyNFT response in ListingCard.js", response);
+          if (response.error === ""){
+            setShowSuccessAlert(true)
+            setFlipPaid((response.flipPaid/1000).toString())
+            setFlipBurned((response.flipBurned/1000).toString())
+            onBuy()
+          }
         });
     } catch (error) {
         console.error('Error buying listing:', error);
-        
+        setBuyButtonLabel("Buy")
     };
   };
 
   const handleRemoveListing = async () => {
     console.log("remove listing call")
+    setRemoveListingButtonLabel("Removing listing...")
     const actions = await Actions.getInstance();
         
     try {
         actions.RemoveNFTListing(artwork.tokenID, seller).then((response) => {
-        console.log("removeNFTListing response in ListingCard.js", response);
+          console.log("removeNFTListing response in ListingCard.js", response);
+          if(response == ""){
+            setRemoveListingButtonLabel("Listing removed")
+            onRemoveListing()
+          }
         });
     } catch (error) {
         console.error('Error removing listing:', error);
+        setRemoveListingButtonLabel("Remove listing")
         return null;
     }
       
   };
+
+  const handleModalCloseOnSuccess = async () => {
+    setShowSuccessAlert(false)
+  }
 
   return (
     <div style={{ position: 'relative' }}>
@@ -111,7 +134,7 @@ const ListingCard = ({ seller, playerAddress, price, artwork, numCols }) => {
           _hover={{ bg: "blue.600"}}
           borderRadius="full"
           onClick={onOpen}         
-        >Buy</Button>
+        >{buyButtonLabel}</Button>
         }
         {seller === playerAddress &&
         <Button
@@ -120,7 +143,7 @@ const ListingCard = ({ seller, playerAddress, price, artwork, numCols }) => {
           _hover={{ bg: "blue.600"}}
           borderRadius="full"
           onClick={handleRemoveListing}      
-        >Remove Listing</Button>
+        >{removeListingButtonLabel}</Button>
         }
         </HStack>
       </VStack>
@@ -147,6 +170,24 @@ const ListingCard = ({ seller, playerAddress, price, artwork, numCols }) => {
       </Modal>
       }
     </Box>
+    {showSuccessAlert && (
+        <Alert 
+        status="info"
+        variant="solid"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        textAlign="center"
+        position="fixed" // or "absolute" depending on your layout
+        top="50%"
+        left="50%"
+        width="300px"
+        transform="translate(-50%, -50%)"
+        zIndex="1000">
+          <div style={{marginTop: '45px', marginBlock: '20px'}}>Transaction complete! You paid {totalFlip} FLIP, out of which {flipPaid} FLIP was sent to the seller, and {flipBurned} FLIP was burned.</div>
+          <CloseButton position="absolute" right="8px" top="8px" onClick={() => handleModalCloseOnSuccess()} />
+        </Alert>
+      )}
     </div>
   );
 };
