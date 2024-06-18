@@ -40,7 +40,7 @@ const ListingCard = ({ seller, playerAddress, price, artwork, numCols, onRemoveL
   const [buyButtonLabel, setBuyButtonLabel] = useState("Buy")
   const [removeListingButtonLabel, setRemoveListingButtonLabel] = useState("Remove listing")
   const [showSuccessAlert, setShowSuccessAlert] = useState(false)
-  const [totalFlip, setTotalFlip] = useState((price/1000).toString())
+  const [totalFlip, setTotalFlip] = useState((price).toString())
   const [flipPaid, setFlipPaid] = useState("")
   const [flipBurned, setFlipBurned] = useState("")
   
@@ -59,11 +59,14 @@ const ListingCard = ({ seller, playerAddress, price, artwork, numCols, onRemoveL
     try {
         actions.BuyNFT(playerAddress, artwork.tokenID).then((response) => {
           console.log("buyNFT response in ListingCard.js", response);
-          if (response.error === ""){
-            setShowSuccessAlert(true)
-            setFlipPaid((response.flipPaid/1000).toString())
-            setFlipBurned((response.flipBurned/1000).toString())
-            onBuy()
+          const jsonResponse = JSON.parse(response)
+          if (jsonResponse.error == ""){
+            console.log("error = nothing")
+            onClose()
+            setFlipPaid((jsonResponse.flipPaid/1000).toString())
+            setFlipBurned((jsonResponse.flipBurned/1000).toString())
+            setShowSuccessAlert(true) 
+            setBuyButtonLabel("Done!")
           }
         });
     } catch (error) {
@@ -95,6 +98,7 @@ const ListingCard = ({ seller, playerAddress, price, artwork, numCols, onRemoveL
 
   const handleModalCloseOnSuccess = async () => {
     setShowSuccessAlert(false)
+    onBuy()
   }
 
   return (
@@ -183,7 +187,7 @@ const ListingCard = ({ seller, playerAddress, price, artwork, numCols, onRemoveL
         left="50%"
         width="300px"
         transform="translate(-50%, -50%)"
-        zIndex="1000">
+        zIndex="1003">
           <div style={{marginTop: '45px', marginBlock: '20px'}}>Transaction complete! You paid {totalFlip} FLIP, out of which {flipPaid} FLIP was sent to the seller, and {flipBurned} FLIP was burned.</div>
           <CloseButton position="absolute" right="8px" top="8px" onClick={() => handleModalCloseOnSuccess()} />
         </Alert>
