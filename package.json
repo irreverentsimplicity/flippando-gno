@@ -1,6 +1,6 @@
 {
   "name": "flippando-gno",
-  "version": "1.0.2-beta",
+  "version": "1.0.3-beta",
   "private": true,
   "scripts": {
     "dev": "next dev",
