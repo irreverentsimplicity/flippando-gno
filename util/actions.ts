@@ -36,7 +36,7 @@ const cleanUpRealmReturn = (ret: string, callType: string) => {
   // and one from 11 chars, for maketx
   console.log("ret ", ret)
   if (callType == "maketx"){
-    return ret.slice(2, -9).replace(/\\"/g, '"');
+    return ret.slice(2, -11).replace(/\\"/g, '"');
   }
   else if (callType == "eval"){
     return ret.slice(2, -9).replace(/\\"/g, '"');
