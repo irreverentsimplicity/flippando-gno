@@ -34,6 +34,8 @@ const Wallet = ({ userBalances, userGnotBalances }) => {
       actionsInstance.setRpcUrl(newNetwork);
     };
 
+    const showLocalOption = process.env.NEXT_PUBLIC_SHOW_LOCAL_OPTION === 'true';
+
     return (
       <div>
       {/*<AdenaWallet/>*/}
@@ -62,7 +64,7 @@ const Wallet = ({ userBalances, userGnotBalances }) => {
           borderColor="purple.500"
           _hover={{ bg: 'purple.600' }}
           _focus={{ boxShadow: 'outline' }}>
-          <option value="http://localhost:26657">Local node</option>
+          {showLocalOption && <option value="http://localhost:26657">Local node</option>}
           <option value="https://rpc.flippando.xyz" >Flippando RPC</option>
           <option value="https://portal-loop.gnoteam.com">Portal Loop RPC</option>
         </Select>
