@@ -69,6 +69,7 @@ class Actions {
   private provider: GnoWSProvider | null = null;
   private providerJSON: GnoJSONRPCProvider | null = null;
   private faucetToken: string | null = null;
+  
   private rpcURL: string = Config.GNO_JSONRPC_URL;  
   private flippandoRealm: string = Config.GNO_FLIPPANDO_REALM;
   private faucetURL: string = Config.FAUCET_URL;

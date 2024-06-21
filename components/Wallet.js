@@ -4,6 +4,7 @@ import { Icon, Select } from "@chakra-ui/react";
 import { useSelector, useDispatch } from "react-redux";
 import { setRpcEndpoint } from "../slices/flippandoSlice";
 import Actions from "../util/actions";
+import Config from '../util/config';
 //import AdenaWallet from "./AdenaWallet";
 
 
@@ -36,6 +37,7 @@ const Wallet = ({ userBalances, userGnotBalances }) => {
 
     const showLocalOption = process.env.NEXT_PUBLIC_SHOW_LOCAL_OPTION === 'true';
     console.log('NEXT_PUBLIC_SHOW_LOCAL_OPTION:', process.env.NEXT_PUBLIC_SHOW_LOCAL_OPTION);
+    console.log("Config.GNO_JSONRPC_URL: ", Config.GNO_JSONRPC_URL);
 
     return (
       <div>
