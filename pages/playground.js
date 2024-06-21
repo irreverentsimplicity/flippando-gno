@@ -34,7 +34,13 @@ export default function Playground() {
   
   useEffect( () => {
       console.log("rpcEndpoint in useEffect, market.js ", rpcEndpoint)
-      getGNOTBalances(dispatch);
+      getGNOTBalances(dispatch, (result) => {
+        if (result.success) {
+            alert(result.message);
+        } else {
+            alert(`Error: ${result.message}`);
+        }
+    });
       fetchUserFLIPBalances(dispatch);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rpcEndpoint])

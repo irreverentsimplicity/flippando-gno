@@ -27,7 +27,13 @@ const FlippandoNFTs = () => {
   
   useEffect( () => {
       console.log("rpcEndpoint in useEffect, my-art.js ", rpcEndpoint)
-      getGNOTBalances(dispatch);
+      getGNOTBalances(dispatch, (result) => {
+        if (result.success) {
+            alert(result.message);
+        } else {
+            alert(`Error: ${result.message}`);
+        }
+    });
       fetchUserFLIPBalances(dispatch);
   }, [rpcEndpoint]);
 

@@ -581,6 +581,7 @@ class Actions {
    * Pings the faucet to fund the account before playing
    * @private
    */
+  /*
   private async fundAccount(token: string): Promise<void> {
     console.log("Token:", token);
     const requestOptions = {
@@ -613,9 +614,44 @@ class Actions {
         }
     } catch (error) {
         // Catch network errors, parsing errors, etc.
-        console.error("Error during fetch:", error);
+        console.log("Error during fetch:", error);
     }
+}*/
+private async fundAccount(token: string): Promise<boolean> {
+  console.log("Token:", token);
+  const requestOptions = {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+          to: await this.wallet?.getAddress()
+      })
+  };
+
+  if (!this.faucetURL) {
+      console.error("Faucet URL is undefined.");
+      return false;
+  }
+
+  try {
+      const response = await fetch(this.faucetURL, requestOptions);
+      const data = await response.json();
+      console.log("Faucet URL:", this.faucetURL);
+      console.log("Fund Response:", JSON.stringify(data, null, 2));
+
+      if (!response.ok) {
+          console.error("Fund error:", data.message || "Unknown error");
+          return false;
+      }
+
+      return true;
+  } catch (error) {
+      console.error("Error during fetch:", error);
+      return false;
+  }
 }
+
 
 }
 

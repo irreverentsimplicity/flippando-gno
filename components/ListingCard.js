@@ -40,6 +40,8 @@ const ListingCard = ({ seller, playerAddress, price, artwork, numCols, onRemoveL
   const [buyButtonLabel, setBuyButtonLabel] = useState("Buy")
   const [removeListingButtonLabel, setRemoveListingButtonLabel] = useState("Remove listing")
   const [showSuccessAlert, setShowSuccessAlert] = useState(false)
+  const [showErrorAlert, setShowErrorAlert] = useState(false)
+  const [buyError, setBuyError] = useState("")
   const [totalFlip, setTotalFlip] = useState((price).toString())
   const [flipPaid, setFlipPaid] = useState("")
   const [flipBurned, setFlipBurned] = useState("")
@@ -67,6 +69,14 @@ const ListingCard = ({ seller, playerAddress, price, artwork, numCols, onRemoveL
             setFlipBurned((jsonResponse.flipBurned/1000).toString())
             setShowSuccessAlert(true) 
             setBuyButtonLabel("Done!")
+          }
+          else {
+            onClose()
+            setFlipPaid((jsonResponse.flipPaid/1000).toString())
+            setFlipBurned((jsonResponse.flipBurned/1000).toString())
+            setBuyError(jsonResponse.error)
+            setShowErrorAlert(true) 
+            setBuyButtonLabel("Buy")
           }
         });
     } catch (error) {
@@ -99,6 +109,10 @@ const ListingCard = ({ seller, playerAddress, price, artwork, numCols, onRemoveL
   const handleModalCloseOnSuccess = async () => {
     setShowSuccessAlert(false)
     onBuy()
+  }
+
+  const handleModalCloseOnError = async () => {
+    setShowErrorAlert(false)
   }
 
   return (
@@ -190,6 +204,24 @@ const ListingCard = ({ seller, playerAddress, price, artwork, numCols, onRemoveL
         zIndex="1003">
           <div style={{marginTop: '45px', marginBlock: '20px'}}>Transaction complete! You paid {totalFlip} FLIP, out of which {flipPaid} FLIP was sent to the seller, and {flipBurned} FLIP was burned.</div>
           <CloseButton position="absolute" right="8px" top="8px" onClick={() => handleModalCloseOnSuccess()} />
+        </Alert>
+      )}
+      {showErrorAlert && (
+        <Alert 
+        status="info"
+        variant="solid"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        textAlign="center"
+        position="fixed" // or "absolute" depending on your layout
+        top="50%"
+        left="50%"
+        width="300px"
+        transform="translate(-50%, -50%)"
+        zIndex="1003">
+          <div style={{marginTop: '45px', marginBlock: '20px'}}>There was an error buying this NFT: {buyError}.</div>
+          <CloseButton position="absolute" right="8px" top="8px" onClick={() => handleModalCloseOnError()} />
         </Alert>
       )}
     </div>

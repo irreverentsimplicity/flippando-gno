@@ -81,15 +81,22 @@ export default function Home() {
 
   useEffect( () => {
       console.log("rpcEndpoint in useEffect, flip.js ", rpcEndpoint)
-      getGNOTBalances(dispatch);
+      getGNOTBalances(dispatch, (result) => {
+        if (result.success) {
+            alert(result.message);
+        } else {
+            alert(`Error: ${result.message}`);
+        }
+    });
+
       fetchUserFLIPBalances(dispatch);
       fetchUserNFTs();
       getUserGamesByStatus();
-  }, [rpcEndpoint])
+  }, [rpcEndpoint, dispatch])
 
   useEffect( () => {
     getUserGamesByStatus();
-    getGNOTBalances(dispatch);
+    //getGNOTBalances(dispatch);
     fetchUserFLIPBalances(dispatch);
     fetchUserNFTs();
     

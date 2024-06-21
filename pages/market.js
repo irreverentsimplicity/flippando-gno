@@ -24,7 +24,13 @@ export default function Market() {
   
   useEffect( () => {
       console.log("rpcEndpoint in useEffect, market.js ", rpcEndpoint)
-      getGNOTBalances(dispatch);
+      getGNOTBalances(dispatch, (result) => {
+        if (result.success) {
+            alert(result.message);
+        } else {
+            alert(`Error: ${result.message}`);
+        }
+    });
       fetchUserFLIPBalances(dispatch);
   }, [rpcEndpoint])
 
@@ -49,6 +55,7 @@ export default function Market() {
         fetchArtworkNFTsForAll(response);
       }
     })
+    fetchUserFLIPBalances(dispatch)
   }
 
   const getListings = async () => {
