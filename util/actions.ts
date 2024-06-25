@@ -577,46 +577,6 @@ class Actions {
     return response;
   }
   
-  /**
-   * Pings the faucet to fund the account before playing
-   * @private
-   */
-  /*
-  private async fundAccount(token: string): Promise<void> {
-    console.log("Token:", token);
-    const requestOptions = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            // Uncomment or add other headers as needed
-            //'faucet-token': token, // Assuming 'token' should be sent in the request headers
-        },
-        body: JSON.stringify({
-            to: await this.wallet?.getAddress()
-        })
-    };
-
-    // Ensure faucetURL is defined and correct
-    if (!this.faucetURL) {
-        console.error("Faucet URL is undefined.");
-        return;
-    }
-
-    try {
-        const response = await fetch(this.faucetURL, requestOptions);
-        const data = await response.json(); // Assuming the server responds with JSON
-        console.log("Faucet URL:", this.faucetURL);
-        console.log("Fund Response:", JSON.stringify(data, null, 2));
-        
-        if (!response.ok) {
-            // Log more detailed error information
-            console.error("Fund error:", data.message || "Unknown error");
-        }
-    } catch (error) {
-        // Catch network errors, parsing errors, etc.
-        console.log("Error during fetch:", error);
-    }
-}*/
 private async fundAccount(token: string): Promise<boolean> {
   console.log("Token:", token);
   const requestOptions = {
