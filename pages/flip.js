@@ -125,46 +125,6 @@ export default function Home() {
     }
   };
 
-  /*
-  const getGNOTBalances = async () => {
-    const actions = await Actions.getInstance();
-    const playerAddress = await actions.getWalletAddress();
-    try {
-      actions.getBalance().then((response) => {
-        console.log("getGNOTBalances response in Flip", response);
-        let parsedResponse = JSON.parse(response);
-        console.log("parseResponse", JSON.stringify(parsedResponse, null, 2))
-        //setUserGnotBalances(parsedResponse/1000000)
-        dispatch(setUserGnotBalances(parsedResponse/1000000))
-        if(parsedResponse <= 1000000){
-          actions.fundAccount("flippando")
-        }
-      });
-    } catch (err) {
-      console.log("error in calling getGNOTBalances", err);
-    }
-  }
-
-  const fetchUserFLIPBalances = async () => {
-    console.log("fetchUserFLIPBalances");
-    const actions = await Actions.getInstance();
-    const playerAddress = await actions.getWalletAddress();
-    try {
-      actions.GetFLIPBalance(playerAddress).then((response) => {
-        console.log("fetchUserFLIPBalances response in Flip", response);
-        let parsedResponse = JSON.parse(response);
-        console.log("parseResponse", JSON.stringify(response, null, 2))
-        if(parsedResponse.lockedBalance !== undefined && parsedResponse.availableBalance !== undefined){  
-           //setLockedFlipBalance(parsedResponse.lockedBalance)
-           //setFlipBalance(parsedResponse.availableBalance)
-           dispatch(setUserBalances(parsedResponse))
-        }
-      });
-    } catch (err) {
-      console.log("error in calling fetchUserFLIPBalances", err);
-    }
-  };*/
-
   const getUserGamesByStatus = async () => {
     //console.log("getUserGamesByStatus call in Flip");
     const actions = await Actions.getInstance();

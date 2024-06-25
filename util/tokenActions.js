@@ -1,26 +1,6 @@
 import Actions from "./actions";
 import {setUserBalances, setUserGnotBalances} from '../slices/flippandoSlice';
 
-/*
-export const getGNOTBalances = async (dispatch) => {
-    console.log(typeof dispatch); 
-    const actions = await Actions.getInstance();
-    const playerAddress = await actions.getWalletAddress();
-    try {
-      actions.getBalance().then((response) => {
-        console.log("getGNOTBalances response in Flip", response);
-        let parsedResponse = JSON.parse(response);
-        console.log("parseResponse", JSON.stringify(parsedResponse, null, 2))
-        //setUserGnotBalances(parsedResponse/1000000)
-        dispatch(setUserGnotBalances(parsedResponse/1000000))
-        if(parsedResponse <= 80000000){
-          actions.fundAccount("flippando")
-        }
-      });
-    } catch (err) {
-      console.log("error in calling getGNOTBalances", err);
-    }
-  }*/
   export const getGNOTBalances = async (dispatch, callback) => {
     console.log(typeof dispatch); 
     const actions = await Actions.getInstance();
@@ -32,7 +12,7 @@ export const getGNOTBalances = async (dispatch) => {
         console.log("parseResponse", JSON.stringify(parsedResponse, null, 2));
         dispatch(setUserGnotBalances(parsedResponse / 1000000));
         
-        if (parsedResponse <= 80000000) {
+        if (parsedResponse <= 1000000) {
             const fundResult = await actions.fundAccount("flippando");
             if (fundResult) {
                 console.log("Account funded successfully.");
