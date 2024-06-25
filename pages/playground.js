@@ -1,21 +1,15 @@
 /* pages/my-nfts.js */
 //import {ethers} from 'ethers';
 import styles from "../styles/Home.module.css";
-import Head from "next/head";
 import Menu from '../components/Menu';
 import Footer from '../components/Footer';
 import { useEffect, useState } from 'react';
 import { useDispatch } from "react-redux";
 import { Box, Text, VStack, Button } from "@chakra-ui/react";
 import Link from 'next/link';
-import { useSelector } from 'react-redux';
-import { useDrag, useDrop } from 'react-dnd';
-import SmallTile from '../components/SmallTile';
+import { useSelector } from 'react-redux';;
 import Canvas from '../components/Canvas';
 import Header from "../components/Header";
-import Grey from './assets/squares/grey.svg';
-import Image from 'next/image';
-import artNFT from './assets/artNFT.jpg';
 import Actions from "../util/actions";
 import { getGNOTBalances, fetchUserFLIPBalances } from "../util/tokenActions";
 
