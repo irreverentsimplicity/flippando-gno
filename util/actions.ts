@@ -296,7 +296,7 @@ class Actions {
     if (gkLog) {
       const quotesEscaped = expr.replace(/'/g, `'\\''`);
       console.info(
-        `$ gnokey query vm/qeval --data '${this.flippandoRealm}'$'\\n''${quotesEscaped}'`
+        `$ gnokey query vm/qeval --data '${this.flippandoRealm}.${quotesEscaped}'`
       );
     }
 
