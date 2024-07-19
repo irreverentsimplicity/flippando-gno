@@ -1,19 +1,12 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import NFTListUser from '../components/NFTListUser'
-import styles from "../styles/Home.module.css";
-import { Box, Text } from "@chakra-ui/react";
-import Header from "../components/Header";
-import Menu from '../components/Menu';
-import Footer from '../components/Footer';
 import Actions from "../util/actions";
 import { getGNOTBalances, fetchUserFLIPBalances } from "../util/tokenActions";
 
 
-export default function MyAssets() {
+const MyFlips = () => {
 
-  const userBalances = useSelector(state => state.flippando.userBalances);
-  const userGnotBalances = useSelector(state => state.flippando.userGnotBalances);
   const userBasicNFTs = useSelector(state => state.flippando.userBasicNFTs);
   const [isLoadingNFTs, setIsLoadingNFTs] = useState(true)
   const [usedNfts, setUsedNfts] = useState([])
@@ -65,20 +58,8 @@ export default function MyAssets() {
   }, [userBasicNFTs])
   
   return (
-    <div className={styles.container}>
-      <Header userBalances={userBalances} userGnotBalances={userGnotBalances}/>
+      <div className='col-span-5 justify-start'>
       
-      <div className="grid flex grid-cols-5">
-      
-        <div className="bg-white-100 col-span-1">
-        <Menu />
-        </div>
-        <div className='col-span-4 justify-start'>
-        <Box className="justify-end" borderBottom="1px solid white" mb={4}>
-          <Text fontSize="2xl" fontWeight="bold" textAlign="right" mb={4} mr={4}>
-            My Flips
-          </Text>
-        </Box>
         <div className="col-span-4">
             <NFTListUser 
             userNFTs={userBasicNFTs} 
@@ -86,12 +67,9 @@ export default function MyAssets() {
             isLoadingUserArtworkNFTs={isLoadingUsedNFTs} 
             userArtworkNFTs={usedNfts}/>
         </div>
-        </div>
-    </div>
-        <div className="col-span-5 pt-20">
-            <Footer/>
-        
-        </div>
-    </div>
+      </div>
+    
   )
 }
+
+export default MyFlips;

@@ -52,13 +52,9 @@ const Menu = () => {
     <Box width="200px" height="80vh" bg="gray.100" borderRadius="lg" p={2}  display="flex" flexDirection="column">
       <VStack align="stretch" spacing={4}>
         <MenuItem href="/flip">Flip</MenuItem>
-        <MenuItem href="/my-flips">My Flips</MenuItem>
-        <MenuItem href="/playground">Playground</MenuItem>
-        <MenuItem href="/my-art">My Art</MenuItem>
-        <MenuItem href="/market">Market</MenuItem>
-        <MenuItem href="/docs">What is Flippando</MenuItem>
-        <MenuItem href="/airdrop">Airdrop</MenuItem>
-        <MenuItem href="/roadmap">Roadmap</MenuItem>
+        <MenuItem href="/playground">Playground</MenuItem> 
+        <MenuItem href="/inventory">Inventory</MenuItem>
+        <MenuItem href="/market">Marketplace</MenuItem>
       </VStack>
       <Spacer/>
       <a href={'https://twitter.com/Flippand0'} target="_blank" rel="noopener noreferrer">

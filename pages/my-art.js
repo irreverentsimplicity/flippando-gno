@@ -2,23 +2,17 @@
 
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from "react-redux";
-import styles from "../styles/Home.module.css";
 import Spinner from '../components/Spinner';
-import Menu from '../components/Menu';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import Actions from '../util/actions';
-import { Box, Text, filter } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import ArtGridLayout from '../components/ArtGridLayout';
+import { setUserArtNFTs } from '../slices/flippandoSlice';
 import { getGNOTBalances, fetchUserFLIPBalances } from '../util/tokenActions';
 
 
-const FlippandoNFTs = () => {
+const MyArt = () => {
   const [ownedNFTs, setOwnedNFTs] = useState([]);
   const [enhancedNFTs, setEnhancedNFTs] = useState([]);
-
-  const userBalances = useSelector(state => state.flippando.userBalances);
-  const userGnotBalances = useSelector(state => state.flippando.userGnotBalances);
   const [isLoading, setIsLoading] = useState(false)
 
   const rpcEndpoint = useSelector(state => state.flippando.rpcEndpoint);
@@ -82,12 +76,14 @@ const FlippandoNFTs = () => {
                   );
                   console.log("filteredCompositeNFTS: ", JSON.stringify(filteredCompositeNFTs))
                   setOwnedNFTs(filteredCompositeNFTs);
+                  dispatch(setUserArtNFTs(filteredCompositeNFTs));
                   setEnhancedNFTs([])
                   setIsLoading(false)
                   //return filteredCompositeNFTs;
                 }
                 else {
                   setOwnedNFTs(allCompositeNFTs);
+                  dispatch(setUserArtNFTs(allCompositeNFTs));
                   console.log("allCompositeNFTs: ", JSON.stringify(allCompositeNFTs))
                   setIsLoading(false)
                   //return allCompositeNFTs;
@@ -134,57 +130,42 @@ const FlippandoNFTs = () => {
 
   return (
 
-    <div className={styles.container}>
-      <Header userBalances={userBalances} userGnotBalances={userGnotBalances}/>
-      
-      <div className="grid flex grid-cols-5">
-      
-        <div className="bg-white-100 col-span-1">
-        <Menu />
-        </div>   
-        <div className='col-span-4 justify-start'>
-        <Box className="justify-end" borderBottom="1px solid white" mb={4}>
-          <Text fontSize="2xl" fontWeight="bold" textAlign="right" mb={4} mr={4}>
-            My Art
-          </Text>
-        </Box>
+        <div className='col-span-5 justify-start'>
+        
           {isLoading &&
-            <div className="flex col-span-4 justify-center items-center">
-            <Spinner loadingText={'Fetching art..'}/>
-          </div>
+            <div className="flex col-span-5 justify-center items-center">
+              <Spinner loadingText={'Fetching art..'}/>
+            </div>
           }
-        <div className="col-span-4 flex justify-start">  
-        {(ownedNFTs.length !== 0 && !isLoading) &&
-          <ArtGridLayout cards={ownedNFTs} onTrigger={() => {
-            null
-          } 
-          }/>
-        }
-        {(enhancedNFTs.length !== 0) &&
-          <ArtGridLayout cards={enhancedNFTs} onTrigger={() => {
-            reloadArtworkData() 
-          }} />
-        }
-        {!isLoading && ownedNFTs.length === 0 && enhancedNFTs.length === 0 &&
-          <Box display="flex" justifyContent="center" width="100%" mt={8}>
-          <Text fontSize="lg" fontWeight="bold" textAlign="center">
-            Nothing here yet
-          </Text>
-          </Box>
-        }
-        </div>
+          <div className="col-span-5 flex justify-start">  
+          {(ownedNFTs.length !== 0 && !isLoading) &&
+            <ArtGridLayout cards={ownedNFTs} onTrigger={() => {
+              null
+            } 
+            }/>
+          }
+          {(enhancedNFTs.length !== 0) &&
+            <ArtGridLayout cards={enhancedNFTs} onTrigger={() => {
+              reloadArtworkData() 
+            }} />
+          }
+          {!isLoading && ownedNFTs.length === 0 && enhancedNFTs.length === 0 &&
+            <Box display="flex" justifyContent="center" width="100%" mt={8}>
+            <Text fontSize="lg" fontWeight="bold" textAlign="center">
+              Nothing here yet
+            </Text>
+            </Box>
+          }
+          </div>
         
         </div>
       
       
-    </div>
-        <div className="col-span-5 pt-20">
-            <Footer/>
-        </div>
-    </div>
+        
+    
 
    
   );
 };
 
-export default FlippandoNFTs;
+export default MyArt;

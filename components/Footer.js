@@ -1,11 +1,19 @@
 import Link from 'next/link';
 import styles from "../styles/Home.module.css";
 import PackageJSON from "../package.json";
+import { HStack, Text } from '@chakra-ui/react';
 
 export default function Footer() {
 
     return (
         <footer className={styles.footer}>
+          <HStack>
+          <Link href="/docs">What is Flippando</Link>
+          <Text> | </Text>
+          <Link href="/airdrop">Airdrop</Link>
+          <Text> | </Text>
+          <Link size={"md"} href="/roadmap">Roadmap</Link> 
+          </HStack>
           <div>Flippando Gno - version {PackageJSON.version}</div>
           <div>made with &#x2764;&#xFE0F; by <Link href="https://github.com/irreverentsimplicity">@irreverentsimplicity</Link></div>
           <div style={{ display: 'flex', alignItems: 'center'}}>powered by <Link href="https://gno.land">
