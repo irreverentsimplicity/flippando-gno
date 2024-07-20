@@ -63,7 +63,7 @@ const MyArt = () => {
           // get listings and filter
           try {
             console.log("getListings")
-            actions.getMarketPlaceListings().then((response) => {
+            actions.getCompositeListings().then((response) => {
              // console.log("getListings response in art.js", response);
               let parsedResponse = JSON.parse(response);
               console.log("getListings parseResponse in art.js", parsedResponse)

@@ -106,42 +106,70 @@ const Canvas = ({height, width, isArtMinted}) => {
     const images = ["/assets/hacker_pixelated_64.jpeg", "/assets/hacker_green_pixelated_64.jpeg"];
     
     useEffect(() => {
-        console.log("fetchNFTs")
-        const fetchNFTs = async () => {
-            
-          setIsLoading(true);
-
+      const fetchNFTs = async () => {
+        console.log("fetchNFTs");
+        setIsLoading(true);
+    
+        try {
           const actions = await Actions.getInstance();
           const playerAddress = await actions.getWalletAddress();
-          try {
-            actions.getAllNFTs(playerAddress).then((response) => {
-              //console.log("getAllNFTS response in Canvas", response);
-              let parsedResponse = JSON.parse(response);
-              //console.log("parseResponse", parsedResponse)
-              if(parsedResponse.userNFTs !== undefined && parsedResponse.userNFTs.length !== 0){
-                  let nftData = []
-                  parsedResponse.userNFTs.map((nftItem) => {
+          const response = await actions.getAllNFTs(playerAddress);
+    
+          let parsedResponse = JSON.parse(response);
+          if (parsedResponse.userNFTs !== undefined && parsedResponse.userNFTs.length !== 0) {
+            let nftData = [];
+            let userListings = [];
+    
+            try {
+              const listingsResponse = await actions.getBasicListings();
+              let parsedListingsResponse = JSON.parse(listingsResponse);
+              console.log("getBasicListings parseListingResponse in Canvas.js", parsedListingsResponse);
+              
+              if (parsedListingsResponse.error === undefined) {
+                userListings = parsedListingsResponse.marketplaceListings;
+                
+                if (userListings.length !== 0) {
+                  const filteredBasicNFTs = parsedResponse.userNFTs.filter(nft =>
+                    !userListings.some(listing => listing.tokenID === nft.tokenID)
+                  );
+                  console.log("filteredBasicNFTs: ", JSON.stringify(filteredBasicNFTs));
+                  
+                  filteredBasicNFTs.forEach((nftItem) => {
                     nftData.push({
                       tokenId: nftItem.tokenId,
                       metadata: nftItem,
-                    })
-                  })
-                
-                if(nftData.length !== 0){
-                  setSourceGrid(nftData);
+                    });
+                  });
+                } else {
+                  parsedResponse.userNFTs.forEach((nftItem) => {
+                    nftData.push({
+                      tokenId: nftItem.tokenId,
+                      metadata: nftItem,
+                    });
+                  });
                 }
-                
+              } else {
+                console.error('Error in listings response:', parsedListingsResponse.error);
               }
-              setIsLoading(false);
-            });
-          } catch (err) {
-            console.log("error in calling getAllNFTs", err);
-          }
-          
-        };
+            } catch (error) {
+              console.error('Error retrieving BasicNFTs:', error);
+            }
     
-        fetchNFTs();;
-      }, []);
+            if (nftData.length !== 0) {
+              console.log("nftData.length !== 0", JSON.stringify(nftData));
+              setSourceGrid(nftData);
+            }
+          }
+        } catch (err) {
+          console.log("error in calling getAllNFTs", err);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+    
+      fetchNFTs();
+    }, []);
+    
 
     useEffect( () => {
       if (isArtMinted) {

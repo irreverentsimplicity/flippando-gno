@@ -52,9 +52,11 @@ export default function Playground() {
           console.log("parseResponse", parsedResponse)
           if(parsedResponse.userNFTs !== undefined && parsedResponse.userNFTs.length !== 0){
               let existingNFTs = 0
+              /*
               parsedResponse.userNFTs.map((nftItem) => {
                 existingNFTs++;
-              })
+              })*/
+              existingNFTs = parsedResponse.userNFTs.length;
             
             if(existingNFTs !== 0){
               setExistingBasicNFTs(existingNFTs);

@@ -110,12 +110,44 @@ export default function Home() {
       actions.getUserNFTs(playerAddress, "yes").then((response) => {
         console.log("getUserNFTS response in Flip", response);
           if (response !== undefined){
-          let parsedResponse = JSON.parse(response);
+          let parsedUsedResponse = JSON.parse(response);
           
-          if(parsedResponse.userNFTs !== undefined && parsedResponse.userNFTs.length !== 0){  
+          if(parsedUsedResponse.userNFTs !== undefined && parsedUsedResponse.userNFTs.length !== 0){  
             //setNfts(parsedResponse.userNFTs)
             console.log("parseResponse", JSON.stringify(response, null, 2))
-            dispatch(setUserBasicNFTs(parsedResponse.userNFTs))
+            //dispatch(setUserBasicNFTs(parsedResponse.userNFTs))
+            let allBasicNFTs = parsedUsedResponse.userNFTs;
+            let userListings = [];
+            // get listings and filter
+            try {
+              console.log("getBasicListings")
+              actions.getBasicListings().then((response) => {
+               // console.log("getListings response in art.js", response);
+                let parsedResponse = JSON.parse(response);
+                console.log("getBasicListings parseResponse in flip.js", parsedResponse)
+                if(parsedResponse.error === undefined){
+                  userListings = parsedResponse.marketplaceListings;
+                  
+                  if (userListings.length != 0){
+                    const filteredBasicNFTs = allBasicNFTs.filter(nft =>   
+                      !userListings.some(listing => listing.tokenID === nft.tokenID)
+                    );
+                    console.log("filteredBasicNFTs: ", JSON.stringify(filteredBasicNFTs))
+                    dispatch(setUserBasicNFTs(filteredBasicNFTs))
+                  }
+                  else {
+                    
+                    dispatch(setUserBasicNFTs(allBasicNFTs))
+                    console.log("allBasicNFTs: ", JSON.stringify(allBasicNFTs))
+                    
+                  }
+                }
+              });
+            } catch (error) {
+              console.error('Error retrieving BasicNFTs:', error);
+              return null
+            }
+            
           }
         }
       });

@@ -13,8 +13,8 @@ import { Alert, Box, Text, VStack, HStack, Button, Spacer, CloseButton } from "@
 import Spinner from './Spinner';
 import Actions from '../util/actions';
 
-const ArtSmallTile = ({ size, artNFT, tokenID }) => {
-  //console.log("svgData", JSON.stringify(artNFT))
+const BasicNFTSmallTile = ({ size, basicNFT, tokenID }) => {
+  console.log("BasicNFTSmallTile svgData ", JSON.stringify(basicNFT.tokenURI.svgData))
   return (
     <div style={{
       display: "flex",
@@ -25,14 +25,14 @@ const ArtSmallTile = ({ size, artNFT, tokenID }) => {
       height: size,
       backgroundColor: 'white', // Resets background color
     }}>
-      <img src={"data:image/svg+xml;base64," + artNFT.svgData} alt={tokenID} />
+      <img src={"data:image/svg+xml;base64," + basicNFT.tokenURI.svgData} alt={tokenID} />
     </div>
   );
 };
 
-const ListingCard = ({ seller, playerAddress, price, artwork, numCols, onRemoveListing, onBuy }) => {
+const BasicListingCard = ({ seller, playerAddress, price, cardData, numCols, onRemoveListing, onBuy }) => {
   const imageWidth = 300; // Fixed image width
-  const tileSize = imageWidth / numCols; 
+  const tileSize = 300; 
   
   console.log("seller ", seller);
   console.log("playerAddress ", playerAddress);
@@ -46,6 +46,7 @@ const ListingCard = ({ seller, playerAddress, price, artwork, numCols, onRemoveL
   const [flipPaid, setFlipPaid] = useState("")
   const [flipBurned, setFlipBurned] = useState("")
   
+  console.log("cardData ", JSON.stringify(cardData))
   
   const OverlayModal = () => (
     <ModalOverlay
@@ -59,7 +60,7 @@ const ListingCard = ({ seller, playerAddress, price, artwork, numCols, onRemoveL
     const actions = await Actions.getInstance();
     setBuyButtonLabel("Buying...")
     try {
-        actions.BuyNFT(playerAddress, artwork.tokenID).then((response) => {
+        actions.BuyBasicNFT(playerAddress, cardData.tokenID).then((response) => {
           console.log("buyNFT response in ListingCard.js", response);
           const jsonResponse = JSON.parse(response)
           if (jsonResponse.error == ""){
@@ -91,7 +92,7 @@ const ListingCard = ({ seller, playerAddress, price, artwork, numCols, onRemoveL
     const actions = await Actions.getInstance();
         
     try {
-        actions.RemoveNFTListing(artwork.tokenID, seller).then((response) => {
+        actions.RemoveBasicNFTListing(cardData.tokenID, seller).then((response) => {
           console.log("removeNFTListing response in ListingCard.js", response);
           if(response == ""){
             setRemoveListingButtonLabel("Listing removed")
@@ -126,16 +127,16 @@ const ListingCard = ({ seller, playerAddress, price, artwork, numCols, onRemoveL
       borderRadius="lg"
       overflow="hidden"
     >
-      {artwork.artworkNFT === undefined &&
+      {cardData.tokenURI.svgData === undefined &&
         <div style={{
         justifyContent: "center", alignItems: "center", display: 'flex', flexWrap: 'wrap', width: `${imageWidth}px` }}>
           <Spinner style={{backgroundColor: 'red'}} loadingText={'loading...'} />
           </div>
         }
       <div style={{ display: 'flex', flexWrap: 'wrap', width: `${imageWidth}px` }}>
-        {artwork.artworkNFT !== undefined && artwork.artworkNFT.map((artNFT, index) => (
-           <ArtSmallTile key={artNFT.tokenID} size={`${tileSize}px`} artNFT={artNFT} tokenID={artNFT.tokenID} />
-        ))}
+        {cardData.tokenURI.svgData !== undefined &&
+           <BasicNFTSmallTile key={cardData.tokenID} size={`${tileSize}px`} basicNFT={cardData} tokenID={cardData.tokenID} />
+        }
       </div>
       <Spacer />
       <VStack p="2">
@@ -228,4 +229,4 @@ const ListingCard = ({ seller, playerAddress, price, artwork, numCols, onRemoveL
   );
 };
 
-export default ListingCard 
+export default BasicListingCard 

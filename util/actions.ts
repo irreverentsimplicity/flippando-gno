@@ -495,21 +495,21 @@ class Actions {
 
 
   /**
-   * Call the ListMArketplaceNFT function, returns nil on success
+   * Call the ListCompositeNFT function, returns nil on success
    * @param tokenID string
    * @param seller string
    * @param price string
    */
-  async ListNFT(
+  async ListCompositeNFT(
     compositeTokenId: string,
     seller: string,
     price: string,
   ): Promise<any> {
     try {
-      const response = await this.callMethod('ListMarketplaceNFT', [
+      const response = await this.callMethod('ListCompositeNFT', [
         compositeTokenId, seller, price
       ]);
-      console.log("actions ListMarketplaceNFT response ", JSON.stringify(response));
+      console.log("actions ListCompositeNFT response ", JSON.stringify(response));
       return response;
     } catch (error) {
       // Log the error
@@ -520,39 +520,103 @@ class Actions {
     }
   }
   
+  /**
+   * Call the ListBasicNFT function, returns nil on success
+   * @param tokenID string
+   * @param seller string
+   * @param price string
+   */
+  async ListBasicNFT(
+    basicTokenId: string,
+    seller: string,
+    price: string,
+  ): Promise<any> {
+    try {
+      const response = await this.callMethod('ListBasicNFT', [
+        basicTokenId, seller, price
+      ]);
+      console.log("actions ListBasicNFT response ", JSON.stringify(response));
+      return response;
+    } catch (error) {
+      // Log the error
+      console.error('Error in ListBasicNFT:', error);
+  
+      // Return a custom error message 
+      return { error: 'An error occurred while listing this NFT.', details: error.message != undefined ? error.message : "no details"};
+    }
+  }
 
   /**
-   * Call the RemoveMarketplaceNFT function, returns nil on success
+   * Call the RemoveCompositeNFTListing function, returns nil on success
    * @param compositeTokenId string
    * @param seller string
    */
-  async RemoveNFTListing(
+  async RemoveCompositeNFTListing(
     compositeTokenId: string,
     seller: string,): Promise<any> {
-    const response = await this.callMethod('RemoveMarketplaceNFT', [
+    const response = await this.callMethod('RemoveCompositeNFTListing', [
       compositeTokenId, seller, 
     ]);
-    console.log("actions RemoveListing response ", JSON.stringify(response))
+    console.log("actions RemoveCompositeNFTListing response ", JSON.stringify(response))
     return response;
   }  
 
   /**
-   * Call the BuyMarketplaceNFT function, returns nil on success
+   * Call the RemoveBasicNFTListing function, returns nil on success
+   * @param basicTokenId string
+   * @param seller string
+   */
+  async RemoveBasicNFTListing(
+    basicTokenId: string,
+    seller: string,): Promise<any> {
+    const response = await this.callMethod('RemoveBasicNFTListing', [
+      basicTokenId, seller, 
+    ]);
+    console.log("actions RemoveBasicNFTListing response ", JSON.stringify(response))
+    return response;
+  }  
+
+  /**
+   * Call the BuyCompositeNFT function, returns nil on success
    * @param compositeTokenId string
    * @param buyer string
    */
-  async BuyNFT(
+  async BuyCompositeNFT(
     compositeTokenId: string,
     buyer: string,): Promise<any> {
       try {
-        const response = await this.callMethod('BuyMarketplaceNFT', [
+        const response = await this.callMethod('BuyCompositeNFT', [
           compositeTokenId, buyer, 
         ]);
-        console.log("actions BuyMarketplaceNFT response ", JSON.stringify(response));
+        console.log("actions BuyCompositeNFT response ", JSON.stringify(response));
         return response;
       } catch (error) {
         // Log the error
-        console.error('Error in BuyNFT:', error);
+        console.error('Error in BuyCompositeNFT:', error);
+    
+        // Return a custom error message 
+        return { error: 'An error occurred while buying this NFT.', details: error.message != undefined ? error.message : "no details"};
+      }
+
+  }
+
+  /**
+   * Call the BuyBasicNFT function, returns nil on success
+   * @param basicTokenId string
+   * @param buyer string
+   */
+  async BuyBasicNFT(
+    basicTokenId: string,
+    buyer: string,): Promise<any> {
+      try {
+        const response = await this.callMethod('BuyBasicNFT', [
+          basicTokenId, buyer, 
+        ]);
+        console.log("actions BuyBasicNFT response ", JSON.stringify(response));
+        return response;
+      } catch (error) {
+        // Log the error
+        console.error('Error in BuyBasicNFT:', error);
     
         // Return a custom error message 
         return { error: 'An error occurred while buying this NFT.', details: error.message != undefined ? error.message : "no details"};
@@ -561,13 +625,20 @@ class Actions {
   }
   
   /**
-   * Call the GetListings function and return a JSON object
-   * @param tokenID string
+   * Call the GetArtListings function and return a JSON object
    */
-  async getMarketPlaceListings(): Promise<any> {
+  async getCompositeListings(): Promise<any> {
     const response = await this.evaluateExpression("GetArtListings()")
-    //const response = await this.callMethod('GetArtListings', []);
-    console.log("actions GetListings response ", JSON.stringify(response))
+    console.log("actions GetCompositeListings response ", JSON.stringify(response))
+    return response;
+  }
+
+  /**
+   * Call the GetBasicListings function and return a JSON object
+   */
+  async getBasicListings(): Promise<any> {
+    const response = await this.evaluateExpression("GetBasicListings()")
+    console.log("actions GetBasicListings response ", JSON.stringify(response))
     return response;
   }
 

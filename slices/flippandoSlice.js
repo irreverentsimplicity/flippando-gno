@@ -41,6 +41,8 @@ const flippandoSlice = createSlice({
     userGnotBalances: undefined,
     userBasicNFTs: [],
     userArtNFTs: [],
+    basicMarketplaceListings: [],
+    artMarketplaceListings: [],
     networkSplit: [{near: 24}, 
       {evmos: 8}, 
       {mumbai: 12}, 
@@ -79,6 +81,14 @@ const flippandoSlice = createSlice({
     setUserArtNFTs(state, action) {
       console.log("slice userArtNFTs ", JSON.stringify(action.payload))
       state.userArtNFTs = action.payload;
+    },
+    setBasicMarketplaceListings(state, action) {
+      console.log("slice basic marketplace listings ", JSON.stringify(action.payload))
+      state.basicMarketplaceListings = action.payload;
+    },
+    setArtMarketplaceListings(state, action) {
+      console.log("slice art marketplace listings ", JSON.stringify(action.payload))
+      state.artMarketplaceListings = action.payload;
     },
     setNetwork(state, action) {
       if (action.payload === 'testnet'){
@@ -124,6 +134,8 @@ export const {
   setUserGnotBalances, 
   setUserBasicNFTs, 
   setUserArtNFTs,
+  setBasicMarketplaceListings,
+  setArtMarketplaceListings,
   setRpcEndpoint } = flippandoSlice.actions;
 
 export default flippandoSlice;

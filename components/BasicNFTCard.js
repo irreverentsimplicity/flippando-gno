@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Box, Text, VStack, HStack, Button, Spacer, Alert, FormControl, FormLabel, Input, CloseButton } from "@chakra-ui/react";
 import Actions from '../util/actions';
 import Spinner from './Spinner';
+import card from '@material-tailwind/react/theme/components/card';
 
-const ArtSmallTile = ({ size, artNFT, tokenID }) => {
-  //console.log("svgData", JSON.stringify(artNFT))
+const BasicNFTSmallTile = ({ size, basicNFT, tokenID }) => {
+  console.log("basicNFT", JSON.stringify(basicNFT))
   return (
     <div style={{
       display: "flex",
@@ -15,20 +16,22 @@ const ArtSmallTile = ({ size, artNFT, tokenID }) => {
       height: size,
       backgroundColor: 'white', // Resets background color
     }}>
-      <img src={"data:image/svg+xml;base64," + artNFT.svgData} alt={tokenID} />
+      <img src={"data:image/svg+xml;base64," + basicNFT.svgData} alt={tokenID} />
     </div>
   );
 };
 
-const ArtCard = ({ title, text, artwork, numRows, numCols, onTrigger }) => {
+const BasicNFTCard = ({ title, text, cardData, numRows, numCols, onTrigger }) => {
   const imageWidth = 300; // Fixed image width
-  const tileSize = imageWidth / numCols; 
+  const tileSize = 300; 
 
   const [showAlert, setShowAlert] = useState(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isListing, setIsListing] = useState(false);
+
+  console.log("cardData ", JSON.stringify(cardData))
 
   const handleTrigger = () => {
     if (onTrigger) {
@@ -50,8 +53,8 @@ const ArtCard = ({ title, text, artwork, numRows, numCols, onTrigger }) => {
       setIsListing(true)
       
       try {
-        actions.ListCompositeNFT(tokenId, seller, price).then((response) => {
-          console.log("ListCompositeNFT response in ArtCard.js", response);
+        actions.ListBasicNFT(tokenId, seller, price).then((response) => {
+          console.log("ListBasicNFT response in BasicNFTCard.js", response);
           //let parsedResponse = JSON.parse(response);
           console.log("Listing parsedResponse", response)
           if(response === ""){
@@ -69,7 +72,7 @@ const ArtCard = ({ title, text, artwork, numRows, numCols, onTrigger }) => {
           }
         });
       } catch (error) {
-        console.error('Error listing Artwork:', error);
+        console.error('Error listing Basic NFT:', error);
         setIsListing(false)
         closeAlert()
         //return null;
@@ -92,16 +95,16 @@ const ArtCard = ({ title, text, artwork, numRows, numCols, onTrigger }) => {
       borderRadius="lg"
       overflow="hidden"
     >
-      {artwork.artworkNFT === undefined &&
+      {cardData.svgData === undefined &&
         <div style={{
         justifyContent: "center", alignItems: "center", display: 'flex', flexWrap: 'wrap', width: `${imageWidth}px` }}>
           <Spinner style={{backgroundColor: 'red'}} loadingText={'loading...'} />
           </div>
         }
       <div style={{ display: 'flex', flexWrap: 'wrap', width: `${imageWidth}px` }}>
-        {artwork.artworkNFT !== undefined && artwork.artworkNFT.map((artNFT, index) => (
-           <ArtSmallTile key={artNFT.tokenID} size={`${tileSize}px`} artNFT={artNFT} tokenID={artNFT.tokenID} />
-        ))}
+        {cardData.svgData !== undefined &&
+           <BasicNFTSmallTile key={cardData.tokenID} size={`${tileSize}px`} basicNFT={cardData} tokenID={cardData.tokenID} />
+        }
       </div>
       <Spacer />
       <VStack p="2">
@@ -162,7 +165,7 @@ const ArtCard = ({ title, text, artwork, numRows, numCols, onTrigger }) => {
             />
             <Button
               colorScheme="blue"
-              onClick={() => handleList(document.querySelector('input[name="price"]').value, artwork.tokenID)}
+              onClick={() => handleList(document.querySelector('input[name="price"]').value, cardData.tokenID)}
             >
               List on Market
             </Button>
@@ -211,4 +214,4 @@ const ArtCard = ({ title, text, artwork, numRows, numCols, onTrigger }) => {
   );
 };
 
-export default ArtCard 
+export default BasicNFTCard 
