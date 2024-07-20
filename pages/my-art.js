@@ -11,6 +11,7 @@ import { getGNOTBalances, fetchUserFLIPBalances } from '../util/tokenActions';
 
 
 const MyArt = () => {
+  const artNFTs = useSelector(state => state.flippando.userArtNFTs)
   const [ownedNFTs, setOwnedNFTs] = useState([]);
   const [enhancedNFTs, setEnhancedNFTs] = useState([]);
   const [isLoading, setIsLoading] = useState(false)

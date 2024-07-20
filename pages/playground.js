@@ -179,7 +179,7 @@ export default function Playground() {
           <Text fontSize="lg" fontWeight="bold" textAlign="center">
             Your painting is now part of your collection.
           </Text>
-          <Link href={'/my-art'} passHref>
+          <Link href={'/inventory'} passHref>
             <Button as="a" borderRadius="full">
               Your Collection
             </Button>

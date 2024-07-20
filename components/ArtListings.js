@@ -64,11 +64,11 @@ const  ArtListings = () => {
     try {
       console.log("getListings")
       actions.getCompositeListings().then((response) => {
-        console.log("getListings response in market.js", response);
+        console.log("getListings response in ArtListings.js", response);
         let parsedResponse = JSON.parse(response);
         //console.log("getUserCompositeNFTs parseResponse", parsedResponse)
         if(parsedResponse.error === undefined){
-          //fetchArtworkNFTsForAll(parsedResponse.userNFTs);
+          fetchArtworkNFTsForAll(parsedResponse.marketplaceListings);
           setListings(parsedResponse.marketplaceListings)
           dispatch(setArtMarketplaceListings(parsedResponse.marketplaceListings))
           setIsLoading(false)
@@ -133,7 +133,7 @@ const  ArtListings = () => {
         }
         {(enhancedNFTs.length !== 0) &&
           <MarketPlaceGrid 
-            maketType="art"
+            marketType="art"
             listings={enhancedNFTs} 
             playerAddress={playerAddress} 
             triggerReload={() => reloadMarketData()}/>

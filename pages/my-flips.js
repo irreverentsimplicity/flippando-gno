@@ -85,7 +85,7 @@ const MyFlips = () => {
     };
   
     fetchData();
-  }, [userBasicNFTs]);
+  }, []);
 
   useEffect( () => {
     console.log("userBasicNFTs", JSON.stringify(userBasicNFTs))

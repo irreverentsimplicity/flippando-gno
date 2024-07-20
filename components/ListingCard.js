@@ -59,7 +59,7 @@ const ListingCard = ({ seller, playerAddress, price, artwork, numCols, onRemoveL
     const actions = await Actions.getInstance();
     setBuyButtonLabel("Buying...")
     try {
-        actions.BuyNFT(playerAddress, artwork.tokenID).then((response) => {
+        actions.BuyCompositeNFT(playerAddress, artwork.tokenID).then((response) => {
           console.log("buyNFT response in ListingCard.js", response);
           const jsonResponse = JSON.parse(response)
           if (jsonResponse.error == ""){
@@ -91,7 +91,7 @@ const ListingCard = ({ seller, playerAddress, price, artwork, numCols, onRemoveL
     const actions = await Actions.getInstance();
         
     try {
-        actions.RemoveNFTListing(artwork.tokenID, seller).then((response) => {
+        actions.RemoveCompositeNFTListing(artwork.tokenID, seller).then((response) => {
           console.log("removeNFTListing response in ListingCard.js", response);
           if(response == ""){
             setRemoveListingButtonLabel("Listing removed")
@@ -169,7 +169,7 @@ const ListingCard = ({ seller, playerAddress, price, artwork, numCols, onRemoveL
         <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader color={'black'}>Let&aposs go!</ModalHeader>
+          <ModalHeader color={'black'}>Let's go!</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Text color='black'>You will pay {price} FLIP for this NFT.</Text>
