@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { useDispatch } from 'react-redux';
 import SmallTile from './SmallTile';
-import { Box, Text, Link, Switch, FormControl, FormLabel } from "@chakra-ui/react";
+import { Box, Text, Link, HStack, VStack, Button } from "@chakra-ui/react";
 import NextLink from 'next/link';
 import Spinner from './Spinner';
 import { setArtPayload } from '../slices/flippandoSlice';
@@ -29,8 +29,7 @@ const AdvancedCanvas = ({height, width, isArtMinted}) => {
     const [indexSourceGrid, setIndexSourceGrid] = useState(null);
     const [indexTrack, setIndexTrack] = useState([{}]);
     const [isLoading, setIsLoading] = useState(true);
-    //const [assistiveMode, setAssistiveMode] = useState(false);
-    const [assistiveImage, setAssistiveImage] = useState(false);
+    const [assistiveImage, setAssistiveImage] = useState(true);
     const dispatch = useDispatch();
 
     // Calculate start and end for draggable area
@@ -244,19 +243,19 @@ const AdvancedCanvas = ({height, width, isArtMinted}) => {
 
   return (
     <div className='flex items-center' style={{marginTop: 5, marginBottom: 20, flexDirection: 'column'}}>     
-    <div style={{ display: 'flex', flexDirection: 'row', width: '100%', justifyContent: "flex-start" }}>
-    <SwitchButton setAssistiveImage={setAssistiveImage} />
-    </div>
-<div className='flex justify-center items-center column' style={{flexDirection: 'column', position: 'relative'}}>
+      <div style={{ display: 'flex', flexDirection: 'row', width: '100%', justifyContent: "flex-start" }}>
+      <SwitchButton setAssistiveImage={setAssistiveImage} assistiveImage={assistiveImage} />
+      </div>
+      <div className='flex justify-center items-center column' style={{flexDirection: 'column', position: 'relative'}}>
 
       <div style={{
         display: "flex",
         flexDirection: 'row',
         justifyContent: 'flex-start',
-        alignItems: 'center', // Centers items vertically
+        alignItems: 'flex-start', // Centers items vertically
         width: "100%"
     }}>
-        
+        <VStack w="55vh">
           <div style={{ 
               display: 'inline-grid', 
               background: 'gray',
@@ -279,80 +278,69 @@ const AdvancedCanvas = ({height, width, isArtMinted}) => {
                 }}/>
               }
           </div>
+          {height <= 2 &&
+        <Text fontSize='xs' style={{paddingTop: 10, paddingLeft: 40, paddingRight: 40, paddingBottom: 15}}>
+          You are on the minimum canvas size. There must be more basic NFT minted for a larger size. Read more <Link as={NextLink} color='teal.500' href='/docs'>here</Link>.  
+        </Text>
+        }
+        {height > 2 && height <=7 &&
+        <Text fontSize='xs' style={{paddingTop: 20}}>
+          You are not playing on the maximum canvas size. Read more <Link as={NextLink} color='teal.500' href='/docs'></Link>.  
+        </Text>
+        }
+        {height > 7 &&
+        <Text fontSize='xs' style={{paddingTop: 20}}>
+          You are playing on the maximum canvas size, your art will have the best resolution.  
+        </Text>
+        }
+        </VStack>
         
-        
-          <div style={{ marginLeft: 10}}>
+          <VStack style={{ marginLeft: 20}}>
             <a onClick={() => setAssistiveImage(true)}>
-           <img src={images[currentImageIndex]} alt="helper" style={{
-            width: '404px',
-            height: '404px',
-          }}/>
-          </a>
-          <button style={{
-              position: 'absolute',
-              top: '50%',
-              left: 320,
-              transform: 'translateY(-50%)'
-          }} onClick={handlePrev}>
+              <img src={images[currentImageIndex]} alt="helper" style={{
+                width: '380px',
+                height: '380px',
+              }}/>
+            </a>
+          <HStack>
+          <Button onClick={handlePrev}>
               <FaArrowLeft />
-          </button>
-          <button style={{
-              position: 'absolute',
-              top: '50%',
-              right: 2,
-              transform: 'translateY(-50%)'
-          }} onClick={handleNext}>
+          </Button>
+          <Button onClick={handleNext}>
               <FaArrowRight />
-          </button>
-          </div>
+          </Button>
+          </HStack>
+          </VStack>
         
       </div>
-          {height <= 2 &&
-          <Text fontSize='xs' style={{paddingTop: 20}}>
-            You are on the minimum canvas size. There must be more basic NFT minted for a larger size. Read more <Link as={NextLink} color='teal.500' href='/docs'>here</Link>.  
-          </Text>
-          }
-          {height > 2 && height <=7 &&
-          <Text fontSize='xs' style={{paddingTop: 20}}>
-            You are not playing on the maximum canvas size. Read more <Link as={NextLink} color='teal.500' href='/docs'></Link>.  
-          </Text>
-          }
-          {height > 7 &&
-          <Text fontSize='xs' style={{paddingTop: 20}}>
-            You are playing on the maximum canvas size, your art will have the best resolution.  
-          </Text>
-          }
-        </div>
-      <div style={{ marginRight: '20px' }}>
         
-         <Box 
-           w="100vh" 
-           h="30vh"
-           mt="4" 
-           borderWidth="1px" 
-           borderRadius="lg" 
-           overflow="hidden"  
-           display="flex"
-           flexDirection="column"
-           alignItems="flex-start">
+      </div>
+      
+        
+         
         {isLoading &&
           <Box display="flex" justifyContent="center" width="100%" height="100%" mt={20}>
             <Spinner loadingText={'loading...'}/>
           </Box>
         }
-        <div style={{ display: 'inline-grid', gridTemplateColumns: 'repeat(18, 1fr)', gridGap: '3px' }}>  
+        <Box borderWidth="0.5px" 
+            borderColor="#ececec"
+            borderRadius="lg" 
+            h="30vh"
+            overflowY="auto"
+            style={{ display: 'inline-grid', gridTemplateColumns: 'repeat(18, 1fr)', gridGap: '3px' }}>  
           { (sourceGrid !== undefined && !isLoading) && sourceGrid.map((nft, index) => (
             <CanvasGridItem key={index} nft={nft} onDragStart={() => handleDragStart(index)} /> 
             )
           )}
-        </div>
+        </Box>
         {(!isLoading && sourceGrid.length === 0) && 
             <Box display="flex" justifyContent="center" width="100%" height="100%" mt={20}>
             Nothing here yet.
             </Box>
           }
-        </Box>
-      </div>
+        
+      
       
     </div>
   );
