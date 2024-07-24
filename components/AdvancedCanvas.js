@@ -12,6 +12,7 @@ import Loader from '../pages/assets/loader.svg';
 import Actions from '../util/actions';
 import CanvasGridItem from './CanvasGridItem';
 import CanvasSquare from './CanvasSquare';
+import SwitchButton from './SwitchButton';
 
 
 
@@ -28,7 +29,7 @@ const AdvancedCanvas = ({height, width, isArtMinted}) => {
     const [indexSourceGrid, setIndexSourceGrid] = useState(null);
     const [indexTrack, setIndexTrack] = useState([{}]);
     const [isLoading, setIsLoading] = useState(true);
-    const [assistiveMode, setAssistiveMode] = useState(false);
+    //const [assistiveMode, setAssistiveMode] = useState(false);
     const [assistiveImage, setAssistiveImage] = useState(false);
     const dispatch = useDispatch();
 
@@ -242,28 +243,19 @@ const AdvancedCanvas = ({height, width, isArtMinted}) => {
   };
 
   return (
-    <div className='flex items-center' style={{marginTop: 20, marginBottom: 20, flexDirection: 'column'}}>     
-
+    <div className='flex items-center' style={{marginTop: 5, marginBottom: 20, flexDirection: 'column'}}>     
+    <div style={{ display: 'flex', flexDirection: 'row', width: '100%', justifyContent: "flex-start" }}>
+    <SwitchButton setAssistiveImage={setAssistiveImage} />
+    </div>
 <div className='flex justify-center items-center column' style={{flexDirection: 'column', position: 'relative'}}>
-<div style={{ display: 'flex', flexDirection: 'row', width: '100%', justifyContent: "flex-end" }}>
-<FormControl display='flex' alignItems='center' style={{ width: 'auto' }}>
-  <FormLabel htmlFor='assistive-mode' mb='2' fontSize='xs'>
-    Airdrop Mode
-  </FormLabel>
-  <Switch size='md' id='assistive-mode' mb='2' onChange={(event) => {
-    setAssistiveMode(event.target.checked)
-    setAssistiveImage(false)
-  }
-  }/>
-</FormControl>
-</div>
+
       <div style={{
-    display: "flex",
-    flexDirection: 'row',
-    justifyContent: assistiveMode ? 'flex-start' : 'center', // Adjust based on assistiveMode
-    alignItems: 'center', // Centers items vertically
-    width: "100%"
-}}>
+        display: "flex",
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center', // Centers items vertically
+        width: "100%"
+    }}>
         
           <div style={{ 
               display: 'inline-grid', 
@@ -275,7 +267,7 @@ const AdvancedCanvas = ({height, width, isArtMinted}) => {
               position: 'relative',
             }}>
               {renderCanvas()}
-              {assistiveImage && assistiveMode &&
+              {assistiveImage &&
                 <img src={images[currentImageIndex]}  alt="helper" style={{
                 position: 'absolute',
                 top: 0,
@@ -288,12 +280,12 @@ const AdvancedCanvas = ({height, width, isArtMinted}) => {
               }
           </div>
         
-        {assistiveMode &&
-          <div style={{marginLeft: 10}}>
+        
+          <div style={{ marginLeft: 10}}>
             <a onClick={() => setAssistiveImage(true)}>
            <img src={images[currentImageIndex]} alt="helper" style={{
-            width: '309px',
-            height: '309px',
+            width: '404px',
+            height: '404px',
           }}/>
           </a>
           <button style={{
@@ -313,7 +305,7 @@ const AdvancedCanvas = ({height, width, isArtMinted}) => {
               <FaArrowRight />
           </button>
           </div>
-        }
+        
       </div>
           {height <= 2 &&
           <Text fontSize='xs' style={{paddingTop: 20}}>

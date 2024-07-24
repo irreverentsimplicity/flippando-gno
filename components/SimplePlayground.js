@@ -3,7 +3,7 @@
 import styles from "../styles/Home.module.css";
 import { useEffect, useState } from 'react';
 import { useDispatch } from "react-redux";
-import { Box, Text, VStack, Button } from "@chakra-ui/react";
+import { Box, Text, VStack,  } from "@chakra-ui/react";
 import Link from 'next/link';
 import { useSelector } from 'react-redux';;
 import SimpleCanvas from './SimpleCanvas';
@@ -128,33 +128,6 @@ import { getGNOTBalances, fetchUserFLIPBalances } from "../util/tokenActions";
     
     
     <div className="col-span-4">
-        {/*
-      <div className="flex justify-center">
-      
-      {!isArtMinted &&
-      <button 
-        disabled={false}
-        onClick={() => { makeArt() }} 
-        className="bg-gray-200 hover:bg-purple-900 hover:text-white text-black text-lg font-bold py-2 px-4 mr-2 ml-2 rounded-full font-quantico">
-          Mint This Painting
-      </button>
-      }
-      {isArtMinted &&
-        <Box display="flex" justifyContent="center" width="100%" mt={8}>
-        <VStack p="6">
-          <Text fontSize="lg" fontWeight="bold" textAlign="center">
-            Your painting is now part of your collection.
-          </Text>
-          <Link href={'/inventory'} passHref>
-            <Button as="a" borderRadius="full">
-              Your Collection
-            </Button>
-          </Link>
-          </VStack>
-        </Box>
-      }
-    
-      </div>*/}
       <div>
         <SimpleCanvas height={height} width={width}/>
       </div>
