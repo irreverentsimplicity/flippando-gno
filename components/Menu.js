@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import { Box, Link as ChakraLink, VStack, Icon, Spacer } from '@chakra-ui/react';
-import { FaTwitter} from 'react-icons/fa';
+import { Box, Link as ChakraLink, VStack, Spacer } from '@chakra-ui/react';
+
 
 import Link from 'next/link';
 
@@ -13,18 +13,21 @@ const MenuItem = ({ href, children }) => {
     <Link href={href} passHref>
       <ChakraLink 
         style={{ width: '100%' }} 
-        color="purple.800"
+        bg={"purple.900"}
+        border="1px"
+        borderColor="purple.600"
+        borderRadius="lg"
+        color="gray.100"
         fontWeight="bold"
         _hover={{ textDecoration: 'none' }}>
         <Box
           as="nav"
-          border="1px"
-          borderColor="purple.100"
+          border="0.5px"
           borderRadius="lg"
           p={2}
           _hover={{
             bg: 'purple.800',
-            color: 'white',
+            color: 'gray.100',
           }}
           position="relative"
           cursor="pointer"
@@ -38,7 +41,7 @@ const MenuItem = ({ href, children }) => {
               transform="translateY(-50%)"
               w="12px"
               h="12px"
-              bg="purple.800"
+              bg="purple.100"
             />
           )}
         </Box>
@@ -49,17 +52,15 @@ const MenuItem = ({ href, children }) => {
 
 const Menu = () => {
   return (
-    <Box width="200px" height="80vh" bg="gray.100" borderRadius="lg" p={2}  display="flex" flexDirection="column">
+    <Box width="200px" height="80vh" bg="transparent" borderRadius="lg" p={2}  display="flex" flexDirection="column">
       <VStack align="stretch" spacing={4}>
         <MenuItem href="/flip">Flip</MenuItem>
-        <MenuItem href="/playground">Playground</MenuItem> 
+        <MenuItem href="/canvas">Canvas</MenuItem> 
         <MenuItem href="/inventory">Inventory</MenuItem>
         <MenuItem href="/market">Marketplace</MenuItem>
       </VStack>
       <Spacer/>
-      <a href={'https://twitter.com/Flippand0'} target="_blank" rel="noopener noreferrer">
-        <Icon as={FaTwitter} w={8} h={8} alignSelf="right" color={'#bbbbbb'}/>
-      </a>
+      
 
     </Box>
   );

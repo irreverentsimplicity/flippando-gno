@@ -1,24 +1,19 @@
 /* pages/my-nfts.js */
 //import {ethers} from 'ethers';
 import styles from "../styles/Home.module.css";
-import Menu from '../components/Menu';
-import Footer from '../components/Footer';
 import { useEffect, useState } from 'react';
 import { useDispatch } from "react-redux";
 import { Box, Text, VStack, Button } from "@chakra-ui/react";
 import Link from 'next/link';
 import { useSelector } from 'react-redux';;
-import Canvas from '../components/Canvas';
-import Header from "../components/Header";
+import SimpleCanvas from './SimpleCanvas';
 import Actions from "../util/actions";
 import { getGNOTBalances, fetchUserFLIPBalances } from "../util/tokenActions";
 
-export default function Playground() {
+ const SimplePlayground = () => {
   const [width, setWidth] = useState(2); // defaults, changed on calling setExistingBasicNFTs
   const [height, setHeight] = useState(2); // defaults, changed on calling setExistingBasicNFTs
   const [existingBasicNFTs, setExistingBasicNFTs] = useState(0);
-  const userBalances = useSelector(state => state.flippando.userBalances);
-  const userGnotBalances = useSelector(state => state.flippando.userGnotBalances);
   const [isArtMinted, setIsArtMinted] = useState(false)
   const artPayload = useSelector(state => state.flippando.artPayload);
 
@@ -52,10 +47,6 @@ export default function Playground() {
           console.log("parseResponse", parsedResponse)
           if(parsedResponse.userNFTs !== undefined && parsedResponse.userNFTs.length !== 0){
               let existingNFTs = 0
-              /*
-              parsedResponse.userNFTs.map((nftItem) => {
-                existingNFTs++;
-              })*/
               existingNFTs = parsedResponse.userNFTs.length;
             
             if(existingNFTs !== 0){
@@ -134,35 +125,10 @@ export default function Playground() {
   }
 
   return (
-    <div className={styles.container}>
-      
-      <Header userBalances={userBalances} userGnotBalances={userGnotBalances}/>
-      
-      <div className="grid flex grid-cols-5">
-      
-        <div className="bg-white-100 col-span-1">
-        <Menu />
-        </div>
-
-
+    
+    
     <div className="col-span-4">
-        <Box className="justify-end" borderBottom="1px solid white" mb={4}>
-          <Text fontSize="2xl" fontWeight="bold" textAlign="right" mb={4} mr={4}>
-            Playground
-          </Text>
-        </Box>
-      <div>
-        {
-          /* get height and width dynamically from backend, based on the logic implemented
-          in CreateCompositeNFT: 50 / 2 x 2 - 100 / 3 x 3 - 400 / 4 x 4 - 600 / 5 x 5 - 800 / 6 x 6 - 1000 / 7 x 7 - 1200 / 8 x 8 
-          */
-        }
-          <Canvas height={height} width={width} isArtMinted={isArtMinted}/>
-      </div>
-      <div className='flex justify-center items-center text-sm pt-3 pb-5'>
-          Drag and drop tiles from above into the canvas at the top. Click on a tile in the canvas to remove it. When your canvas is full, click Make Art.
-      </div>
-
+        {/*
       <div className="flex justify-center">
       
       {!isArtMinted &&
@@ -170,7 +136,7 @@ export default function Playground() {
         disabled={false}
         onClick={() => { makeArt() }} 
         className="bg-gray-200 hover:bg-purple-900 hover:text-white text-black text-lg font-bold py-2 px-4 mr-2 ml-2 rounded-full font-quantico">
-          Make Art
+          Mint This Painting
       </button>
       }
       {isArtMinted &&
@@ -187,13 +153,20 @@ export default function Playground() {
           </VStack>
         </Box>
       }
-    </div>
-    </div>
+    
+      </div>*/}
+      <div>
+        <SimpleCanvas height={height} width={width}/>
+      </div>
+      <div className='flex justify-center items-center text-xs pt-3 pb-5'>
+          Drag and drop tiles from above into the canvas on the right. Click on a tile in the canvas to remove it. You can mint your painting once your canvas is filled.
+      </div>
 
+      
     </div>
-        <div className="col-span-5 pt-20">
-            <Footer/>
-        </div>
-    </div>
+    
+    
   );
 }
+
+export default SimplePlayground;

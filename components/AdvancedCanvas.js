@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { useDispatch } from 'react-redux';
-import SmallTile from '../components/SmallTile';
+import SmallTile from './SmallTile';
 import { Box, Text, Link, Switch, FormControl, FormLabel } from "@chakra-ui/react";
 import NextLink from 'next/link';
 import Spinner from './Spinner';
@@ -10,75 +10,12 @@ import { setArtPayload } from '../slices/flippandoSlice';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import Loader from '../pages/assets/loader.svg';
 import Actions from '../util/actions';
+import CanvasGridItem from './CanvasGridItem';
+import CanvasSquare from './CanvasSquare';
 
 
-const Square = ({ isOccupied, onDrop, onClick, nft, canAcceptDrop, index }) => {
-  const [{ isOver }, drop] = useDrop(() => ({
-    accept: 'image', // Specify the types of items accepted
-    drop: canAcceptDrop ? onDrop : null, // Only call onDrop if canAcceptDrop is true
-    collect: monitor => ({
-      isOver: canAcceptDrop && monitor.isOver(), // Only show isOver effect if can accept drop
-    }),
-  }), [canAcceptDrop, onDrop]); // React to changes in canAcceptDrop and onDrop
 
-  // Convert NFT metadata to a string for display, assuming you need it as a prop for SmallTile
-  const stringifiedNFT = JSON.stringify(nft?.metadata);
-  return (
-    <div
-      onClick={canAcceptDrop ? onClick: null}
-      ref={drop} // Use the ref from useDrop to make this div a drop target
-      style={{
-        width: '38px',
-        height: '38px',
-        border: '0.5px solid #eee',
-        background: isOver ? 'lightgreen' : canAcceptDrop ? 'white' : '#bbb', // Highlight on hover if over a droppable area
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      {isOccupied && <div><SmallTile metadata={stringifiedNFT} tokenId={nft.tokenId} /></div>}
-      {/*(nft === null || nft === undefined) && !isOccupied && <div><Color7/></div>*/}
-      {/*isOccupied && nft && <SmallTile metadata={stringifiedNFT} tokenId={nft.tokenId} />*/}
-      {/*(!nft || !isOccupied) && <Color7 />*/}
-    </div>
-  );
-};
-
-const GridItem = ({ onDragStart, nft }) => {
-    const stringifiedNFT = JSON.stringify(nft.metadata);
-  const [{ isDragging }, drag] = useDrag({
-    item: { },
-    type: 'image',
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  });
-
-  return (
-    <div
-      ref={drag}
-      onDragStart={onDragStart}
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        margin: '2px',
-        width: '45px',
-        height: '45px',
-        border: '1px dashed #ccc',
-        background: isDragging ? 'lightblue' : 'white',
-        cursor: 'move',
-      }}
-    >
-      { nft !== undefined && nft.metadata.image !== 'i' ? 
-      <SmallTile metadata={stringifiedNFT} tokenId={nft.tokenId} /> : null}
-    </div>
-  );
-};
-
-const Canvas = ({height, width, isArtMinted}) => {
+const AdvancedCanvas = ({height, width, isArtMinted}) => {
 
     // Constants for the 8x8 grid
     const gridWidth = 8;
@@ -283,7 +220,7 @@ const Canvas = ({height, width, isArtMinted}) => {
       const canAcceptDrop = row >= startRow && row < endRow && col >= startCol && col < endCol;
       let canvasNFT = canvas[clickableArray[index]]
         return (
-          <Square
+          <CanvasSquare
             key={index}
             index={clickableArray[index]}
             onClick={() => handleClick(clickableArray[index])}
@@ -413,7 +350,7 @@ const Canvas = ({height, width, isArtMinted}) => {
         }
         <div style={{ display: 'inline-grid', gridTemplateColumns: 'repeat(18, 1fr)', gridGap: '3px' }}>  
           { (sourceGrid !== undefined && !isLoading) && sourceGrid.map((nft, index) => (
-            <GridItem key={index} nft={nft} onDragStart={() => handleDragStart(index)} /> 
+            <CanvasGridItem key={index} nft={nft} onDragStart={() => handleDragStart(index)} /> 
             )
           )}
         </div>
@@ -429,4 +366,4 @@ const Canvas = ({height, width, isArtMinted}) => {
   );
 };
 
-export default Canvas;
+export default AdvancedCanvas;

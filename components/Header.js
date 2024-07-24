@@ -7,7 +7,7 @@ const Header = ({ userBalances, userGnotBalances }) => {
     return (
         <Flex align="center" p="3" bg="transparent" boxShadow="sm" alignItems="flex-start">
           <Box display="flex" alignItems="flex-start" flexDirection={"column"}>
-            <Text fontSize="3xl" fontWeight="bold">Flippando</Text>
+            <Text fontSize="5xl" fontWeight="bold">Flippando</Text>
             <Text fontSize="xs" fontWeight="italic">Estoy flippando en colores</Text>
           </Box>
           <Spacer />

@@ -36,8 +36,8 @@ const Wallet = ({ userBalances, userGnotBalances }) => {
     };
 
     const showLocalOption = process.env.NEXT_PUBLIC_SHOW_LOCAL_OPTION === 'true';
-    console.log('NEXT_PUBLIC_SHOW_LOCAL_OPTION:', process.env.NEXT_PUBLIC_SHOW_LOCAL_OPTION);
-    console.log("Config.GNO_JSONRPC_URL: ", Config.GNO_JSONRPC_URL);
+    //console.log('NEXT_PUBLIC_SHOW_LOCAL_OPTION:', process.env.NEXT_PUBLIC_SHOW_LOCAL_OPTION);
+    //console.log("Config.GNO_JSONRPC_URL: ", Config.GNO_JSONRPC_URL);
 
     return (
       <div>

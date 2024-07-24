@@ -17,7 +17,6 @@
   flex-direction: column;
   width: 100%;
   padding-top: 8px;
-  border-top: 1px solid #eaeaea;
   justify-content: center;
   align-items: center;
   font-size: small;
@@ -313,6 +312,21 @@
   background-size: cover;
   background-position: center;
   height: 40px;
+}
+
+.canvas_tile {
+  display: flex;
+  flex-direction: column;
+  height: 52px;
+  width: 52px;
+  border: 1px solid #ddd;
+  margin: 0px;
+}
+
+.canvas_tile_image {
+  background-size: cover;
+  background-position: center;
+  height: 52px;
 }
 
 .art_small_tile {

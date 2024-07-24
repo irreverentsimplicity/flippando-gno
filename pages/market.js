@@ -47,7 +47,7 @@ const Market = () => {
         <div className='col-span-4 justify-start'>
       
 
-        <Tabs variant="enclosed-colored">
+        <Tabs variant="enclosed-colored" borderColor={"purple.400"}>
           <TabList justifyContent={"flex-end"} >
             <Tab
               bg="purple.400"

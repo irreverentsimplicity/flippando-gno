@@ -8,12 +8,12 @@ import Menu from '../components/Menu';
 import Footer from '../components/Footer';
 import Actions from "../util/actions";
 import { getGNOTBalances, fetchUserFLIPBalances } from "../util/tokenActions";
-import MyFlips from './my-flips';
-import MyArt from './my-art';
+import SimplePlayground from '../components/SimplePlayground';
+import AdvancedPlayground from '../components/AdvancedPlayground';
 
 import { Tabs, TabList, TabPanels, Tab, TabPanel, HStack, Badge } from '@chakra-ui/react';
 
-const Inventory = () => {
+const Canvas = () => {
   
   const userBalances = useSelector(state => state.flippando.userBalances);
   const userGnotBalances = useSelector(state => state.flippando.userGnotBalances);
@@ -62,8 +62,8 @@ const Inventory = () => {
               fontWeight="bold"
             >
               <HStack spacing={4}>
-                <span>My Flips</span>
-                <Badge colorScheme="gray">{userBasicNFTs.length}</Badge>
+                <span>Simple Canvas</span>
+                <Badge colorScheme="gray">{0}</Badge>
               </HStack>
             </Tab>
             <Tab
@@ -75,8 +75,8 @@ const Inventory = () => {
               fontWeight="bold"
             >
               <HStack spacing={4}>
-                <span>My Art</span>
-                <Badge colorScheme="gray">{userArtNFTs.length}</Badge>
+                <span>Advanced Canvas</span>
+                <Badge colorScheme="gray">{0}</Badge>
               </HStack>
             </Tab>
             
@@ -84,10 +84,10 @@ const Inventory = () => {
 
           <TabPanels>
             <TabPanel>
-              <MyFlips/>
+              <SimplePlayground/>
             </TabPanel>
             <TabPanel>
-              <MyArt/>
+              <AdvancedPlayground/>
             </TabPanel>
           </TabPanels>
         </Tabs>
@@ -100,4 +100,4 @@ const Inventory = () => {
   );
 };
 
-export default Inventory;
+export default Canvas;
