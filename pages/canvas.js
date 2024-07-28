@@ -1,15 +1,13 @@
-import { React, useEffect, useState } from "react";
+import { React, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import NFTListUser from '../components/NFTListUser'
 import styles from "../styles/Home.module.css";
-import { Box, Text } from "@chakra-ui/react";
 import Header from "../components/Header";
 import Menu from '../components/Menu';
 import Footer from '../components/Footer';
-import Actions from "../util/actions";
 import { getGNOTBalances, fetchUserFLIPBalances } from "../util/tokenActions";
 import SimplePlayground from '../components/SimplePlayground';
-import AdvancedPlayground from '../components/AdvancedPlayground';
+import AirdropPlayground from '../components/AirdropPlayground';
+import AIPlayground from '../components/AIPlayground';
 
 import { Tabs, TabList, TabPanels, Tab, TabPanel, HStack, Badge } from '@chakra-ui/react';
 
@@ -17,8 +15,6 @@ const Canvas = () => {
   
   const userBalances = useSelector(state => state.flippando.userBalances);
   const userGnotBalances = useSelector(state => state.flippando.userGnotBalances);
-  const userBasicNFTs = useSelector(state => state.flippando.userBasicNFTs);
-  const userArtNFTs = useSelector(state => state.flippando.userArtNFTs)
   const rpcEndpoint = useSelector(state => state.flippando.rpcEndpoint);
 
   const dispatch = useDispatch()
@@ -51,7 +47,7 @@ const Canvas = () => {
         <div className='col-span-4 justify-start'>
       
 
-        <Tabs variant="enclosed-colored" borderColor={"purple.400"}>
+        <Tabs variant="enclosed-colored" borderColor={"purple.200"}>
           <TabList justifyContent={"flex-end"}>
             <Tab
               bg="purple.400"
@@ -63,7 +59,6 @@ const Canvas = () => {
             >
               <HStack spacing={4}>
                 <span>Simple Canvas</span>
-                <Badge colorScheme="gray">{0}</Badge>
               </HStack>
             </Tab>
             <Tab
@@ -75,8 +70,19 @@ const Canvas = () => {
               fontWeight="bold"
             >
               <HStack spacing={4}>
-                <span>Advanced Canvas</span>
-                <Badge colorScheme="gray">{0}</Badge>
+                <span>Airdrop Canvas</span>
+              </HStack>
+            </Tab>
+            <Tab
+              bg="purple.400"
+              _selected={{ bg: "purple.900", color: "white" }}
+              _hover={{ bg: "purple.700", color: "white" }}
+              _active={{ color: "purple.700" }}
+              color="purple.900"
+              fontWeight="bold"
+            >
+              <HStack spacing={4}>
+                <span>AI Canvas</span>
               </HStack>
             </Tab>
             
@@ -87,7 +93,10 @@ const Canvas = () => {
               <SimplePlayground/>
             </TabPanel>
             <TabPanel>
-              <AdvancedPlayground/>
+              <AirdropPlayground/>
+            </TabPanel>
+            <TabPanel>
+              <AIPlayground/>
             </TabPanel>
           </TabPanels>
         </Tabs>

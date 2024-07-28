@@ -864,7 +864,7 @@ export default function Home() {
           <div className="mb-4 w-full flex justify-end pr-20">
             
           </div>
-          <div className="mb-4 text-sm text-gray-300">{gameStatus}</div>
+          <div className="mb-4 text-lg text-gray-300">{gameStatus}</div>
           {gameStatus === "Initializing..." && (
             <div role="status" className={styles.empty_div}>
               <svg

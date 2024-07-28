@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Box, Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, useDisclosure } from '@chakra-ui/react';
 
 const SwitchButton = ({ setAssistiveImage, assistiveImage }) => {
@@ -21,7 +20,7 @@ const SwitchButton = ({ setAssistiveImage, assistiveImage }) => {
           borderLeftRadius="md"
           mr={0}
         >
-          Airdrop Assistant
+          Hackerville Airdrop 1
         </Button>
         <Button
           onClick={() => {
@@ -35,7 +34,7 @@ const SwitchButton = ({ setAssistiveImage, assistiveImage }) => {
           borderLeftRadius={0}
           borderRightRadius="md"
         >
-          AI Assistant
+          Gnomeverse Airdrop 1
         </Button>
   
         <Modal isOpen={isOpen} onClose={onModalClose}>
@@ -44,7 +43,7 @@ const SwitchButton = ({ setAssistiveImage, assistiveImage }) => {
           <ModalHeader>Coming Soon</ModalHeader>
           <ModalCloseButton bg="white" color="purple.800" />
           <ModalBody>
-            The AI Assistant feature is coming soon.
+            Gnomeverse airdrop is not yet live. Patience.
           </ModalBody>
           <ModalFooter>
             <Button bg="white" color="purple.800" onClick={onModalClose}>

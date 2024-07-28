@@ -1,17 +1,19 @@
 /* eslint-disable @next/next/no-img-element */
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';;
-import { useDispatch } from 'react-redux';
-import { Box, Text, Link, Button, VStack } from "@chakra-ui/react";
+import { useDispatch, useSelector } from 'react-redux';
+import { Box, Text, Link, HStack, VStack, Button, Flex } from "@chakra-ui/react";
+import NextLink from 'next/link';
 import Spinner from './Spinner';
 import { setArtPayload } from '../slices/flippandoSlice';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+import Actions from '../util/actions';
 import CanvasGridItem from './CanvasGridItem';
 import CanvasSquare from './CanvasSquare';
-import Actions from '../util/actions';
+import SwitchButton from './SwitchButton';
 
 
-const SimpleCanvas = ({height, width}) => {
+
+const AirdropCanvas = ({height, width}) => {
 
     // Constants for the 8x8 grid
     const gridWidth = 8;
@@ -24,8 +26,7 @@ const SimpleCanvas = ({height, width}) => {
     const [indexSourceGrid, setIndexSourceGrid] = useState(null);
     const [indexTrack, setIndexTrack] = useState([{}]);
     const [isLoading, setIsLoading] = useState(true);
-    const [assistiveMode, setAssistiveMode] = useState(false);
-    const [assistiveImage, setAssistiveImage] = useState(false);
+    const [assistiveImage, setAssistiveImage] = useState(true);
     const [isArtMinted, setIsArtMinted] = useState(false)
     const artPayload = useSelector(state => state.flippando.artPayload);
     const dispatch = useDispatch();
@@ -70,17 +71,23 @@ const SimpleCanvas = ({height, width}) => {
                   console.log("filteredBasicNFTs: ", JSON.stringify(filteredBasicNFTs));
                   
                   filteredBasicNFTs.forEach((nftItem) => {
-                    nftData.push({
-                      tokenId: nftItem.tokenId,
-                      metadata: nftItem,
-                    });
+                    // filter by airdrop name, so far it's hardcoded to airdrop/hackerville/1
+                    if(nftItem.airdropName !== "" && nftItem.airdropName === "airdrop/hackerville/1"){
+                      nftData.push({
+                        tokenId: nftItem.tokenId,
+                        metadata: nftItem,
+                      });
+                    }
                   });
                 } else {
                   parsedResponse.userNFTs.forEach((nftItem) => {
-                    nftData.push({
-                      tokenId: nftItem.tokenId,
-                      metadata: nftItem,
-                    });
+                    // filter by airdrop name, so far it's hardcoded to airdrop/hackerville/1
+                    if(nftItem.airdropName !== "" && nftItem.airdropName === "airdrop/hackerville/1"){
+                      nftData.push({
+                        tokenId: nftItem.tokenId,
+                        metadata: nftItem,
+                      });
+                    }
                   });
                 }
               } else {
@@ -271,113 +278,81 @@ const SimpleCanvas = ({height, width}) => {
   };
 
   return (
-    <div className='flex items-center' style={{ marginTop: 20, marginBottom: 20, flexDirection: 'column' }}>     
-  <div className='flex justify-center items-center' style={{ flexDirection: 'row', width: '100%', height: '100%' }}>
-    <div style={{ flex: 1, marginRight: '10px', height: '80vh', overflowY: 'auto' }}>
-      <Box 
-        w="100%" 
-        h="100%"
-        mt="4" 
-        p="1"
-        borderWidth="0.5px" 
-        borderColor="#ececec"
-        borderRadius="lg" 
-        overflow="hidden"  
-        display="flex"
-        flexDirection="column"
-        alignItems="flex-start">
-        {isLoading &&
-          <Box display="flex" justifyContent="center" width="100%" height="100%" mt={20}>
-            <Spinner loadingText={'loading...'}/>
-          </Box>
-        }
-        <div style={{ display: 'inline-grid', gridTemplateColumns: 'repeat(14, 1fr)', gridGap: '2px' }}>  
-          { (sourceGrid !== undefined && !isLoading) && sourceGrid.map((nft, index) => (
-            <CanvasGridItem key={index} nft={nft} onDragStart={() => handleDragStart(index)} /> 
-          ))}
-        </div>
-        {(!isLoading && sourceGrid.length === 0) && 
-          <Box display="flex" justifyContent="center" width="100%" height="100%" mt={20}>
-            Nothing here yet.
-          </Box>
-        }
-      </Box>
-    </div>
-    <div style={{ flex: 1, position: 'relative', paddingLeft: '10px', height: '100%', justifyContent: "flex-start" }}>
+    <div className='flex items-center' style={{marginTop: 5, marginBottom: 20, flexDirection: 'column'}}>     
+      <div className='flex justify-center items-center column' style={{flexDirection: 'column', position: 'relative'}}>
+      <div className='flex justify-start items-start mt-4 row w-full'>  
+      
+      <SwitchButton setAssistiveImage={setAssistiveImage} assistiveImage={assistiveImage} />
+      </div>
       <div style={{
         display: "flex",
-        flexDirection: 'column',
-        justifyContent: assistiveMode ? 'flex-start' : 'center',
-        alignItems: 'center',
-        width: "100%",
-        height: '100%'
-      }}>
-        <div style={{ 
-          display: 'inline-grid', 
-          background: 'gray',
-          gridTemplateColumns: `repeat(${gridWidth}, 1fr)`, 
-          gridTemplateRows: `repeat(${gridHeight}, 1fr)`, 
-          gridGap: '0.5px', 
-          position: 'relative',
-          height: '100%',
-        }}>
-          {renderCanvas()}
-          {assistiveImage && assistiveMode &&
-            <img src={images[currentImageIndex]} alt="helper" style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              opacity: 0.3,
-              pointerEvents: 'none'
-            }}/>
-          }
-        </div>
-        
-        {assistiveMode &&
-          <div style={{ marginLeft: 10 }}>
-            <a onClick={() => setAssistiveImage(true)}>
-              <img src={images[currentImageIndex]} alt="helper" style={{
-                width: '309px',
-                height: '309px',
-              }}/>
-            </a>
-            <button style={{
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start', // Centers items vertically
+        width: "100%"
+    }}>
+        <VStack w="55vh">
+          <div style={{ 
+              display: 'inline-grid', 
+              background: 'gray',
+              gridTemplateColumns: `repeat(${gridWidth}, 1fr)`, 
+              gridTemplateRows: `repeat(${gridHeight}, 1fr)`, 
+              gridGap: '0.5px', 
+              border: '0.5px dashed #cdcdcd', 
+              position: 'relative',
+            }}>
+              {renderCanvas()}
+              {assistiveImage &&
+                <img src={images[currentImageIndex]}  alt="helper" style={{
                 position: 'absolute',
-                top: '50%',
-                left: 320,
-                transform: 'translateY(-50%)'
-            }} onClick={handlePrev}>
-                <FaArrowLeft />
-            </button>
-            <button style={{
-                position: 'absolute',
-                top: '50%',
-                right: 2,
-                transform: 'translateY(-50%)'
-            }} onClick={handleNext}>
-                <FaArrowRight />
-            </button>
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                opacity: 0.3, // Semi-transparent
+                pointerEvents: 'none' // Allows clicks to pass through to the grid
+                }}/>
+              }
           </div>
+          {height <= 2 &&
+        <Text fontSize='xs' style={{paddingTop: 10, paddingLeft: 30, paddingRight: 30, paddingBottom: 15}}>
+          Looks like you are on the minimum canvas size. There must be more basic NFT minted for a larger size. Read more <Link color='teal.500' href='/docs'>here</Link>.  
+        </Text>
         }
-        
-        {height <= 2 &&
-          <Text fontSize='xs' style={{ paddingTop: 20, paddingLeft: 40, paddingRight: 40 }}>
-            Looks like you are on the minimum canvas size. There must be more basic NFT minted for a larger size. Read more <Link color='teal.500' href='/docs'>here</Link>.  
-          </Text>
-        }
-        {height > 2 && height <= 7 &&
-          <Text fontSize='xs' style={{ paddingTop: 20, paddingLeft: 40, paddingRight: 40 }}>
-            You are not playing on the maximum canvas size. Read more <Link color='teal.500' href='/docs'></Link>.  
-          </Text>
+        {height > 2 && height <=7 &&
+        <Text fontSize='xs' style={{paddingTop: 10, paddingLeft: 30, paddingRight: 30, paddingBottom: 15}}>
+          You are not playing on the maximum canvas size. Read more <Link as={NextLink} color='teal.500' href='/docs'></Link>.  
+        </Text>
         }
         {height > 7 &&
-          <Text fontSize='xs' style={{ paddingTop: 20, paddingLeft: 40, paddingRight: 40 }}>
-            You are playing on the maximum canvas size, your art will have the best resolution.  
-          </Text>
+        <Text fontSize='xs' style={{paddingTop: 10, paddingLeft: 30, paddingRight: 30, paddingBottom: 15}}>
+          You are playing on the maximum canvas size, your art will have the best resolution.  
+        </Text>
         }
-        <div className="flex justify-center">
+        </VStack>
+        
+          <VStack style={{ marginLeft: 20}}>
+            <a onClick={() => setAssistiveImage(true)}>
+              <img src={images[currentImageIndex]} alt="helper" style={{
+                width: '380px',
+                height: '380px',
+              }}/>
+            </a>
+          <HStack>
+          <Button onClick={handlePrev}>
+              <FaArrowLeft />
+          </Button>
+          <Button onClick={handleNext}>
+              <FaArrowRight />
+          </Button>
+          </HStack>
+          </VStack>
+        
+      </div>
+        
+      </div>
+      
+      <div className="flex justify-center">
       
       {!isArtMinted &&
       <Button 
@@ -390,6 +365,7 @@ const SimpleCanvas = ({height, width}) => {
       py={2}
       px={4}
       mt={3}
+      mb={4}
       borderRadius="lg"
       _hover={{
         bg: "purple.800",
@@ -416,11 +392,47 @@ const SimpleCanvas = ({height, width}) => {
       }
     
       </div>
-      </div>
+         
+        {isLoading &&
+          <Box display="flex" justifyContent="center" width="100%" height="100%" mt={20}>
+            <Spinner loadingText={'loading...'}/>
+          </Box>
+        }
+        {(!isLoading && sourceGrid !== undefined && sourceGrid.length !== 0) && 
+        <Box borderWidth="0.5px" 
+            borderColor="#ececec"
+            borderRadius="lg" 
+            h="30vh"
+            overflowY="auto"
+            style={{ display: 'inline-grid', gridTemplateColumns: 'repeat(18, 1fr)', gridGap: '3px' }}>  
+          { sourceGrid.map((nft, index) => (
+            <CanvasGridItem key={index} nft={nft} onDragStart={() => handleDragStart(index)} /> 
+            )
+          )}
+        </Box>
+        }
+        {(!isLoading && sourceGrid.length === 0) && 
+        <Box borderWidth="0.5px" 
+        borderColor="#ececec"
+        borderRadius="lg" 
+        h="30vh"
+        w="100vh">  
+        <Flex 
+          height="100%" 
+          justifyContent="center" 
+          alignItems="center"
+        >
+          <Text fontSize="lg" alignSelf={"center"}>
+            This airdrop has no NFTs available right now.
+          </Text>
+          </Flex>
+          </Box>
+        }
+        
+      
+      
     </div>
-  </div>
-</div>
   );
 };
 
-export default SimpleCanvas;
+export default AirdropCanvas;
