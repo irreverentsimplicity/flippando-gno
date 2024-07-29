@@ -33,7 +33,7 @@ import Hexagram1 from "./assets/hexagrams/hexagram1.svg";
 import Hexagram2 from "./assets/hexagrams/hexagram2.svg";
 import Hexagram4 from "./assets/hexagrams/hexagram4.svg";
 import Hexagram6 from "./assets/hexagrams/hexagram6.svg";
-import { Box, Button, Flex, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Spinner, Text, Stack } from '@chakra-ui/react';
 import SmallTile from "../components/SmallTile";
 import Menu from "../components/Menu";
 import Header from "../components/Header";
@@ -67,16 +67,16 @@ export default function Home() {
   // levels boards, to be taken by querying player's NFTs
   const [level1Board, setLevel1Board] = useState(new Array(8).fill(0));
   const [level2Board, setLevel2Board] = useState(new Array(16).fill(0));
-  //const [nfts, setNfts] = useState([]);
+  const [isCreatingGame, setIsCreatingGame] = useState(false);  
+  const [isMintingNFT, setIsMintingNFT] = useState(false);  
   const userBalances = useSelector(state => state.flippando.userBalances);
   const userGnotBalances = useSelector(state => state.flippando.userGnotBalances);
   const rpcEndpoint = useSelector(state => state.flippando.rpcEndpoint);
-  //const [networkChanged, setNetworkChanged] = useState(false)
+
   const userBasicNFTs = useSelector(state => state.flippando.userBasicNFTs);
 
   const dispatch = useDispatch();
 
-  console.log(typeof dispatch); 
 
   useEffect( () => {
       console.log("rpcEndpoint in useEffect, flip.js ", rpcEndpoint)
@@ -212,6 +212,7 @@ export default function Home() {
 
   async function createNewGame(gameLevel, typeOfGame) {
     console.log("typeOfGame ", typeOfGame)
+    setIsCreatingGame(true)
     const actions = await Actions.getInstance();
     const playerAddress = await actions.getWalletAddress();
     try {
@@ -223,6 +224,7 @@ export default function Home() {
         setTileMatrix(Array(gameLevel).fill(0));
         setUncoveredTileMatrix(Array(gameLevel).fill(0));
         setGameStatus(newGameStatus);
+        setIsCreatingGame(false)
       });
     } catch (err) {
       console.log("error in calling startGame", err);
@@ -322,6 +324,7 @@ export default function Home() {
     const actions = await Actions.getInstance();
     const playerAddress = await actions.getWalletAddress();
     setGameStatus("Hang on, we're minting this...");
+    setIsMintingNFT(true)
     try {
       actions.createNFT(playerAddress, gameId).then((response) => {
         console.log("mintNFT response in Flip", response);
@@ -341,6 +344,7 @@ export default function Home() {
           fetchUserFLIPBalances(dispatch);
           setIsLoadingUserGames(true)
           getUserGamesByStatus()
+          setIsMintingNFT(false)
         }
       });
     } catch (err) {
@@ -897,14 +901,32 @@ export default function Home() {
                 */}
               <div>
                 
-                  <button 
-                    className="rounded-full bg-gray-200 px-3.5 py-2.5 text-lg hover:scale-110 font-semibold font-quantic text-black shadow-bg hover:bg-purple-900 hover:text-white border-none w-[160px] focus:outline-none"
-                    onClick={() => {
+                <Button 
+                  disabled={false}
+                  onClick={() => {
                     createNewGame(gameLevel, gameTileType);
-                  }}>
-                    Start a new flip                  
-                  </button>
-                
+                  }}
+                  bg="purple.900"
+                  color="white"
+                  fontSize="lg"
+                  fontWeight="bold"
+                  py={2}
+                  px={4}
+                  mt={3}
+                  borderRadius="lg"
+                  _hover={{
+                    bg: "purple.800",
+                    color: "white",
+                  }}
+                >
+                  {!isCreatingGame &&
+                    <div>Start a new flip</div>
+                  }
+                  {isCreatingGame &&
+                    <Spinner size="sm"/>
+                  }                    
+                  
+                </Button>     
               </div>
             </div>
           )}
@@ -938,29 +960,61 @@ export default function Home() {
             </div>
           )}
           {(gameStatus.includes("Flippando solved") || gameStatus.includes("Hang on")) && (
-            <div>
-              <div className={styles.mintButton}>
-                <button
-                  onClick={() => {
-                    mintNFT(currentGameId);
-                  }}
-                  className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 mr-2 ml-2 rounded-full"
-                >
-                  Mint this NFT
-                </button>
-              </div>
-              <div>
-                <a
-                  href="#"
-                  onClick={() => {
-                    createNewGame(gameLevel, gameTileType);
-                  }}
-                >
-                  <button className="rounded-md bg-gray-200 px-3.5 py-2.5 text-lg hover:scale-110 font-semibold font-quantic text-black shadow-bg hover:bg-green-700 hover:text-white border-none w-[160px] focus:outline-none">
-                    Start a new flip                  
-                  </button>
-                </a>
-              </div>
+            <div className="flex items-center column ">
+              <Stack spacing={2} align="center">
+                  <Button 
+                    disabled={false}
+                    onClick={() => {
+                      mintNFT(currentGameId);
+                    }}
+                    bg="purple.900"
+                    color="white"
+                    fontSize="lg"
+                    fontWeight="bold"
+                    py={2}
+                    px={4}
+                    mt={8}
+                    borderRadius="lg"
+                    _hover={{
+                      bg: "purple.800",
+                      color: "white",
+                    }}
+                  >
+                    {!isMintingNFT &&
+                      <div>Mint this NFT</div>  
+                    }
+                    {isMintingNFT &&
+                      <Spinner size="sm"/>
+                    }
+                  </Button>
+                    {/**
+                  <Button 
+                    disabled={false}
+                    onClick={() => {
+                      createNewGame(gameLevel, gameTileType);
+                    }}
+                    bg="purple.900"
+                    color="white"
+                    fontSize="lg"
+                    fontWeight="bold"
+                    py={2}
+                    px={4}
+                    mt={1}
+                    borderRadius="lg"
+                    _hover={{
+                      bg: "purple.800",
+                      color: "white",
+                    }}
+                  >
+                  {!isCreatingGame &&
+                    <div>Start a new flip</div>
+                  }
+                  {isCreatingGame &&
+                    <Spinner size="sm"/>
+                  }               
+                  </Button>
+                   */}
+              </Stack>
             </div>
           )}
 

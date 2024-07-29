@@ -383,7 +383,21 @@ const AirdropCanvas = ({height, width}) => {
             Your painting is now part of your collection.
           </Text>
           <Link href={'/inventory'} passHref>
-            <Button as="a" borderRadius="full">
+          <Button 
+            disabled={false}
+            bg="purple.900"
+            color="white"
+            fontSize="lg"
+            fontWeight="bold"
+            py={2}
+            px={4}
+            mt={3}
+            borderRadius="lg"
+            _hover={{
+              bg: "purple.800",
+              color: "white",
+            }}
+          >
               Your Collection
             </Button>
           </Link>
