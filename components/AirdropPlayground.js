@@ -53,7 +53,9 @@ import { getGNOTBalances, fetchUserFLIPBalances } from "../util/tokenActions";
               parsedResponse.userNFTs.map((nftItem) => {
                 existingNFTs++;
               })*/
-              existingNFTs = parsedResponse.userNFTs.length;
+             // to uncomment this in prod
+              //existingNFTs = parsedResponse.userNFTs.length;
+              existingNFTs = 200;
             
             if(existingNFTs !== 0){
               setExistingBasicNFTs(existingNFTs);

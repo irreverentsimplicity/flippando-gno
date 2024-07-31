@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Box, Text, Link, HStack, VStack, Button, Flex } from "@chakra-ui/react";
+import { Box, Text, Link, HStack, VStack, Button, Flex, filter, position } from "@chakra-ui/react";
 import NextLink from 'next/link';
 import Spinner from './Spinner';
 import { setArtPayload } from '../slices/flippandoSlice';
@@ -10,8 +10,16 @@ import Actions from '../util/actions';
 import CanvasGridItem from './CanvasGridItem';
 import CanvasSquare from './CanvasSquare';
 import SwitchButton from './SwitchButton';
+import { stringify } from 'postcss';
 
-
+const AirdropData = ({totalNFTsMinted, avaialableForParent, totalNeededForParent}) => {
+  return(
+    <div className='flex justify-between w-full mb-1'>
+      <Text>{totalNFTsMinted} NFTs minted in this airdrop</Text>
+      <Text>{avaialableForParent} available to complete this image, out of {totalNeededForParent} needed.</Text>
+    </div>
+  )
+}
 
 const AirdropCanvas = ({height, width}) => {
 
@@ -21,6 +29,9 @@ const AirdropCanvas = ({height, width}) => {
 
     const placeHolderNFT = {tokenId: 0, metadata: {image: 'i'}};
     const [sourceGrid, setSourceGrid] = useState([]);
+    const [totalNFTsMinted, setTotalNFTsMinted] = useState([]);
+    const [avaialableForParent, setAvailableForParent] = useState([]);
+    const [totalNeededForParent, setTotalNeededForParent] = useState(0);
     const [canvas, setCanvas] = useState(Array(height*width).fill(placeHolderNFT));
     const [gridCanvas, setGridCanvas] = useState(Array(gridWidth*gridHeight).fill(placeHolderNFT));
     const [indexSourceGrid, setIndexSourceGrid] = useState(null);
@@ -28,6 +39,7 @@ const AirdropCanvas = ({height, width}) => {
     const [isLoading, setIsLoading] = useState(true);
     const [assistiveImage, setAssistiveImage] = useState(true);
     const [isArtMinted, setIsArtMinted] = useState(false)
+    const [isMintingArt, setIsMintingArt] = useState(false)
     const artPayload = useSelector(state => state.flippando.artPayload);
     const dispatch = useDispatch();
 
@@ -39,8 +51,12 @@ const AirdropCanvas = ({height, width}) => {
 
     // used for assitive image array
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [currentNFTIndex, setCurrentNFTIndex] = useState(0);
     const images = ["/assets/hacker_pixelated_64.jpeg", "/assets/hacker_green_pixelated_64.jpeg"];
-    
+    const airdropCompositeNFTs = ["1", "2"];
+    const [isNextDisabled, setIsNextDisabled] = useState(false);
+    const [isPrevDisabled, setIsPrevDisabled] = useState(true);
+
     useEffect(() => {
       const fetchNFTs = async () => {
         console.log("fetchNFTs");
@@ -72,7 +88,7 @@ const AirdropCanvas = ({height, width}) => {
                   
                   filteredBasicNFTs.forEach((nftItem) => {
                     // filter by airdrop name, so far it's hardcoded to airdrop/hackerville/1
-                    if(nftItem.airdropName !== "" && nftItem.airdropName === "airdrop/hackerville/1"){
+                    if(nftItem.airdropName !== "" && nftItem.airdropName === "hackerville"){
                       nftData.push({
                         tokenId: nftItem.tokenId,
                         metadata: nftItem,
@@ -82,7 +98,7 @@ const AirdropCanvas = ({height, width}) => {
                 } else {
                   parsedResponse.userNFTs.forEach((nftItem) => {
                     // filter by airdrop name, so far it's hardcoded to airdrop/hackerville/1
-                    if(nftItem.airdropName !== "" && nftItem.airdropName === "airdrop/hackerville/1"){
+                    if((nftItem.airdropName !== "" && nftItem.airdropName === "hackerville")){
                       nftData.push({
                         tokenId: nftItem.tokenId,
                         metadata: nftItem,
@@ -98,8 +114,12 @@ const AirdropCanvas = ({height, width}) => {
             }
     
             if (nftData.length !== 0) {
-              console.log("nftData.length !== 0", JSON.stringify(nftData));
-              setSourceGrid(nftData);
+              //console.log("nftData.length !== 0", JSON.stringify(nftData));
+              setTotalNFTsMinted(nftData);
+              const filteredArray = nftData.filter(item => item.metadata.airdropParentID == airdropCompositeNFTs[currentNFTIndex]);
+              setTotalNeededForParent(nftData[0].metadata.gameLevel);
+              setAvailableForParent(filteredArray);
+              setSourceGrid(filteredArray);
             }
           }
         } catch (err) {
@@ -150,18 +170,33 @@ const AirdropCanvas = ({height, width}) => {
     }, [isArtMinted])
 
   const handleDrop = (index) => {
-    const updatedCanvas = [...canvas];
-    updatedCanvas[index] = sourceGrid[indexSourceGrid];
-    setCanvas(updatedCanvas);
-    checkAndPrepareArtPayload(updatedCanvas);
-    const updatedSourceGrid = [...sourceGrid];
-    updatedSourceGrid[indexSourceGrid] = placeHolderNFT;
-    setSourceGrid(updatedSourceGrid);
-    let idxTrack = {'canvasIndex': index, 'gridIndex': indexSourceGrid};
-    let indexTrackCopy = [...indexTrack];
-    indexTrackCopy.push(idxTrack);
-    setIndexTrack(indexTrackCopy);
-    
+    const pos = getPosition(index, width);
+    // matrix x and y are starting at 0, airdrop positions are starting at 1
+    const droppedX = pos.x + 1
+    const droppedY = pos.y + 1
+    const droppedNFT = sourceGrid[indexSourceGrid]
+    const droppedNFTX = droppedNFT.metadata.airdropXPos
+    const droppedNFTY = droppedNFT.metadata.airdropYPos
+    //console.log("dropped NFT ", JSON.stringify(droppedNFT))
+    //console.log("dropped, aridropped ", droppedX, droppedY, droppedNFTX, droppedNFTY)
+    if (droppedX != droppedNFTX || droppedY != droppedNFTY){
+      alert("This doesn't quite belong there. Try other squares")
+      // revert the dropped NFT if not correct
+      handleClick(index)
+    }
+    else {
+      const updatedCanvas = [...canvas];
+      updatedCanvas[index] = sourceGrid[indexSourceGrid];
+      setCanvas(updatedCanvas);
+      checkAndPrepareArtPayload(updatedCanvas);
+      const updatedSourceGrid = [...sourceGrid];
+      updatedSourceGrid[indexSourceGrid] = placeHolderNFT;
+      setSourceGrid(updatedSourceGrid);
+      let idxTrack = {'canvasIndex': index, 'gridIndex': indexSourceGrid};
+      let indexTrackCopy = [...indexTrack];
+      indexTrackCopy.push(idxTrack);
+      setIndexTrack(indexTrackCopy);
+    }
   };
 
   const handleDragStart = (index) => {
@@ -194,7 +229,7 @@ const AirdropCanvas = ({height, width}) => {
     let tokenIds = [];
     updatedCanvas.map( (nft, index) => {
       console.log("nft ", JSON.stringify(nft, null, 2))
-        if(nft.tokenId != 0){
+        if(nft !== undefined && nft.metadata.tokenID != 0){
             tokenIds.push(nft.metadata.tokenID);
         }
         
@@ -203,6 +238,15 @@ const AirdropCanvas = ({height, width}) => {
         dispatch(setArtPayload([height, width, tokenIds]));
     }
   }
+
+  // helper to determine the position in the matrix
+  function getPosition(index, width){
+    const x = index % width;
+    const y = Math.floor(index / width);
+    return { x: x, y: y };
+  }
+
+  // UI intensive functions
 
   const renderCanvas = () => {
     let realIndex = -1;
@@ -253,7 +297,7 @@ const AirdropCanvas = ({height, width}) => {
       alert("You have to fill the entire canvas")
     }
     if (artPayload.length !== 0){
-      
+      setIsMintingArt(true)
       try {
         actions.createCompositeNFT(playerAddress, String(width), String(height), bTokenIDs).then((response) => {
           console.log("createCompositeNFT response in Playground", response);
@@ -261,7 +305,9 @@ const AirdropCanvas = ({height, width}) => {
           console.log("createCompositeNFT parseResponse", parsedResponse)
           if(parsedResponse.error === undefined){
             setIsArtMinted(true)
+            
           }
+          setIsMintingArt(false)
         });
       } catch (err) {
         console.log("error in calling createCompositeNFT", err);
@@ -269,12 +315,63 @@ const AirdropCanvas = ({height, width}) => {
     } 
   }
 
+  /*
   const handleNext = () => {
     setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+    setCurrentNFTIndex((prevIndex) => (prevIndex + 1) % airdropCompositeNFTs.length);
+    //console.log("sourceGrid ", JSON.stringify(sourceGrid))
+    console.log("airdropCompositeNFTs[currentNFTIndex] ", airdropCompositeNFTs[currentNFTIndex])
+    const filteredArray = totalNFTsMinted.filter(item => item.metadata.airdropParentID == airdropCompositeNFTs[currentNFTIndex]);
+    console.log("filteredArray ", JSON.stringify(filteredArray))
+    setAvaialbleForParent(filteredArray);
+    setSourceGrid(filteredArray);
   };
 
   const handlePrev = () => {
       setCurrentImageIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
+      setCurrentNFTIndex((prevIndex) => (prevIndex - 1 + airdropCompositeNFTs.length) % airdropCompositeNFTs.length);
+      //console.log("sourceGrid ", JSON.stringify(sourceGrid))
+      console.log("airdropCompositeNFTs[currentNFTIndex] ", airdropCompositeNFTs[currentNFTIndex])
+      const filteredArray = totalNFTsMinted.filter(item => item.metadata.airdropParentID == airdropCompositeNFTs[currentNFTIndex]);
+      console.log("filteredArray ", JSON.stringify(filteredArray))
+      setAvaialbleForParent(filteredArray);
+      setSourceGrid(filteredArray);
+  };*/
+
+  const handleNext = () => {
+    setCurrentImageIndex(prevIndex => {
+      const newIndex = prevIndex + 1;
+      if (newIndex >= images.length - 1) {
+        setIsNextDisabled(true);
+      }
+      setIsPrevDisabled(false);
+      return newIndex;
+    });
+    setCurrentNFTIndex(prevIndex => {
+      const newIndex = prevIndex + 1;
+      const filteredArray = totalNFTsMinted.filter(item => item.metadata.airdropParentID === airdropCompositeNFTs[newIndex]);
+      setAvailableForParent(filteredArray);
+      setSourceGrid(filteredArray);
+      return newIndex;
+    });
+  };
+
+  const handlePrev = () => {
+    setCurrentImageIndex(prevIndex => {
+      const newIndex = prevIndex - 1;
+      if (newIndex <= 0) {
+        setIsPrevDisabled(true);
+      }
+      setIsNextDisabled(false);
+      return newIndex;
+    });
+    setCurrentNFTIndex(prevIndex => {
+      const newIndex = prevIndex - 1;
+      const filteredArray = totalNFTsMinted.filter(item => item.metadata.airdropParentID === airdropCompositeNFTs[newIndex]);
+      setAvailableForParent(filteredArray);
+      setSourceGrid(filteredArray);
+      return newIndex;
+    });
   };
 
   return (
@@ -321,7 +418,7 @@ const AirdropCanvas = ({height, width}) => {
         }
         {height > 2 && height <=7 &&
         <Text fontSize='xs' style={{paddingTop: 10, paddingLeft: 30, paddingRight: 30, paddingBottom: 15}}>
-          You are not playing on the maximum canvas size. Read more <Link as={NextLink} color='teal.500' href='/docs'></Link>.  
+          You are not playing on the maximum canvas size. Read more <Link as={NextLink} color='teal.500' href='/docs'>here</Link>.  
         </Text>
         }
         {height > 7 &&
@@ -339,10 +436,10 @@ const AirdropCanvas = ({height, width}) => {
               }}/>
             </a>
           <HStack>
-          <Button onClick={handlePrev}>
+          <Button onClick={handlePrev} isDisabled={isPrevDisabled}>
               <FaArrowLeft />
           </Button>
-          <Button onClick={handleNext}>
+          <Button onClick={handleNext} isDisabled={isNextDisabled}>
               <FaArrowRight />
           </Button>
           </HStack>
@@ -355,26 +452,30 @@ const AirdropCanvas = ({height, width}) => {
       <div className="flex justify-center">
       
       {!isArtMinted &&
-      <Button 
-      disabled={false}
-      onClick={() => { makeArt() }} 
-      bg="purple.900"
-      color="white"
-      fontSize="lg"
-      fontWeight="bold"
-      py={2}
-      px={4}
-      mt={3}
-      mb={4}
-      borderRadius="lg"
-      _hover={{
-        bg: "purple.800",
-        color: "white",
-      }}
-    >
-      Mint This Painting
-    </Button>
-    
+        <Button 
+          disabled={false}
+          onClick={() => { makeArt() }} 
+          bg="purple.900"
+          color="white"
+          fontSize="lg"
+          fontWeight="bold"
+          py={2}
+          px={4}
+          mt={3}
+          mb={4}
+          borderRadius="lg"
+          _hover={{
+            bg: "purple.800",
+            color: "white",
+          }}
+        >
+          {!isMintingArt &&
+            <div>Mint This Painting</div>
+          }
+          {isMintingArt &&
+            <Spinner size="sm" />
+          }
+        </Button>
       }
       {isArtMinted &&
         <Box display="flex" justifyContent="center" width="100%" mt={8}>
@@ -412,34 +513,38 @@ const AirdropCanvas = ({height, width}) => {
             <Spinner loadingText={'loading...'}/>
           </Box>
         }
+        {!isLoading && sourceGrid !== undefined &&
+          <AirdropData 
+          totalNFTsMinted={totalNFTsMinted.length} 
+          avaialableForParent={avaialableForParent.length}
+          totalNeededForParent={totalNeededForParent} 
+          /> 
+        }
         {(!isLoading && sourceGrid !== undefined && sourceGrid.length !== 0) && 
-        <Box borderWidth="0.5px" 
-            borderColor="#ececec"
-            borderRadius="lg" 
-            h="30vh"
-            overflowY="auto"
-            style={{ display: 'inline-grid', gridTemplateColumns: 'repeat(18, 1fr)', gridGap: '3px' }}>  
-          { sourceGrid.map((nft, index) => (
-            <CanvasGridItem key={index} nft={nft} onDragStart={() => handleDragStart(index)} /> 
-            )
-          )}
-        </Box>
+          <Box borderWidth="0.5px" 
+              borderColor="#ececec"
+              borderRadius="lg" 
+              h="30vh"
+              overflowY="auto"
+              style={{ display: 'inline-grid', gridTemplateColumns: 'repeat(18, 1fr)', gridGap: '3px' }}>             
+            { sourceGrid.map((nft, index) => (
+              <CanvasGridItem key={index} nft={nft} onDragStart={() => handleDragStart(index)} /> 
+              )
+            )}
+          </Box>
         }
         {(!isLoading && sourceGrid.length === 0) && 
-        <Box borderWidth="0.5px" 
-        borderColor="#ececec"
-        borderRadius="lg" 
-        h="30vh"
-        w="100vh">  
-        <Flex 
-          height="100%" 
-          justifyContent="center" 
-          alignItems="center"
-        >
-          <Text fontSize="lg" alignSelf={"center"}>
-            This airdrop has no NFTs available right now.
-          </Text>
-          </Flex>
+          <Box borderWidth="0.5px" 
+          borderColor="#ececec"
+          borderRadius="lg" 
+          h="30vh"
+          w="100vh">  
+          <Flex 
+            height="100%" 
+            justifyContent="center" 
+            alignItems="center"
+          >
+            </Flex>
           </Box>
         }
         

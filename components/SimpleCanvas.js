@@ -27,6 +27,7 @@ const SimpleCanvas = ({height, width}) => {
     const [assistiveMode, setAssistiveMode] = useState(false);
     const [assistiveImage, setAssistiveImage] = useState(false);
     const [isArtMinted, setIsArtMinted] = useState(false)
+    const [isMintingArt, setIsMintingArt] = useState(false)
     const artPayload = useSelector(state => state.flippando.artPayload);
     const dispatch = useDispatch();
 
@@ -77,10 +78,13 @@ const SimpleCanvas = ({height, width}) => {
                   });
                 } else {
                   parsedResponse.userNFTs.forEach((nftItem) => {
-                    nftData.push({
-                      tokenId: nftItem.tokenId,
-                      metadata: nftItem,
-                    });
+                    // filter by airdrop name empty and gameType not "airdrop"
+                    if((nftItem.airdropName === "" && nftItem.gameType !== "airdrop")){
+                      nftData.push({
+                        tokenId: nftItem.tokenId,
+                        metadata: nftItem,
+                      });
+                    }
                   });
                 }
               } else {
@@ -187,7 +191,7 @@ const SimpleCanvas = ({height, width}) => {
     let tokenIds = [];
     updatedCanvas.map( (nft, index) => {
       console.log("nft ", JSON.stringify(nft, null, 2))
-        if(nft.tokenId != 0){
+        if(nft.metadata.tokenId != 0){
             tokenIds.push(nft.metadata.tokenID);
         }
         
@@ -246,7 +250,7 @@ const SimpleCanvas = ({height, width}) => {
       alert("You have to fill the entire canvas")
     }
     if (artPayload.length !== 0){
-      
+      setIsMintingArt(true)
       try {
         actions.createCompositeNFT(playerAddress, String(width), String(height), bTokenIDs).then((response) => {
           console.log("createCompositeNFT response in Playground", response);
@@ -254,7 +258,9 @@ const SimpleCanvas = ({height, width}) => {
           console.log("createCompositeNFT parseResponse", parsedResponse)
           if(parsedResponse.error === undefined){
             setIsArtMinted(true)
+            
           }
+          setIsMintingArt(false)
         });
       } catch (err) {
         console.log("error in calling createCompositeNFT", err);
@@ -285,13 +291,13 @@ const SimpleCanvas = ({height, width}) => {
         overflow="hidden"  
         display="flex"
         flexDirection="column"
-        alignItems="flex-start">
+        alignItems="center">
         {isLoading &&
           <Box display="flex" justifyContent="center" width="100%" height="100%" mt={20}>
             <Spinner loadingText={'loading...'}/>
           </Box>
         }
-        <div style={{ display: 'inline-grid', gridTemplateColumns: 'repeat(14, 1fr)', gridGap: '2px' }}>  
+        <div style={{ display: 'inline-grid', gridTemplateColumns: 'repeat(8, 1fr)', gridGap: '2px' }}>  
           { (sourceGrid !== undefined && !isLoading) && sourceGrid.map((nft, index) => (
             <CanvasGridItem key={index} nft={nft} onDragStart={() => handleDragStart(index)} /> 
           ))}
@@ -369,7 +375,7 @@ const SimpleCanvas = ({height, width}) => {
         }
         {height > 2 && height <= 7 &&
           <Text fontSize='xs' style={{ paddingTop: 20, paddingLeft: 40, paddingRight: 40 }}>
-            You are not playing on the maximum canvas size. Read more <Link color='teal.500' href='/docs'></Link>.  
+            You are not playing on the maximum canvas size. Read more <Link color='teal.500' href='/docs'>here</Link>.  
           </Text>
         }
         {height > 7 &&
@@ -396,7 +402,12 @@ const SimpleCanvas = ({height, width}) => {
         color: "white",
       }}
     >
-      Mint This Painting
+      {!isMintingArt &&
+        <div>Mint This Painting</div>
+      }
+      {isMintingArt &&
+        <Spinner size="sm" />
+      }
     </Button>
     
       }

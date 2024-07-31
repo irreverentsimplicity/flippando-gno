@@ -1,5 +1,3 @@
-/* pages/my-nfts.js */
-//import {ethers} from 'ethers';
 import styles from "../styles/Home.module.css";
 import { useEffect, useState } from 'react';
 import { useDispatch } from "react-redux";
