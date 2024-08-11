@@ -468,6 +468,16 @@ class Actions {
       console.log("actions getArtworkNFTs response ", JSON.stringify(response))
       return response;
     }
+  /**
+   * Get all minted airdrop NFTs
+   */
+  
+
+  async GetAllMintedAirdropNFTs(): Promise<any> {
+    const response = await this.evaluateExpression("GetAllMintedAirdropNFTs()")
+    console.log("actions GetAllMintedAirdropNFTs response ", JSON.stringify(response))
+    return response;
+  }
   
   /**
    * Call the GetFlipBalances function and return a JSON object
