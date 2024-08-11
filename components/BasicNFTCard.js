@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Text, VStack, HStack, Button, Spacer, Alert, FormControl, FormLabel, Input, CloseButton } from "@chakra-ui/react";
+import { Box, Text, VStack, HStack, Button, Spacer, Alert, FormControl, FormLabel, Input, CloseButton, Link } from "@chakra-ui/react";
 import Actions from '../util/actions';
 import Spinner from './Spinner';
-import card from '@material-tailwind/react/theme/components/card';
 
 const BasicNFTSmallTile = ({ size, basicNFT, tokenID }) => {
   console.log("basicNFT", JSON.stringify(basicNFT))
@@ -108,18 +107,13 @@ const BasicNFTCard = ({ title, text, cardData, numRows, numCols, onTrigger }) =>
       </div>
       <Spacer />
       <VStack p="2">
+        <VStack width="100%" alignItems="flex-end" spacing={2} pr="2">
         <Text fontWeight="500" lineHeight="tight" isTruncated>
-          {title}
+          {title} / v.{cardData.version} {cardData.gameType === 'airdrop' ? " - airdropped" : " - organic"}
         </Text>
-        <Text fontWeight="200" lineHeight="tight">{text}</Text>
+        <Text fontSize={"sm"} fontWeight="100" lineHeight="tight">Locked $FLIP: {cardData.gameLevel === "64" ? "4" : "1" }</Text>
+        </VStack>
         <HStack p="1" borderWidth="1px"borderRadius="full" borderColor="purple.200" bg="purple.200" width="100%" justifyContent="end">
-        {/*<Button
-          bg="purple.900"               
-          color="white"               
-          _hover={{ bg: "blue.600"}}
-          borderRadius="full"
-          onClick={handleButtonClick}         
-        >Transfer</Button>*/}
         {!isListing &&
             <Button
             bg="purple.900"               
@@ -138,7 +132,14 @@ const BasicNFTCard = ({ title, text, cardData, numRows, numCols, onTrigger }) =>
           disabled={true}          
         >Listing...</Button>
         }
-        
+        <Link key={cardData.tokenID} href={`/basicnft?tokenId=${cardData.tokenID}`} passHref>
+        <Button
+            bg="purple.900"               
+            color="white"               
+            _hover={{ bg: "blue.600"}}
+            borderRadius="full"   
+          >Details</Button>
+        </Link>
         </HStack>
       </VStack>
       {showAlert && (

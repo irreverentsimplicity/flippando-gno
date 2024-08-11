@@ -1,22 +1,21 @@
 /* pages/_app.js */
 import '../styles/globals.css'
 import styles from '../styles/Home.module.css'
-import Link from 'next/link'
 import { Provider } from 'react-redux';
-import {store} from '../store/store.js';
+import { PersistGate } from 'redux-persist/integration/react';
+import { store, persistor } from '../store/store.js';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import {useRouter} from 'next/router';
 import { ChakraProvider } from '@chakra-ui/react';
 import theme from '../theme';
 
 
 
 function MyApp({ Component, pageProps }) {
-  const { pathname } = useRouter();
   
   return (
     <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
     <DndProvider backend={HTML5Backend}>
     <div className={styles.container}>
       <link
@@ -29,6 +28,7 @@ function MyApp({ Component, pageProps }) {
       </ChakraProvider>
     </div>
     </DndProvider>
+    </PersistGate>
     </Provider>
   )
 }
