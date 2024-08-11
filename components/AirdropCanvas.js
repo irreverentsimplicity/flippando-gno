@@ -10,7 +10,6 @@ import Actions from '../util/actions';
 import CanvasGridItem from './CanvasGridItem';
 import CanvasSquare from './CanvasSquare';
 import SwitchButton from './SwitchButton';
-import { stringify } from 'postcss';
 
 const AirdropData = ({totalNFTsMinted, avaialableForParent, totalNeededForParent}) => {
   return(
@@ -30,6 +29,7 @@ const AirdropCanvas = ({height, width}) => {
     const placeHolderNFT = {tokenId: 0, metadata: {image: 'i'}};
     const [sourceGrid, setSourceGrid] = useState([]);
     const [totalNFTsMinted, setTotalNFTsMinted] = useState([]);
+    const [totalAirdropNFTsMinted, setTotalAirdropNFTsMinted] = useState([]);
     const [avaialableForParent, setAvailableForParent] = useState([]);
     const [totalNeededForParent, setTotalNeededForParent] = useState(0);
     const [canvas, setCanvas] = useState(Array(height*width).fill(placeHolderNFT));
@@ -52,10 +52,16 @@ const AirdropCanvas = ({height, width}) => {
     // used for assitive image array
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [currentNFTIndex, setCurrentNFTIndex] = useState(0);
-    const images = ["/assets/hacker_pixelated_64.jpeg", "/assets/hacker_green_pixelated_64.jpeg"];
-    const airdropCompositeNFTs = ["1", "2"];
+    const images = [];
+    const airdropCompositeNFTs = [];
     const [isNextDisabled, setIsNextDisabled] = useState(false);
     const [isPrevDisabled, setIsPrevDisabled] = useState(true);
+
+    // generate the images array
+    for (let i = 1; i <= 157; i++) {
+      images.push(`/assets/hacker_pixelated_${i}.jpeg`);
+      airdropCompositeNFTs.push(`${i}`)
+    }
 
     useEffect(() => {
       const fetchNFTs = async () => {
@@ -115,7 +121,7 @@ const AirdropCanvas = ({height, width}) => {
     
             if (nftData.length !== 0) {
               //console.log("nftData.length !== 0", JSON.stringify(nftData));
-              setTotalNFTsMinted(nftData);
+              setTotalNFTsMinted(nftData)
               const filteredArray = nftData.filter(item => item.metadata.airdropParentID == airdropCompositeNFTs[currentNFTIndex]);
               setTotalNeededForParent(nftData[0].metadata.gameLevel);
               setAvailableForParent(filteredArray);
@@ -130,6 +136,7 @@ const AirdropCanvas = ({height, width}) => {
       };
     
       fetchNFTs();
+      getMintedNFTs();
     }, []);
     
 
@@ -169,6 +176,28 @@ const AirdropCanvas = ({height, width}) => {
       }
     }, [isArtMinted])
 
+    const getMintedNFTs = async () => {
+      const actions = await Actions.getInstance();
+      
+        try {
+          actions.GetAllMintedAirdropNFTs().then((response) => {
+            if (response !== undefined){
+              let parsedResponse = JSON.parse(response);
+              if (parsedResponse.length != 0) {
+                console.log("getMintedNFTs, ", JSON.stringify(parsedResponse))
+                const tokenIds = parsedResponse.tokenIDs.map(item => item.split(':')[0]);
+                console.log("getMintedNFTs tokenIds, ", JSON.stringify(tokenIds))
+                setTotalAirdropNFTsMinted(tokenIds);
+              }
+            
+            }
+          });
+        } catch (err) {
+          console.log("error in calling GetAllMintedAirdropNFTs", err);
+        }
+        
+      
+    }
   const handleDrop = (index) => {
     const pos = getPosition(index, width);
     // matrix x and y are starting at 0, airdrop positions are starting at 1
@@ -315,30 +344,11 @@ const AirdropCanvas = ({height, width}) => {
     } 
   }
 
-  /*
-  const handleNext = () => {
-    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
-    setCurrentNFTIndex((prevIndex) => (prevIndex + 1) % airdropCompositeNFTs.length);
-    //console.log("sourceGrid ", JSON.stringify(sourceGrid))
-    console.log("airdropCompositeNFTs[currentNFTIndex] ", airdropCompositeNFTs[currentNFTIndex])
-    const filteredArray = totalNFTsMinted.filter(item => item.metadata.airdropParentID == airdropCompositeNFTs[currentNFTIndex]);
-    console.log("filteredArray ", JSON.stringify(filteredArray))
-    setAvaialbleForParent(filteredArray);
-    setSourceGrid(filteredArray);
-  };
-
-  const handlePrev = () => {
-      setCurrentImageIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
-      setCurrentNFTIndex((prevIndex) => (prevIndex - 1 + airdropCompositeNFTs.length) % airdropCompositeNFTs.length);
-      //console.log("sourceGrid ", JSON.stringify(sourceGrid))
-      console.log("airdropCompositeNFTs[currentNFTIndex] ", airdropCompositeNFTs[currentNFTIndex])
-      const filteredArray = totalNFTsMinted.filter(item => item.metadata.airdropParentID == airdropCompositeNFTs[currentNFTIndex]);
-      console.log("filteredArray ", JSON.stringify(filteredArray))
-      setAvaialbleForParent(filteredArray);
-      setSourceGrid(filteredArray);
-  };*/
 
   const handleNext = () => {
+    // reset canvas
+    setCanvas(Array(gridWidth*gridHeight).fill(placeHolderNFT));
+    
     setCurrentImageIndex(prevIndex => {
       const newIndex = prevIndex + 1;
       if (newIndex >= images.length - 1) {
@@ -354,9 +364,13 @@ const AirdropCanvas = ({height, width}) => {
       setSourceGrid(filteredArray);
       return newIndex;
     });
+    
   };
 
   const handlePrev = () => {
+    // reset canvas
+    setCanvas(Array(gridWidth*gridHeight).fill(placeHolderNFT));
+    
     setCurrentImageIndex(prevIndex => {
       const newIndex = prevIndex - 1;
       if (newIndex <= 0) {
@@ -372,6 +386,7 @@ const AirdropCanvas = ({height, width}) => {
       setSourceGrid(filteredArray);
       return newIndex;
     });
+    
   };
 
   return (
@@ -515,7 +530,7 @@ const AirdropCanvas = ({height, width}) => {
         }
         {!isLoading && sourceGrid !== undefined &&
           <AirdropData 
-          totalNFTsMinted={totalNFTsMinted.length} 
+          totalNFTsMinted={totalAirdropNFTsMinted.length} 
           avaialableForParent={avaialableForParent.length}
           totalNeededForParent={totalNeededForParent} 
           /> 

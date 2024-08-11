@@ -48,14 +48,8 @@ import { getGNOTBalances, fetchUserFLIPBalances } from "../util/tokenActions";
           let parsedResponse = JSON.parse(response);
           console.log("parseResponse", parsedResponse)
           if(parsedResponse.userNFTs !== undefined && parsedResponse.userNFTs.length !== 0){
-              let existingNFTs = 0
-              /*
-              parsedResponse.userNFTs.map((nftItem) => {
-                existingNFTs++;
-              })*/
-             // to uncomment this in prod
-              //existingNFTs = parsedResponse.userNFTs.length;
-              existingNFTs = 200;
+              const existingNFTs = parsedResponse.userNFTs.length;
+              // existingNFTs = 200;
             
             if(existingNFTs !== 0){
               setExistingBasicNFTs(existingNFTs);
