@@ -35,7 +35,7 @@ const Wallet = ({ userBalances, userGnotBalances }) => {
       actionsInstance.setRpcUrl(newNetwork);
     };
 
-    const showLocalOption = process.env.NEXT_PUBLIC_SHOW_LOCAL_OPTION === 'true';
+    const showLocalOption = process.env.NEXT_PUBLIC_SHOW_LOCAL_OPTION === 'false';
     //console.log('NEXT_PUBLIC_SHOW_LOCAL_OPTION:', process.env.NEXT_PUBLIC_SHOW_LOCAL_OPTION);
     //console.log("Config.GNO_JSONRPC_URL: ", Config.GNO_JSONRPC_URL);
 
