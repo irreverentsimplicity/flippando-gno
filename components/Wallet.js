@@ -35,7 +35,7 @@ const Wallet = ({ userBalances, userGnotBalances }) => {
       actionsInstance.setRpcUrl(newNetwork);
     };
 
-    const showLocalOption = process.env.NEXT_PUBLIC_SHOW_LOCAL_OPTION === 'false';
+    const showLocalOption = process.env.NEXT_PUBLIC_SHOW_LOCAL_OPTION === 'true';
     //console.log('NEXT_PUBLIC_SHOW_LOCAL_OPTION:', process.env.NEXT_PUBLIC_SHOW_LOCAL_OPTION);
     //console.log("Config.GNO_JSONRPC_URL: ", Config.GNO_JSONRPC_URL);
 
@@ -67,8 +67,9 @@ const Wallet = ({ userBalances, userGnotBalances }) => {
           borderColor="purple.500"
           _hover={{ bg: 'purple.600' }}
           _focus={{ boxShadow: 'outline' }}>
-          {showLocalOption && <option value="http://localhost:26657">Local node</option>}
           <option value="https://rpc.irreverentsimplicity.xyz" >IrreverentSimplicity RPC</option>
+          {showLocalOption && <option value="http://localhost:26657">Local node</option>}
+          
         </Select>
         </div>
       </div>
