@@ -18,8 +18,8 @@ const Wallet = ({ userBalances, userGnotBalances }) => {
       console.log("newNetwork, ", newNetwork)
       dispatch(setRpcEndpoint(newNetwork))
       const actionsInstance = await Actions.getInstance();
-      let faucetUrl = "";
-      let flippandoRealm = "";
+      let faucetUrl = "https://faucet.irreverentsimplicity.xyz";
+      let flippandoRealm = "gno.land/r/flippando/flippando";
       if (newNetwork === "http://localhost:26657"){
         faucetUrl = "http://127.0.0.1:5050";
         flippandoRealm = "gno.land/r/demo/flippando"

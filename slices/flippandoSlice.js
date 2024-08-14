@@ -29,7 +29,7 @@ const flippandoSlice = createSlice({
     blockchainName: undefined,
     testnet: true,
     mainnet: false,
-    rpcEndpoint: "http://localhost:26657",
+    rpcEndpoint: "https://rpc.irreverentsimplicity.xyz",
     adr: {
       flippandoAddress: undefined,
       flipAddress: undefined,
