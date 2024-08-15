@@ -33,7 +33,7 @@ import Hexagram1 from "./assets/hexagrams/hexagram1.svg";
 import Hexagram2 from "./assets/hexagrams/hexagram2.svg";
 import Hexagram4 from "./assets/hexagrams/hexagram4.svg";
 import Hexagram6 from "./assets/hexagrams/hexagram6.svg";
-import { Box, Button, Flex, Spinner, Text, Stack } from '@chakra-ui/react';
+import { Box, Button, Flex, Spinner, Text, Stack, Link } from '@chakra-ui/react';
 import SmallTile from "../components/SmallTile";
 import Menu from "../components/Menu";
 import Header from "../components/Header";
@@ -65,8 +65,8 @@ export default function Home() {
   const minNum = 1;
   const maxNum = 4;
   // levels boards, to be taken by querying player's NFTs
-  const [level1Board, setLevel1Board] = useState(new Array(8).fill(0));
-  const [level2Board, setLevel2Board] = useState(new Array(16).fill(0));
+  const [level1Board, setLevel1Board] = useState(new Array(12).fill(0));
+  const [level2Board, setLevel2Board] = useState(new Array(12).fill(0));
   const [isCreatingGame, setIsCreatingGame] = useState(false);  
   const [isMintingNFT, setIsMintingNFT] = useState(false);  
   const userBalances = useSelector(state => state.flippando.userBalances);
@@ -485,14 +485,16 @@ export default function Home() {
     if (levels === 1) {
       levelsBoard = level1Board;
       if(level1NFTs !== undefined && level1NFTs.length !== 0) {
-        for (i = 0; i < level1NFTs.length; i++) {
+        let tileDisplayed = level1NFTs.length >= 8 ? 8 : level1NFTs.length
+        for (i = 0; i < tileDisplayed; i++) {
           levelsBoard[i] = level1NFTs[i];
         }
       }
     } else if (levels === 2) {
       levelsBoard = level2Board;
       if(level2NFTs !== undefined && level2NFTs.length !== 0) {
-          for (i = 0; i < level2NFTs.length; i++) {
+        let tileDisplayed = level2NFTs.length >= 8 ? 8 : level2NFTs.length
+          for (i = 0; i < tileDisplayed; i++) {
             levelsBoard[i] = level2NFTs[i];
           }
         }
@@ -510,7 +512,7 @@ export default function Home() {
             <svg
               aria-hidden="true"
               className="animate-spin text-blue-200 dark:text-blue-600 fill-blue-600"
-              style={{ width: '36x', height: '36px', marginLeft: '2px', marginRight: '2px' }} /* Adjust size */
+              style={{ width: '36x', height: '36px', marginLeft: '2px', marginRight: '2px' }} 
               viewBox="0 0 100 101"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -861,7 +863,7 @@ export default function Home() {
       <div className="grid flex grid-cols-5">
       
         <div className="bg-white-100">
-        <Menu currentPage="/flip"/>
+          <Menu currentPage="/flip"/>
         </div>
 
         <div className="col-span-3 flex flex-col items-center pt-10">
@@ -892,13 +894,6 @@ export default function Home() {
           )}
           {gameStatus.includes("undefined") && (
             <div className="flex gap-6">
-              {/** 
-                 <div>
-                    <a href="#" onClick={() => { createNewGame(gameLevel, 'sponsored') }} >
-                    <button className='rounded-md bg-[#47A992] px-3.5 py-2.5 hover:scale-110 text-lg font-quantic font-semibold text-white shadow-sm hover:bg-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 border-none w-[140px] focus:outline-none'>Sponsored <p>Game</p> </button>
-                    </a>
-                </div>
-                */}
               <div>
                 
                 <Button 
@@ -987,76 +982,10 @@ export default function Home() {
                       <Spinner size="sm"/>
                     }
                   </Button>
-                    {/**
-                  <Button 
-                    disabled={false}
-                    onClick={() => {
-                      createNewGame(gameLevel, gameTileType);
-                    }}
-                    bg="purple.900"
-                    color="white"
-                    fontSize="lg"
-                    fontWeight="bold"
-                    py={2}
-                    px={4}
-                    mt={1}
-                    borderRadius="lg"
-                    _hover={{
-                      bg: "purple.800",
-                      color: "white",
-                    }}
-                  >
-                  {!isCreatingGame &&
-                    <div>Start a new flip</div>
-                  }
-                  {isCreatingGame &&
-                    <Spinner size="sm"/>
-                  }               
-                  </Button>
-                   */}
+                   
               </Stack>
             </div>
           )}
-
-          <div>
-            {/* 
-            <div>
-                
-            <div className={styles.mintButton}>
-                <button 
-                onClick={() => { mintTestNFT() }} 
-                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 mr-2 ml-2 rounded-full">
-                  Mint test NFTs
-              </button>
-            </div>
-            
-            <div className={styles.mintButton}>
-                <button 
-                onClick={() => { mintSingleTestNFT() }} 
-                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 mr-2 ml-2 rounded-full">
-                  Mint single test NFT
-              </button>
-            </div>
-            
-            <div>
-                <a href="#" onClick={() => testBoard()} >
-                  <svg width="150" height="150">
-                    <circle cx="75" cy="75" r="75" fill="red" />
-                    <text x="75" y="75" textAnchor="middle" dominantBaseline="central" fill="white">Test SVG</text>
-                  </svg>
-                </a>
-              </div>             
-            */}
-            {/*testResponse !== null &&
-              <div>
-                <img src={"data:image/svg+xml;base64," + testResponse.svgData}/>
-                </div>
-          */}
-            
-        
-          </div>
-
-          
           <div className="col-span-3 flex flex-col items-center pt-10">
             {gameStatus.includes("undefined") && 
             (
@@ -1261,27 +1190,44 @@ export default function Home() {
         
         </div>
         {/* levels */}
-        <div>
+        <div className="col-span-1 flex flex-col items-start pt-10">
+        <Box
+          width="100%"
+          flex={1}
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="start"
+          textAlign="center"  // Center text inside the Box
+        >
            <p className="bold text-lg pb-2 pt-4">16 tiles flips</p>
             <div className="grid w-4/5 gap-y-2 gap-2 px-0 mx-0 pr-0 mr-0 grid-cols-4 grid-rows-2">
               {renderLevels(1)}
             </div>
             <p className="bold text-lg pb-2 pt-4">64 tiles flips</p>
-            <div className="grid w-4/5 gap-y-2 px-0 mx-0 pr-0 mr-0 grid-cols-4 grid-rows-4">
+            <div className="grid w-4/5 gap-y-2 gap-2 px-0 mx-0 pr-0 mr-0 grid-cols-4 grid-rows-2">
               {renderLevels(2)}
             </div>
-          </div>
+            
+            <Link href={`/inventory`} passHref>
+              <Button
+                bg="purple.900"
+                color="white"
+                _hover={{ bg: "blue.600" }}
+                borderRadius="md"
+                marginTop={3}
+              >
+                Inventory
+              </Button>
+            </Link>
+          
+        </Box>
+        </div>
         </div>
         <div className="col-span-5 pt-20">
             <Footer/>
         
         </div>
-        {/**
-        <div className="col-span-3">
-          <h1>Ongoing games</h1>
-        </div>
-         */}
-      
     </div>
   );
 }
