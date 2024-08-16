@@ -20,7 +20,19 @@ const SwitchButton = ({ setAssistiveImage, assistiveImage }) => {
           borderLeftRadius="md"
           mr={0}
         >
-          Hackerville Airdrop 1
+          Playeground (test) Airdrop
+        </Button>
+        <Button
+          onClick={() => setAssistiveImage(true)}
+          bg={assistiveImage ? "purple.900" : "purple.600"}
+          color="white"
+          fontSize="sm"
+          _hover={{ bg: assistiveImage ? "purple.600" : "purple.900" }}
+          borderRightRadius={0}
+          borderLeftRadius={0}
+          mr={0}
+        >
+          Hackerville Airdrop
         </Button>
         <Button
           onClick={() => {
@@ -34,7 +46,7 @@ const SwitchButton = ({ setAssistiveImage, assistiveImage }) => {
           borderLeftRadius={0}
           borderRightRadius="md"
         >
-          Gnomeverse Airdrop 1
+          Gnomeverse Airdrop
         </Button>
   
         <Modal isOpen={isOpen} onClose={onModalClose}>

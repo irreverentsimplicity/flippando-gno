@@ -7,9 +7,10 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { Box, Text, VStack, HStack, Button, Tabs, Tab, TabList, TabPanels, TabPanel, Link, Divider } from "@chakra-ui/react";
 import { getGNOTBalances, fetchUserFLIPBalances } from "../util/tokenActions";
+import Actions from '../util/actions';
 
-const BasicNFTSmallTile = ({ size, basicNFT, tokenID }) => {
-    console.log("basicNFT", JSON.stringify(basicNFT))
+const ArtSmallTile = ({ size, artNFT, tokenID }) => {
+    //console.log("svgData", JSON.stringify(artNFT))
     return (
       <div style={{
         display: "flex",
@@ -20,7 +21,7 @@ const BasicNFTSmallTile = ({ size, basicNFT, tokenID }) => {
         height: size,
         backgroundColor: 'white', // Resets background color
       }}>
-        <img src={"data:image/svg+xml;base64," + basicNFT.svgData} alt={tokenID} />
+        <img src={"data:image/svg+xml;base64," + artNFT.svgData} alt={tokenID} />
       </div>
     );
   };
@@ -28,13 +29,15 @@ const BasicNFTSmallTile = ({ size, basicNFT, tokenID }) => {
 // @TODO update this component for a composite nft, right now it's just a copy of basic nft
 const CompositeNFT = () => {
 
-  const userBasicNFTs = useSelector(state => state.flippando.userBasicNFTs);
+  const userArtNFTs = useSelector(state => state.flippando.userArtNFTs);
   const userBalances = useSelector(state => state.flippando.userBalances);
   const userGnotBalances = useSelector(state => state.flippando.userGnotBalances);
   const rpcEndpoint = useSelector(state => state.flippando.rpcEndpoint);
-  const [basicNFTData, setBasicNFTData] = useState(null)
-  const imageWidth = 400; // Fixed image width
-  const tileSize = 400; 
+  const [artNFT, setArtNFT] = useState(null)
+  const [artNFTData, setArtNFTData] = useState([])
+  const imageWidth = 300; // Fixed image width
+  const [tileSize, setTileSize] = useState("0")
+  const [flipUnlocked, setFlipUnlocked] = useState(null)
 
   const dispatch = useDispatch()
   const router = useRouter();
@@ -55,14 +58,42 @@ const CompositeNFT = () => {
   }, [rpcEndpoint, dispatch])
 
   useEffect( () => {
-        getBasicNFTData()
+        getArtNFTData()
   }, [tokenId])
 
-  const getBasicNFTData = () => {
+  const getArtNFTData = async () => {
     if (tokenId){
-        const basicNFT = userBasicNFTs.filter(item => item.tokenID === tokenId);
-        console.log("basicNFT ", JSON.stringify(basicNFT))
-        setBasicNFTData(basicNFT[0])
+        const filteredByToken = userArtNFTs.filter(item => item.tokenID === tokenId);
+        if(filteredByToken.length !== 0){
+            console.log("artNFT ", JSON.stringify(filteredByToken[0]))
+            setArtNFT(filteredByToken[0])
+            setTileSize(imageWidth / filteredByToken[0].canvasWidth)
+            console.log("artNFT ", JSON.stringify(filteredByToken[0]))
+            const actions = await Actions.getInstance();
+            const bTokenIds = JSON.stringify(filteredByToken[0].bTokenIDs);
+            try {
+                const response = await actions.getArtworkNFTs(bTokenIds);
+                const parsedResponse = JSON.parse(response);
+                if (!parsedResponse.error) {
+                    console.log("getArtworkNFTs, ", JSON.stringify(parsedResponse))
+                    setArtNFTData(parsedResponse.userNFTs)
+                    let flips = 0
+                    parsedResponse.userNFTs.map((basicNFT, index) => {
+                        if(basicNFT.gameLevel == "16"){
+                            flips += 1
+                        }
+                        else if(basicNFT.gameLevel == "64"){
+                            flips += 4
+                        }
+                    })
+                    setFlipUnlocked(flips)
+                } else {
+                    console.log("error retrieving artwork nfts ", JSON.stringify(parsedResponse.error))
+                }
+            } catch (error) {
+                console.error('Error retrieving basic NFTs for composite NFT:', error);
+            }
+        }
     }
   }
 
@@ -77,7 +108,7 @@ const CompositeNFT = () => {
       <Menu />
     </div>   
 
-    {basicNFTData !== null && (
+    {artNFT !== null && (
       <div className="col-span-4">
         <Tabs variant="enclosed-colored" borderColor={"purple.200"} paddingBottom={4}>
           <TabList justifyContent={"flex-end"}>
@@ -111,10 +142,10 @@ const CompositeNFT = () => {
               alignItems="flex-end"
             >
               <div style={{ display: 'flex', flexWrap: 'wrap', width: `${imageWidth}px` }}>
-                {basicNFTData.svgData !== undefined && (
-                  <BasicNFTSmallTile key={basicNFTData.tokenID} size={`${tileSize}px`} basicNFT={basicNFTData} tokenID={basicNFTData.tokenID} />
-                )}
-              </div>
+                {artNFTData !== undefined && artNFTData.map((basicNFT, index) => (
+                <ArtSmallTile key={basicNFT.tokenID} size={`${tileSize}px`} artNFT={basicNFT} tokenID={basicNFT.tokenID} />
+                ))}
+            </div>
             </Box>
           </div>
 
@@ -124,25 +155,27 @@ const CompositeNFT = () => {
                 <VStack width="100%" alignItems="flex-start" spacing={2} >
                 <HStack>
                   <Text fontWeight="500" lineHeight="tight" isTruncated>Name:</Text> 
-                  <Text fontWeight="200" lineHeight="tight" isTruncated>{basicNFTData.name}</Text>
+                  <Text fontWeight="200" lineHeight="tight" isTruncated>{artNFT.name}</Text>
                 </HStack>
                 <HStack>
                   <Text fontWeight="500" lineHeight="tight" isTruncated>Version:</Text> 
-                  <Text fontWeight="200" lineHeight="tight" isTruncated>{basicNFTData.version}</Text>
+                  <Text fontWeight="200" lineHeight="tight" isTruncated>{artNFT.version}</Text>
                 </HStack>
                 <HStack>
-                  <Text fontWeight="500" lineHeight="tight" isTruncated>Locked $FLIP:</Text> 
-                  <Text fontWeight="200" lineHeight="tight" isTruncated>{basicNFTData.gameLevel === "64" ? "4" : "1" }</Text>
-                </HStack>
-                <HStack>
-                  <Text fontWeight="500" lineHeight="tight" isTruncated>Matrix size:</Text> 
-                  <Text fontWeight="200" lineHeight="tight" isTruncated>{basicNFTData.gameLevel === '64' ? " 8x8" : basicNFTData.gameLevel === '16' ? " 4x4" : " unknowns"}</Text>
+                  <Text fontWeight="500" lineHeight="tight" isTruncated>Components:</Text> 
+                  <Text fontWeight="200" lineHeight="tight" isTruncated>
+                    { (artNFT.canvasHeight !== null && artNFT.canvasWidth !== null) && 
+                    <div>
+                        {(artNFT.canvasHeight * artNFT.canvasWidth)} flips, ({artNFT.canvasHeight} x {artNFT.canvasWidth} matrix)
+                    </div>
+                    }
+                  </Text>
                 </HStack>  
                 <HStack>
-                  <Text fontWeight="500" lineHeight="tight" isTruncated>Origin:</Text> 
-                  <Text fontWeight="200" lineHeight="tight" isTruncated>{basicNFTData.gameType === 'airdrop' ? " airdropped" : " organic"}</Text>
+                  <Text fontWeight="500" lineHeight="tight" isTruncated>$FLIP unlocked:</Text> 
+                  <Text fontWeight="200" lineHeight="tight" isTruncated>{flipUnlocked !== null ? flipUnlocked : "unknown" }</Text>
                 </HStack>  
-                {basicNFTData.gameType === 'airdrop' &&
+                {artNFT.gameType === 'airdrop' &&
                 <Box 
                     display="flex"
                     flexDirection="column"
@@ -155,19 +188,19 @@ const CompositeNFT = () => {
                     alignItems="flex-start">
                   <HStack mb={1}>
                     <Text fontWeight="500" lineHeight="tight" isTruncated>Airdrop name:</Text> 
-                    <Text fontWeight="200" lineHeight="tight" isTruncated>{basicNFTData.airdropName}</Text>
+                    <Text fontWeight="200" lineHeight="tight" isTruncated>{artNFT.airdropName}</Text>
                   </HStack>  
                   <HStack mb={1}>
                     <Text fontWeight="500" lineHeight="tight" isTruncated>Airdrop parent token ID:</Text> 
-                    <Text fontWeight="200" lineHeight="tight" isTruncated>{basicNFTData.airdropParentID}</Text>
+                    <Text fontWeight="200" lineHeight="tight" isTruncated>{artNFT.airdropParentID}</Text>
                   </HStack>  
                   <HStack mb={1}>
                     <Text fontWeight="500" lineHeight="tight" isTruncated>X position in parent:</Text> 
-                    <Text fontWeight="200" lineHeight="tight" isTruncated>{basicNFTData.airdropXPos}</Text>
+                    <Text fontWeight="200" lineHeight="tight" isTruncated>{artNFT.airdropXPos}</Text>
                   </HStack>  
                   <HStack mb={1}>
                     <Text fontWeight="500" lineHeight="tight" isTruncated>Y position in parent:</Text> 
-                    <Text fontWeight="200" lineHeight="tight" isTruncated>{basicNFTData.airdropYPos}</Text>
+                    <Text fontWeight="200" lineHeight="tight" isTruncated>{artNFT.airdropYPos}</Text>
                   </HStack>  
                 </Box>
                 }
@@ -182,7 +215,7 @@ const CompositeNFT = () => {
         </div>
         <div className='col-span-4 flex justify-center mt-4'>
           <Box width="100%" textAlign="center">
-            <Link key={basicNFTData.tokenID} href={`/inventory`} passHref>
+            <Link key={artNFT.tokenID} href={`/inventory`} passHref>
               <Button
                 bg="purple.900"
                 color="white"

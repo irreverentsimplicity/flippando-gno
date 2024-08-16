@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Text, VStack, HStack, Button, Spacer, Alert, FormControl, FormLabel, Input, CloseButton } from "@chakra-ui/react";
+import { Box, Text, VStack, HStack, Button, Spacer, Alert, FormControl, FormLabel, Input, CloseButton, Link } from "@chakra-ui/react";
 import Actions from '../util/actions';
 import Spinner from './Spinner';
 
@@ -110,13 +110,6 @@ const ArtCard = ({ title, text, artwork, numRows, numCols, onTrigger }) => {
         </Text>
         <Text fontWeight="200" lineHeight="tight">{text}</Text>
         <HStack p="1" borderWidth="1px"borderRadius="full" borderColor="purple.200" bg="purple.200" width="100%" justifyContent="end">
-        {/*<Button
-          bg="purple.900"               
-          color="white"               
-          _hover={{ bg: "blue.600"}}
-          borderRadius="full"
-          onClick={handleButtonClick}         
-        >Transfer</Button>*/}
         {!isListing &&
             <Button
             bg="purple.900"               
@@ -135,6 +128,14 @@ const ArtCard = ({ title, text, artwork, numRows, numCols, onTrigger }) => {
           disabled={true}          
         >Listing...</Button>
         }
+        <Link key={artwork.tokenID} href={`/compositenft?tokenId=${artwork.tokenID}`} passHref>
+        <Button
+            bg="purple.900"               
+            color="white"               
+            _hover={{ bg: "blue.600"}}
+            borderRadius="full"   
+          >Details</Button>
+        </Link>
         
         </HStack>
       </VStack>

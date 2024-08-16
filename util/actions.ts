@@ -139,10 +139,8 @@ class Actions {
     try {
       // Initialize the wallet using the saved mnemonic
       this.wallet = await GnoWallet.fromMnemonic(mnemonic);
-      console.log('saved mnemonic ', JSON.stringify(mnemonic))
-      console.log(this.wallet);
+      //console.log(this.wallet);
       // Initialize the provider
-      //this.provider = new GnoWSProvider(wsURL);
       this.providerJSON = new GnoJSONRPCProvider(this.rpcURL)
       console.log(this.providerJSON);
       // Connect the wallet to the provider
@@ -478,7 +476,7 @@ class Actions {
     console.log("actions GetAllMintedAirdropNFTs response ", JSON.stringify(response))
     return response;
   }
-  
+
   /**
    * Call the GetFlipBalances function and return a JSON object
    * @param tokenID string

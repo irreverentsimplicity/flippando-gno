@@ -24,8 +24,6 @@ const SimpleCanvas = ({height, width}) => {
     const [indexSourceGrid, setIndexSourceGrid] = useState(null);
     const [indexTrack, setIndexTrack] = useState([{}]);
     const [isLoading, setIsLoading] = useState(true);
-    const [assistiveMode, setAssistiveMode] = useState(false);
-    const [assistiveImage, setAssistiveImage] = useState(false);
     const [isArtMinted, setIsArtMinted] = useState(false)
     const [isMintingArt, setIsMintingArt] = useState(false)
     const artPayload = useSelector(state => state.flippando.artPayload);
@@ -36,10 +34,6 @@ const SimpleCanvas = ({height, width}) => {
     const endRow = startRow + height;
     const startCol = Math.floor((gridWidth - width) / 2);
     const endCol = startCol + width;
-
-    // used for assitive image array
-    const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const images = ["/assets/hacker_pixelated_64.jpeg", "/assets/hacker_green_pixelated_64.jpeg"];
     
     useEffect(() => {
       const fetchNFTs = async () => {
@@ -113,36 +107,70 @@ const SimpleCanvas = ({height, width}) => {
     useEffect( () => {
       if (isArtMinted) {
         const fetchNFTs = async () => {
-        setIsLoading(true);
-
-          const actions = await Actions.getInstance();
-          const playerAddress = await actions.getWalletAddress();
+          console.log("fetchNFTs");
+          setIsLoading(true);
+      
           try {
-            actions.getAllNFTs(playerAddress).then((response) => {
-              //console.log("getAllNFTS response in Canvas", response);
-              let parsedResponse = JSON.parse(response);
-              //console.log("parseResponse", parsedResponse)
-              if(parsedResponse.userNFTs !== undefined && parsedResponse.userNFTs.length !== 0){
-                  let nftData = []
-                  parsedResponse.userNFTs.map((nftItem) => {
-                    nftData.push({
-                      tokenId: nftItem.tokenId,
-                      metadata: nftItem,
-                    })
-                  })
+            const actions = await Actions.getInstance();
+            const playerAddress = await actions.getWalletAddress();
+            const response = await actions.getAllNFTs(playerAddress);
+      
+            let parsedResponse = JSON.parse(response);
+            if (parsedResponse.userNFTs !== undefined && parsedResponse.userNFTs.length !== 0) {
+              let nftData = [];
+              let userListings = [];
+      
+              try {
+                const listingsResponse = await actions.getBasicListings();
+                let parsedListingsResponse = JSON.parse(listingsResponse);
+                console.log("getBasicListings parseListingResponse in Canvas.js", parsedListingsResponse);
                 
-                if(nftData.length !== 0){
-                  setSourceGrid(nftData);
+                if (parsedListingsResponse.error === undefined) {
+                  userListings = parsedListingsResponse.marketplaceListings;
+                  
+                  if (userListings.length !== 0) {
+                    const filteredBasicNFTs = parsedResponse.userNFTs.filter(nft =>
+                      !userListings.some(listing => listing.tokenID === nft.tokenID)
+                    );
+                    console.log("filteredBasicNFTs: ", JSON.stringify(filteredBasicNFTs));
+                    
+                    filteredBasicNFTs.forEach((nftItem) => {
+                      nftData.push({
+                        tokenId: nftItem.tokenId,
+                        metadata: nftItem,
+                      });
+                    });
+                  } else {
+                    parsedResponse.userNFTs.forEach((nftItem) => {
+                      // filter by airdrop name empty and gameType not "airdrop"
+                      if((nftItem.airdropName === "" && nftItem.gameType !== "airdrop")){
+                        nftData.push({
+                          tokenId: nftItem.tokenId,
+                          metadata: nftItem,
+                        });
+                      }
+                    });
+                  }
+                } else {
+                  console.error('Error in listings response:', parsedListingsResponse.error);
                 }
-                
+              } catch (error) {
+                console.error('Error retrieving BasicNFTs:', error);
               }
-              setIsLoading(false);
-            });
+      
+              if (nftData.length !== 0) {
+                console.log("nftData.length !== 0", JSON.stringify(nftData));
+                setSourceGrid(nftData);
+              }
+            }
           } catch (err) {
             console.log("error in calling getAllNFTs", err);
+          } finally {
+            setIsLoading(false);
           }
-        }
-        fetchNFTs()
+        };
+      
+        fetchNFTs();
       }
     }, [isArtMinted])
 
@@ -313,7 +341,7 @@ const SimpleCanvas = ({height, width}) => {
       <div style={{
         display: "flex",
         flexDirection: 'column',
-        justifyContent: assistiveMode ? 'flex-start' : 'center',
+        justifyContent: 'center',
         alignItems: 'center',
         width: "100%",
         height: '100%'
@@ -328,45 +356,9 @@ const SimpleCanvas = ({height, width}) => {
           height: '100%',
         }}>
           {renderCanvas()}
-          {assistiveImage && assistiveMode &&
-            <img src={images[currentImageIndex]} alt="helper" style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              opacity: 0.3,
-              pointerEvents: 'none'
-            }}/>
-          }
+          
         </div>
         
-        {assistiveMode &&
-          <div style={{ marginLeft: 10 }}>
-            <a onClick={() => setAssistiveImage(true)}>
-              <img src={images[currentImageIndex]} alt="helper" style={{
-                width: '309px',
-                height: '309px',
-              }}/>
-            </a>
-            <button style={{
-                position: 'absolute',
-                top: '50%',
-                left: 320,
-                transform: 'translateY(-50%)'
-            }} onClick={handlePrev}>
-                <FaArrowLeft />
-            </button>
-            <button style={{
-                position: 'absolute',
-                top: '50%',
-                right: 2,
-                transform: 'translateY(-50%)'
-            }} onClick={handleNext}>
-                <FaArrowRight />
-            </button>
-          </div>
-        }
         
         {height <= 2 &&
           <Text fontSize='xs' style={{ paddingTop: 20, paddingLeft: 40, paddingRight: 40 }}>

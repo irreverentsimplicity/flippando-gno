@@ -114,7 +114,7 @@ export default function Home() {
           
           if(parsedUsedResponse.userNFTs !== undefined && parsedUsedResponse.userNFTs.length !== 0){  
             //setNfts(parsedResponse.userNFTs)
-            console.log("parseResponse", JSON.stringify(response, null, 2))
+            console.log("parseResponse in flip.js", JSON.stringify(response, null, 2))
             //dispatch(setUserBasicNFTs(parsedResponse.userNFTs))
             let allBasicNFTs = parsedUsedResponse.userNFTs;
             let userListings = [];
@@ -148,6 +148,9 @@ export default function Home() {
               return null
             }
             
+          }
+          else {
+            dispatch(setUserBasicNFTs([]))
           }
         }
       });
@@ -485,7 +488,7 @@ export default function Home() {
     if (levels === 1) {
       levelsBoard = level1Board;
       if(level1NFTs !== undefined && level1NFTs.length !== 0) {
-        let tileDisplayed = level1NFTs.length >= 8 ? 8 : level1NFTs.length
+        let tileDisplayed = level1NFTs.length >= 12 ? 12 : level1NFTs.length
         for (i = 0; i < tileDisplayed; i++) {
           levelsBoard[i] = level1NFTs[i];
         }
@@ -493,7 +496,7 @@ export default function Home() {
     } else if (levels === 2) {
       levelsBoard = level2Board;
       if(level2NFTs !== undefined && level2NFTs.length !== 0) {
-        let tileDisplayed = level2NFTs.length >= 8 ? 8 : level2NFTs.length
+        let tileDisplayed = level2NFTs.length >= 12 ? 12 : level2NFTs.length
           for (i = 0; i < tileDisplayed; i++) {
             levelsBoard[i] = level2NFTs[i];
           }

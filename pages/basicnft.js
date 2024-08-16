@@ -135,7 +135,7 @@ const BasicNFT = () => {
                 </HStack>
                 <HStack>
                   <Text fontWeight="500" lineHeight="tight" isTruncated>Matrix size:</Text> 
-                  <Text fontWeight="200" lineHeight="tight" isTruncated>{basicNFTData.gameLevel === '64' ? " 8x8" : basicNFTData.gameLevel === '16' ? " 4x4" : " unknowns"}</Text>
+                  <Text fontWeight="200" lineHeight="tight" isTruncated>{basicNFTData.gameLevel === '64' ? " 8x8" : basicNFTData.gameLevel === '16' ? " 4x4" : " unknown"}</Text>
                 </HStack>  
                 <HStack>
                   <Text fontWeight="500" lineHeight="tight" isTruncated>Origin:</Text> 

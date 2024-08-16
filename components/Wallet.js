@@ -1,10 +1,11 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import { FaWallet} from 'react-icons/fa';
-import { Icon, Select } from "@chakra-ui/react";
+import { Icon, Select, Text } from "@chakra-ui/react";
 import { useSelector, useDispatch } from "react-redux";
 import { setRpcEndpoint } from "../slices/flippandoSlice";
 import Actions from "../util/actions";
 import Config from '../util/config';
+import AddressDisplay from "../components/AddressDisplay";
 //import AdenaWallet from "./AdenaWallet";
 
 
@@ -13,6 +14,18 @@ const Wallet = ({ userBalances, userGnotBalances }) => {
     const dispatch = useDispatch();
     const rpcEndpoint = useSelector(state => state.flippando.rpcEndpoint);
     
+    const [address, setAddres] = useState("")
+
+    useEffect( () => {
+      setPlayerAddress()
+    }, [])
+    
+    const setPlayerAddress = async () => {
+      const actions = await Actions.getInstance();
+      const playerAddress = await actions.getWalletAddress();
+      setAddres(playerAddress)
+    }
+
     const handleNetworkChange = async (event) => {
       const newNetwork = event.target.value;
       console.log("newNetwork, ", newNetwork)
@@ -36,9 +49,7 @@ const Wallet = ({ userBalances, userGnotBalances }) => {
     };
 
     const showLocalOption = process.env.NEXT_PUBLIC_SHOW_LOCAL_OPTION === 'true';
-    //console.log('NEXT_PUBLIC_SHOW_LOCAL_OPTION:', process.env.NEXT_PUBLIC_SHOW_LOCAL_OPTION);
-    //console.log("Config.GNO_JSONRPC_URL: ", Config.GNO_JSONRPC_URL);
-
+    
     return (
       <div>
       {/*<AdenaWallet/>*/}
@@ -57,6 +68,9 @@ const Wallet = ({ userBalances, userGnotBalances }) => {
               {userGnotBalances} GNOT
             </button>
           </div>
+        </div>
+        <div className="col-span-5 flex justify-end pr-10 pt-2">
+          <AddressDisplay address={address} />
         </div>
         <div className="col-span-5 flex justify-end pr-10 pt-2">
           <Select onChange={handleNetworkChange} value={rpcEndpoint}
