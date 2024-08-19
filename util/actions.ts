@@ -216,8 +216,17 @@ class Actions {
     return this.wallet?.getAddress();
   }
 
+  public setWallet(wallet: GnoWallet) {
+    this.wallet = wallet;
+  }
+
+
   public hasWallet() {
     return !!this.wallet;
+  }
+
+  public async getSigner() {
+    return this.wallet?.getSigner()
   }
 
   /**

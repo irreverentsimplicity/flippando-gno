@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from "react";
-import { FaWallet} from 'react-icons/fa';
-import { Icon, Select, Text } from "@chakra-ui/react";
+import { FaWallet, FaPowerOff} from 'react-icons/fa';
+import { Icon, Select, Button } from "@chakra-ui/react";
 import { useSelector, useDispatch } from "react-redux";
-import { setRpcEndpoint } from "../slices/flippandoSlice";
+import { setRpcEndpoint, setUserLoggedStatus } from "../slices/flippandoSlice";
 import Actions from "../util/actions";
 import Config from '../util/config';
 import AddressDisplay from "../components/AddressDisplay";
@@ -48,6 +48,10 @@ const Wallet = ({ userBalances, userGnotBalances }) => {
       actionsInstance.setRpcUrl(newNetwork);
     };
 
+    const dispatchLogout = async () => {
+      dispatch(setUserLoggedStatus("0"))
+    }
+
     const showLocalOption = process.env.NEXT_PUBLIC_SHOW_LOCAL_OPTION === 'true';
     
     return (
@@ -58,15 +62,24 @@ const Wallet = ({ userBalances, userGnotBalances }) => {
           <div className="rounded-md flex flex-row justify-center items-center mt-3 mr-3 p-2 bg-black-400border border-purple-400" style={{ borderWidth: '0.5px' }}>
           <Icon as={FaWallet} w={6} h={6} alignSelf="left" color={'purple.600'} pr={1}/>
             <button className="text-sm font-small gap-6 text-white border-transparent focus:outline-none">
-              {userBalances.availableBalance} liquid / {userBalances.lockedBalance} locked
+              {userBalances !== undefined ? userBalances.availableBalance : "n/a"} liquid / {userBalances !== undefined ? userBalances.lockedBalance: "n/a"} locked
               $FLIP
             </button>
           </div>
-          <div className="rounded-md flex flex-row justify-center items-center mt-3 p-2 bg-black-400border border-purple-400" style={{ borderWidth: '0.5px' }}>
-          <Icon as={FaWallet} w={6} h={6} alignSelf="left" color={'purple.200'} pr={1}/>
+          <div className="rounded-md flex flex-row justify-center items-center mt-3 p-2 mr-3 bg-black-400border border-purple-400" style={{ borderWidth: '0.5px' }}>
+            <Icon as={FaWallet} w={6} h={6} alignSelf="left" color={'purple.200'} pr={1}/>
             <button className="text-sm font-small gap-6 text-white border-transparent focus:outline-none">
               {userGnotBalances} GNOT
             </button>
+          </div>
+          <div className="rounded-md flex flex-row justify-center items-center mt-3 p-0 bg-black-400border border-purple-400" style={{ borderWidth: '0.5px' }}>
+            <Button 
+              bgColor={"transparent"}
+              _hover={"transparent"}
+              size={"xs"}
+              onClick={dispatchLogout}>
+              <Icon as={FaPowerOff} w={4} h={4} alignSelf="left" color={'purple.200'}/>
+            </Button>
           </div>
         </div>
         <div className="col-span-5 flex justify-end pr-10 pt-2">

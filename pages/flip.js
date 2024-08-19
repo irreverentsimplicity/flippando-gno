@@ -101,6 +101,26 @@ export default function Home() {
     
   }, [])
 
+
+  // test
+  useEffect( () => {
+    getWalletSigner()
+  }, [])
+
+
+  const getWalletSigner = async () => {
+    const actions = await Actions.getInstance();
+    try {
+      actions.getSigner().then((response) => {
+        //console.log("getWalletSigner response, ", JSON.stringify(response))
+      })
+    }
+    catch (error) {
+      console.error("error in fetching the getWalletSigner signer, ", error)
+    }
+  }
+
+
   const fetchUserNFTs = async () => {
     let userNFTs = [];
     console.log("fetchUserNFTs");

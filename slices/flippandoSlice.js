@@ -27,6 +27,7 @@ const flippandoSlice = createSlice({
   name: 'flippando',
   initialState: {
     blockchainName: undefined,
+    userLoggedIn: "0",
     testnet: true,
     mainnet: false,
     rpcEndpoint: "https://rpc.irreverentsimplicity.xyz",
@@ -82,6 +83,10 @@ const flippandoSlice = createSlice({
       console.log("slice userArtNFTs ", JSON.stringify(action.payload))
       state.userArtNFTs = action.payload;
     },
+    setUserLoggedStatus(state, action) {
+      console.log("slice setUserLoggedStatus ", JSON.stringify(action.payload))
+      state.userLoggedIn = action.payload
+    },
     setBasicMarketplaceListings(state, action) {
       console.log("slice basic marketplace listings ", JSON.stringify(action.payload))
       state.basicMarketplaceListings = action.payload;
@@ -128,6 +133,7 @@ const flippandoSlice = createSlice({
 
 export const { 
   setBlockchain, 
+  setUserLoggedStatus,
   setNetwork, 
   setArtPayload, 
   setUserBalances, 
