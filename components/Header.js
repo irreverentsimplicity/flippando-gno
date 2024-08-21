@@ -15,9 +15,9 @@ const Header = ({ userBalances, userGnotBalances }) => {
             <Text fontSize="xs" fontWeight="italic">Estoy flippando en colores</Text>
           </Box>
           <Spacer />
-          {userLoggedIn === "1" ? <Wallet /> : <PasswordProtectedLogin />}
+          {userLoggedIn === "1" ? <Wallet userBalances={userBalances} userGnotBalances={userGnotBalances}/> : <PasswordProtectedLogin />}
         </Flex>
       );
 }
 
-export default Header
+export default Header;

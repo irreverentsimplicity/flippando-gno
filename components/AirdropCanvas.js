@@ -261,6 +261,11 @@ const AirdropCanvas = ({height, width}) => {
         if(nft !== undefined && nft.metadata.tokenID != 0){
             tokenIds.push(nft.metadata.tokenID);
         }
+        else {
+          // we check later the art payload for this and stop composite nft creation
+          // if there is any
+          tokenIds[index] = "0"
+        }
         
     });
     if (tokenIds.length === (height*width)){
@@ -313,35 +318,43 @@ const AirdropCanvas = ({height, width}) => {
 
   async function makeArt(){
     const actions = await Actions.getInstance();
-    const playerAddress = await actions.getWalletAddress();
-    const height = artPayload[0]
-    const width = artPayload[1]
-    
-    
-    const bTokenIDs = JSON.stringify(artPayload[2], (key, value) => 
-      (key === '' ? value : parseInt(value))
-    );
-    console.log("makeArt, ", JSON.stringify(artPayload))
-    if (artPayload.length === 0){
-      alert("You have to fill the entire canvas")
-    }
-    if (artPayload.length !== 0){
-      setIsMintingArt(true)
-      try {
-        actions.createCompositeNFT(playerAddress, String(width), String(height), bTokenIDs).then((response) => {
-          console.log("createCompositeNFT response in Playground", response);
-          let parsedResponse = JSON.parse(response);
-          console.log("createCompositeNFT parseResponse", parsedResponse)
-          if(parsedResponse.error === undefined){
-            setIsArtMinted(true)
-            
-          }
-          setIsMintingArt(false)
-        });
-      } catch (err) {
-        console.log("error in calling createCompositeNFT", err);
+      if(actions.hasWallet()){
+      const playerAddress = await actions.getWalletAddress();
+      const height = artPayload[0]
+      const width = artPayload[1]
+      
+      
+      const bTokenIDs = JSON.stringify(artPayload[2], (key, value) => 
+        (key === '' ? value : parseInt(value))
+      );
+      //console.log("makeArt, ", JSON.stringify(artPayload))
+      if (artPayload.length === 0 ) {
+        alert("You have to fill the entire canvas")
       }
-    } 
+      if (artPayload[2] !== undefined && artPayload[2].includes("0")){
+        alert("You have to fill the entire canvas")
+      }
+      if (artPayload.length !== 0 && !artPayload[2].includes("0")){
+        setIsMintingArt(true)
+        try {
+          actions.createCompositeNFT(playerAddress, String(width), String(height), bTokenIDs).then((response) => {
+            console.log("createCompositeNFT response in Playground", response);
+            let parsedResponse = JSON.parse(response);
+            console.log("createCompositeNFT parseResponse", parsedResponse)
+            if(parsedResponse.error === undefined){
+              setIsArtMinted(true)
+              
+            }
+            setIsMintingArt(false)
+          });
+        } catch (err) {
+          console.log("error in calling createCompositeNFT", err);
+        }
+      } 
+    }
+    else {
+      alert("seems like you're logged out")
+    }
   }
 
 

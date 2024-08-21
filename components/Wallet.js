@@ -2,7 +2,15 @@ import React, {useState, useEffect} from "react";
 import { FaWallet, FaPowerOff} from 'react-icons/fa';
 import { Icon, Select, Button } from "@chakra-ui/react";
 import { useSelector, useDispatch } from "react-redux";
-import { setRpcEndpoint, setUserLoggedStatus } from "../slices/flippandoSlice";
+import { setRpcEndpoint, 
+  setUserLoggedStatus, 
+  setArtPayload, 
+  setUserBalances, 
+  setUserGnotBalances, 
+  setUserBasicNFTs, 
+  setUserArtNFTs,
+  setBasicMarketplaceListings,
+  setArtMarketplaceListings, } from "../slices/flippandoSlice";
 import Actions from "../util/actions";
 import Config from '../util/config';
 import AddressDisplay from "../components/AddressDisplay";
@@ -22,8 +30,14 @@ const Wallet = ({ userBalances, userGnotBalances }) => {
     
     const setPlayerAddress = async () => {
       const actions = await Actions.getInstance();
-      const playerAddress = await actions.getWalletAddress();
-      setAddres(playerAddress)
+      if(actions.hasWallet()){
+        const playerAddress = await actions.getWalletAddress();
+        setAddres(playerAddress);
+      }
+      else {
+        await dispatchLogout()
+        dispatch(setUserLoggedStatus("0"))
+      }
     }
 
     const handleNetworkChange = async (event) => {
@@ -49,6 +63,16 @@ const Wallet = ({ userBalances, userGnotBalances }) => {
     };
 
     const dispatchLogout = async () => {
+      const actions = await Actions.getInstance();
+      actions.setWallet(null)
+      // reset all state, except rpc node
+      dispatch(setArtPayload([]))
+      dispatch(setUserBalances({}))
+      dispatch(setUserGnotBalances(undefined))
+      dispatch(setUserBasicNFTs([]))
+      dispatch(setUserArtNFTs([]))
+      dispatch(setBasicMarketplaceListings([]))
+      dispatch(setArtMarketplaceListings([]))
       dispatch(setUserLoggedStatus("0"))
     }
 

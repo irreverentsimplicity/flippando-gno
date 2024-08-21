@@ -3,7 +3,7 @@ import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import {setUserBalances, setUserBasicNFTs, setUserGnotBalances} from '../slices/flippandoSlice';
+import {setUserBasicNFTs} from '../slices/flippandoSlice';
 import TileImages from "../components/TileImages";
 import Color1 from "./assets/squares/Color1.svg";
 import Color14 from "./assets/squares/Color14.svg";
@@ -40,9 +40,9 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Actions from "../util/actions";
 import { getGNOTBalances, fetchUserFLIPBalances } from "../util/tokenActions";
-//import AdenaWallet from "../components/AdenaWallet";
+import { act } from "react";
 
-export default function Home() {
+const Home = () => {
   
 
   const [isLoadingUserGames, setIsLoadingUserGames] = useState(true);
@@ -72,6 +72,7 @@ export default function Home() {
   const userBalances = useSelector(state => state.flippando.userBalances);
   const userGnotBalances = useSelector(state => state.flippando.userGnotBalances);
   const rpcEndpoint = useSelector(state => state.flippando.rpcEndpoint);
+  const userLoggedIn = useSelector(state => state.flippando.userLoggedIn);
 
   const userBasicNFTs = useSelector(state => state.flippando.userBasicNFTs);
 
@@ -101,81 +102,62 @@ export default function Home() {
     
   }, [])
 
-
-  // test
-  useEffect( () => {
-    getWalletSigner()
-  }, [])
-
-
-  const getWalletSigner = async () => {
-    const actions = await Actions.getInstance();
-    try {
-      actions.getSigner().then((response) => {
-        //console.log("getWalletSigner response, ", JSON.stringify(response))
-      })
-    }
-    catch (error) {
-      console.error("error in fetching the getWalletSigner signer, ", error)
-    }
-  }
-
-
   const fetchUserNFTs = async () => {
-    let userNFTs = [];
-    console.log("fetchUserNFTs");
     const actions = await Actions.getInstance();
-    const playerAddress = await actions.getWalletAddress();
-    try {
-      actions.getUserNFTs(playerAddress, "yes").then((response) => {
-        console.log("getUserNFTS response in Flip", response);
-          if (response !== undefined){
-          let parsedUsedResponse = JSON.parse(response);
-          
-          if(parsedUsedResponse.userNFTs !== undefined && parsedUsedResponse.userNFTs.length !== 0){  
-            //setNfts(parsedResponse.userNFTs)
-            console.log("parseResponse in flip.js", JSON.stringify(response, null, 2))
-            //dispatch(setUserBasicNFTs(parsedResponse.userNFTs))
-            let allBasicNFTs = parsedUsedResponse.userNFTs;
-            let userListings = [];
-            // get listings and filter
-            try {
-              console.log("getBasicListings")
-              actions.getBasicListings().then((response) => {
-               // console.log("getListings response in art.js", response);
-                let parsedResponse = JSON.parse(response);
-                console.log("getBasicListings parseResponse in flip.js", parsedResponse)
-                if(parsedResponse.error === undefined){
-                  userListings = parsedResponse.marketplaceListings;
-                  
-                  if (userListings.length != 0){
-                    const filteredBasicNFTs = allBasicNFTs.filter(nft =>   
-                      !userListings.some(listing => listing.tokenID === nft.tokenID)
-                    );
-                    console.log("filteredBasicNFTs: ", JSON.stringify(filteredBasicNFTs))
-                    dispatch(setUserBasicNFTs(filteredBasicNFTs))
-                  }
-                  else {
-                    
-                    dispatch(setUserBasicNFTs(allBasicNFTs))
-                    console.log("allBasicNFTs: ", JSON.stringify(allBasicNFTs))
-                    
-                  }
-                }
-              });
-            } catch (error) {
-              console.error('Error retrieving BasicNFTs:', error);
-              return null
-            }
+    console.log("fetchUserNFTs, ", actions.hasWallet());
+    if(actions.hasWallet()){
+      const playerAddress = await actions.getWalletAddress();
+      try {
+        actions.getUserNFTs(playerAddress, "yes").then((response) => {
+          console.log("getUserNFTS response in Flip", response);
+            if (response !== undefined){
+            let parsedUsedResponse = JSON.parse(response);
             
+            if(parsedUsedResponse.userNFTs !== undefined && parsedUsedResponse.userNFTs.length !== 0){  
+              //setNfts(parsedResponse.userNFTs)
+              console.log("parseResponse in flip.js", JSON.stringify(response, null, 2))
+              //dispatch(setUserBasicNFTs(parsedResponse.userNFTs))
+              let allBasicNFTs = parsedUsedResponse.userNFTs;
+              let userListings = [];
+              // get listings and filter
+              try {
+                console.log("getBasicListings")
+                actions.getBasicListings().then((response) => {
+                // console.log("getListings response in art.js", response);
+                  let parsedResponse = JSON.parse(response);
+                  console.log("getBasicListings parseResponse in flip.js", parsedResponse)
+                  if(parsedResponse.error === undefined){
+                    userListings = parsedResponse.marketplaceListings;
+                    
+                    if (userListings.length != 0){
+                      const filteredBasicNFTs = allBasicNFTs.filter(nft =>   
+                        !userListings.some(listing => listing.tokenID === nft.tokenID)
+                      );
+                      console.log("filteredBasicNFTs: ", JSON.stringify(filteredBasicNFTs))
+                      dispatch(setUserBasicNFTs(filteredBasicNFTs))
+                    }
+                    else {
+                      
+                      dispatch(setUserBasicNFTs(allBasicNFTs))
+                      console.log("allBasicNFTs: ", JSON.stringify(allBasicNFTs))
+                      
+                    }
+                  }
+                });
+              } catch (error) {
+                console.error('Error retrieving BasicNFTs:', error);
+                return null
+              }
+              
+            }
+            else {
+              dispatch(setUserBasicNFTs([]))
+            }
           }
-          else {
-            dispatch(setUserBasicNFTs([]))
-          }
-        }
-      });
-    } catch (err) {
-      console.log("error in calling getUserNFTs", err);
+        });
+      } catch (err) {
+        console.log("error in calling getUserNFTs", err);
+      }
     }
   };
 
@@ -883,7 +865,7 @@ export default function Home() {
 
       <Header userBalances={userBalances} userGnotBalances={userGnotBalances}/>
     
-      <div className="grid flex grid-cols-5">
+        <div className="grid flex grid-cols-5">
       
         <div className="bg-white-100">
           <Menu currentPage="/flip"/>
@@ -1254,3 +1236,5 @@ export default function Home() {
     </div>
   );
 }
+
+export default Home;

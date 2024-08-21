@@ -17,7 +17,7 @@ const SimpleCanvas = ({height, width}) => {
     const gridWidth = 8;
     const gridHeight = 8;
 
-    const placeHolderNFT = {tokenId: 0, metadata: {image: 'i'}};
+    const placeHolderNFT = {tokenId: 0, metadata: {tokenId: 0, image: 'i'}};
     const [sourceGrid, setSourceGrid] = useState([]);
     const [canvas, setCanvas] = useState(Array(height*width).fill(placeHolderNFT));
     const [gridCanvas, setGridCanvas] = useState(Array(gridWidth*gridHeight).fill(placeHolderNFT));
@@ -217,13 +217,20 @@ const SimpleCanvas = ({height, width}) => {
 
   const checkAndPrepareArtPayload = (updatedCanvas) => {
     let tokenIds = [];
+    console.log("makeArt, updatedCanvas.length ", updatedCanvas.length)
     updatedCanvas.map( (nft, index) => {
-      console.log("nft ", JSON.stringify(nft, null, 2))
+      console.log("makeArt, nft ", JSON.stringify(nft, null, 2))
         if(nft.metadata.tokenId != 0){
             tokenIds.push(nft.metadata.tokenID);
         }
+        else {
+          // we check later the art payload for this and stop composite nft creation
+          // if there is any
+          tokenIds[index] = "0"
+        }
         
     });
+    
     if (tokenIds.length === (height*width)){
         dispatch(setArtPayload([height, width, tokenIds]));
     }
@@ -274,10 +281,13 @@ const SimpleCanvas = ({height, width}) => {
       (key === '' ? value : parseInt(value))
     );
     console.log("makeArt, ", JSON.stringify(artPayload))
-    if (artPayload.length === 0){
+    if (artPayload.length === 0 ) {
       alert("You have to fill the entire canvas")
     }
-    if (artPayload.length !== 0){
+    if (artPayload[2] !== undefined && artPayload[2].includes("0")){
+      alert("You have to fill the entire canvas")
+    }
+    if (artPayload.length !== 0 && !artPayload[2].includes("0")){
       setIsMintingArt(true)
       try {
         actions.createCompositeNFT(playerAddress, String(width), String(height), bTokenIDs).then((response) => {

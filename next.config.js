@@ -9,14 +9,10 @@ const nextConfig = {
       test: /\.svg$/i,
       issuer: /\.[jt]sx?$/,
       use: ['@svgr/webpack'],
-    });
-
-    // Enable WebAssembly support
-    config.experiments = {
-      asyncWebAssembly: true,
-      topLevelAwait: true, // This may be required for certain wasm modules
-    };
+    })
 
     return config;
-  },
-};
+  }
+}
+
+module.exports = nextConfig

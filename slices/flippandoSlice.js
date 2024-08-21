@@ -27,7 +27,7 @@ const flippandoSlice = createSlice({
   name: 'flippando',
   initialState: {
     blockchainName: undefined,
-    userLoggedIn: "0",
+    userLoggedIn: "",
     testnet: true,
     mainnet: false,
     rpcEndpoint: "https://rpc.irreverentsimplicity.xyz",

@@ -34,12 +34,14 @@ const cleanUpRealmReturn = (ret: string, callType: string) => {
   // maketx adds and extra quote at the end of the string
   // so we need to have 2 slice values, one from 9 chars, for eval transaction
   // and one from 11 chars, for maketx
-  console.log("ret ", ret)
-  if (callType == "maketx"){
-    return ret.slice(2, -11).replace(/\\"/g, '"');
-  }
-  else if (callType == "eval"){
-    return ret.slice(2, -9).replace(/\\"/g, '"');
+  if(ret !== undefined){
+    console.log("ret ", ret)
+    if (callType == "maketx"){
+      return ret.slice(2, -11).replace(/\\"/g, '"');
+    }
+    else if (callType == "eval"){
+      return ret.slice(2, -9).replace(/\\"/g, '"');
+    }
   }
 };
 const decodeRealmResponse = (resp: string, callType: string) => {
@@ -128,6 +130,7 @@ class Actions {
     // Wallet initialization //
 
     // Try to load the mnemonic from local storage
+    /*
     let mnemonic: string | null = localStorage.getItem(defaultMnemonicKey);
     if (!mnemonic || mnemonic === '') {
       // Generate a fresh mnemonic
@@ -137,20 +140,40 @@ class Actions {
       saveToLocalStorage(defaultMnemonicKey, mnemonic);
     }
     try {
-      // Initialize the wallet using the saved mnemonic
-      this.wallet = await GnoWallet.fromMnemonic(mnemonic);
-      //console.log(this.wallet);
+      
+      //this.wallet = await GnoWallet.fromMnemonic(mnemonic);
+      console.log("actions wallet ", this.wallet);
       // Initialize the provider
       this.providerJSON = new GnoJSONRPCProvider(this.rpcURL)
-      console.log(this.providerJSON);
+      console.log("actions provider ", this.providerJSON);
       // Connect the wallet to the provider
       this.wallet.connect(this.providerJSON);
     } catch (e) {
       //Should not happen
       console.error('Could not create wallet from mnemonic');
-    }
+    }*/
 
     
+    
+  }
+
+  public connectWallet() {
+    if (this.wallet !== null){
+      try {
+        console.log("actions wallet ", this.wallet);
+        // Initialize the provider
+        this.providerJSON = new GnoJSONRPCProvider(this.rpcURL)
+        console.log("actions provider ", this.providerJSON);
+        // Connect the wallet to the provider
+        this.wallet.connect(this.providerJSON);
+      } catch (e) {
+        //Should not happen
+        console.error('Could not create wallet from mnemonic');
+      }
+    }
+  }
+
+  public async initializeFaucet() {
     // Faucet token initialization //
     let faucetToken: string | null = localStorage.getItem(
       defaultFaucetTokenKey
