@@ -37,55 +37,55 @@ import { getGNOTBalances, fetchUserFLIPBalances } from "../util/tokenActions";
     console.log("fetch all existing basic NFTs")
     const fetchNFTs = async () => {
       const actions = await Actions.getInstance();
-      
-      try {
-        actions.getAllNFTs("").then((response) => {
-          console.log("fetch all existing basic NFTs response in playground.js", response);
-          let parsedResponse = JSON.parse(response);
-          console.log("parseResponse", parsedResponse)
-          if(parsedResponse.userNFTs !== undefined && parsedResponse.userNFTs.length !== 0){
-              let existingNFTs = 0
-              existingNFTs = parsedResponse.userNFTs.length;
-            
-            if(existingNFTs !== 0){
-              setExistingBasicNFTs(existingNFTs);
-              console.log(existingNFTs)
-              if(existingNFTs <= 50){
-                setHeight(2);
-                setWidth(2);
+      if(actions.hasWallet()){
+        try {
+          actions.getAllNFTs("").then((response) => {
+            console.log("fetch all existing basic NFTs response in playground.js", response);
+            let parsedResponse = JSON.parse(response);
+            console.log("parseResponse", parsedResponse)
+            if(parsedResponse.userNFTs !== undefined && parsedResponse.userNFTs.length !== 0){
+                let existingNFTs = 0
+                existingNFTs = parsedResponse.userNFTs.length;
+              
+              if(existingNFTs !== 0){
+                setExistingBasicNFTs(existingNFTs);
+                console.log(existingNFTs)
+                if(existingNFTs <= 50){
+                  setHeight(2);
+                  setWidth(2);
+                }
+                else if(existingNFTs > 50 && existingNFTs <= 100){
+                  setHeight(3);
+                  setWidth(3);
+                }
+                else if(existingNFTs > 100 && existingNFTs <= 400){
+                  setHeight(4);
+                  setWidth(4);
+                }
+                else if(existingNFTs > 400 && existingNFTs <= 600){
+                  setHeight(5);
+                  setWidth(5);
+                }
+                else if(existingNFTs > 600 && existingNFTs <= 800){
+                  setHeight(6);
+                  setWidth(6);
+                }
+                else if(existingNFTs > 800 && existingNFTs <= 1000){
+                  setHeight(7);
+                  setWidth(7);
+                }
+                else if(existingNFTs > 1000){
+                  setHeight(8);
+                  setWidth(8);
+                }
               }
-              else if(existingNFTs > 50 && existingNFTs <= 100){
-                setHeight(3);
-                setWidth(3);
-              }
-              else if(existingNFTs > 100 && existingNFTs <= 400){
-                setHeight(4);
-                setWidth(4);
-              }
-              else if(existingNFTs > 400 && existingNFTs <= 600){
-                setHeight(5);
-                setWidth(5);
-              }
-              else if(existingNFTs > 600 && existingNFTs <= 800){
-                setHeight(6);
-                setWidth(6);
-              }
-              else if(existingNFTs > 800 && existingNFTs <= 1000){
-                setHeight(7);
-                setWidth(7);
-              }
-              else if(existingNFTs > 1000){
-                setHeight(8);
-                setWidth(8);
-              }
+              
             }
-            
-          }
-        });
-      } catch (err) {
-        console.log("error in calling fetch all existing basic NFTs", err);
+          });
+        } catch (err) {
+          console.log("error in calling fetch all existing basic NFTs", err);
+        }
       }
-      
     };
 
     fetchNFTs();;

@@ -1,11 +1,6 @@
 import {useEffect, useState} from 'react';
 import { useSelector, useDispatch } from "react-redux";
-import styles from "../styles/Home.module.css";
-import Menu from '../components/Menu';
-import Footer from '../components/Footer';
 import Actions from '../util/actions';
-import { Box, Text } from "@chakra-ui/react";
-import Header from "../components/Header";
 import Spinner from '../components/Spinner';
 import MarketPlaceGrid from "../components/MarketPlaceGrid";
 import { setBasicMarketplaceListings } from '../slices/flippandoSlice';
@@ -14,9 +9,10 @@ import { getGNOTBalances, fetchUserFLIPBalances } from '../util/tokenActions';
 const BasicListings = () => {
 
   const basicListings = useSelector(state => state.flippando.basicMarketplaceListings);
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const [playerAddress, setPlayerAddress] = useState()
   const rpcEndpoint = useSelector(state => state.flippando.rpcEndpoint);
+  const userLoggedIn = useSelector(state => state.flippando.userLoggedIn)
 
   const dispatch = useDispatch()
   
@@ -33,9 +29,11 @@ const BasicListings = () => {
   }, [rpcEndpoint])
 
   useEffect(() => {
-    getPlayerAddress();
-    getBasicListings();
-  }, []);
+    if(userLoggedIn === "1"){
+      getPlayerAddress();
+      getBasicListings();
+    }
+  }, [userLoggedIn]);
 
 
   const reloadMarketData = async () => {
@@ -45,30 +43,34 @@ const BasicListings = () => {
 
   const getBasicListings = async () => {
     const actions = await Actions.getInstance();
-    setIsLoading(true)
+    if(actions.hasWallet()){
+      setIsLoading(true)
 
-    try {
-      console.log("getBasicListings")
-      actions.getBasicListings().then((response) => {
-        console.log("getBasicListings response in BasicListings.js", response);
-        let parsedResponse = JSON.parse(response);
-        console.log("getBasicListings parseResponse", parsedResponse)
-        if(parsedResponse.error === undefined){
-          dispatch(setBasicMarketplaceListings(parsedResponse.marketplaceListings))
-          setIsLoading(false)
-          return parsedResponse.marketplaceListings
-        }
-      });
-    } catch (error) {
-      console.error('Error retrieving Basic listings:', error);
-      return null;
+      try {
+        console.log("getBasicListings")
+        actions.getBasicListings().then((response) => {
+          console.log("getBasicListings response in BasicListings.js", response);
+          let parsedResponse = JSON.parse(response);
+          console.log("getBasicListings parseResponse", parsedResponse)
+          if(parsedResponse.error === undefined){
+            dispatch(setBasicMarketplaceListings(parsedResponse.marketplaceListings))
+            setIsLoading(false)
+            return parsedResponse.marketplaceListings
+          }
+        });
+      } catch (error) {
+        console.error('Error retrieving Basic listings:', error);
+        return null;
+      }
     }
   }
 
   const getPlayerAddress = async() => {
     const actions = await Actions.getInstance();
-    const playerAddress = await actions.getWalletAddress();
-    setPlayerAddress(playerAddress);
+    if(actions.hasWallet()){
+      const playerAddress = await actions.getWalletAddress();
+      setPlayerAddress(playerAddress);
+    }
   }
 
 

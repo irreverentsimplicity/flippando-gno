@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';;
 import { useDispatch } from 'react-redux';
+import { useRouter } from 'next/router';
 import { Box, Text, Link, Button, VStack } from "@chakra-ui/react";
 import Spinner from './Spinner';
 import { setArtPayload } from '../slices/flippandoSlice';
@@ -27,7 +28,9 @@ const SimpleCanvas = ({height, width}) => {
     const [isArtMinted, setIsArtMinted] = useState(false)
     const [isMintingArt, setIsMintingArt] = useState(false)
     const artPayload = useSelector(state => state.flippando.artPayload);
+    const userLoggedIn = useSelector(state => state.flippando.userLoggedIn);
     const dispatch = useDispatch();
+    const router = useRouter();
 
     // Calculate start and end for draggable area
     const startRow = Math.floor((gridHeight - height) / 2);
@@ -99,9 +102,16 @@ const SimpleCanvas = ({height, width}) => {
           setIsLoading(false);
         }
       };
-    
-      fetchNFTs();
-    }, []);
+      if(userLoggedIn === "1"){
+        fetchNFTs();
+      }
+      else if(userLoggedIn === "0"){
+        setSourceGrid([])
+        setCanvas(Array(height*width).fill(placeHolderNFT))
+        setIndexSourceGrid(null)
+        setIndexTrack([{}])
+      }
+    }, [userLoggedIn]);
     
 
     useEffect( () => {
@@ -169,10 +179,11 @@ const SimpleCanvas = ({height, width}) => {
             setIsLoading(false);
           }
         };
-      
-        fetchNFTs();
+        if(userLoggedIn === "1"){
+          fetchNFTs();
+        }
       }
-    }, [isArtMinted])
+    }, [isArtMinted, userLoggedIn])
 
   const handleDrop = (index) => {
     const updatedCanvas = [...canvas];
@@ -272,47 +283,47 @@ const SimpleCanvas = ({height, width}) => {
 
   async function makeArt(){
     const actions = await Actions.getInstance();
-    const playerAddress = await actions.getWalletAddress();
-    const height = artPayload[0]
-    const width = artPayload[1]
-    
-    
-    const bTokenIDs = JSON.stringify(artPayload[2], (key, value) => 
-      (key === '' ? value : parseInt(value))
-    );
-    console.log("makeArt, ", JSON.stringify(artPayload))
-    if (artPayload.length === 0 ) {
-      alert("You have to fill the entire canvas")
-    }
-    if (artPayload[2] !== undefined && artPayload[2].includes("0")){
-      alert("You have to fill the entire canvas")
-    }
-    if (artPayload.length !== 0 && !artPayload[2].includes("0")){
-      setIsMintingArt(true)
-      try {
-        actions.createCompositeNFT(playerAddress, String(width), String(height), bTokenIDs).then((response) => {
-          console.log("createCompositeNFT response in Playground", response);
-          let parsedResponse = JSON.parse(response);
-          console.log("createCompositeNFT parseResponse", parsedResponse)
-          if(parsedResponse.error === undefined){
-            setIsArtMinted(true)
-            
-          }
-          setIsMintingArt(false)
-        });
-      } catch (err) {
-        console.log("error in calling createCompositeNFT", err);
+    if(actions.hasWallet()){
+      const playerAddress = await actions.getWalletAddress();
+      const height = artPayload[0]
+      const width = artPayload[1]
+      
+      const bTokenIDs = JSON.stringify(artPayload[2], (key, value) => 
+        (key === '' ? value : parseInt(value))
+      );
+      console.log("makeArt, ", JSON.stringify(artPayload))
+      if (artPayload.length === 0 ) {
+        alert("You have to fill the entire canvas")
       }
-    } 
+      if (artPayload[2] !== undefined && artPayload[2].includes("0")){
+        alert("You have to fill the entire canvas")
+      }
+      if (artPayload.length !== 0 && !artPayload[2].includes("0")){
+        setIsMintingArt(true)
+        try {
+          actions.createCompositeNFT(playerAddress, String(width), String(height), bTokenIDs).then((response) => {
+            console.log("createCompositeNFT response in Playground", response);
+            let parsedResponse = JSON.parse(response);
+            console.log("createCompositeNFT parseResponse", parsedResponse)
+            if(parsedResponse.error === undefined){
+              setIsArtMinted(true)
+              
+            }
+            setIsMintingArt(false)
+          });
+        } catch (err) {
+          console.log("error in calling createCompositeNFT", err);
+        }
+      } 
+    }
+    else {
+      alert("Looks like you're logged out. Log in to play.")
+    }
   }
 
-  const handleNext = () => {
-    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
-  };
-
-  const handlePrev = () => {
-      setCurrentImageIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
-  };
+  const navigateToInventory = () => {
+    router.push('./inventory')
+  }
 
   return (
     <div className='flex items-center' style={{ marginTop: 20, marginBottom: 20, flexDirection: 'column' }}>     
@@ -419,9 +430,10 @@ const SimpleCanvas = ({height, width}) => {
           <Text fontSize="lg" fontWeight="bold" textAlign="center">
             Your painting is now part of your collection.
           </Text>
-          <Link href={'/inventory'} passHref>
+          
           <Button 
             disabled={false}
+            onClick={navigateToInventory}
             bg="purple.900"
             color="white"
             fontSize="lg"
@@ -437,7 +449,7 @@ const SimpleCanvas = ({height, width}) => {
           >
               Your Collection
             </Button>
-          </Link>
+          
           </VStack>
         </Box>
       }

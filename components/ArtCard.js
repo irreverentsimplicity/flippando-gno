@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import { Box, Text, VStack, HStack, Button, Spacer, Alert, FormControl, FormLabel, Input, CloseButton, Link } from "@chakra-ui/react";
 import Actions from '../util/actions';
 import Spinner from './Spinner';
@@ -23,6 +24,7 @@ const ArtSmallTile = ({ size, artNFT, tokenID }) => {
 const ArtCard = ({ title, text, artwork, numRows, numCols, onTrigger }) => {
   const imageWidth = 300; // Fixed image width
   const tileSize = imageWidth / numCols; 
+  const router = useRouter()
 
   const [showAlert, setShowAlert] = useState(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
@@ -77,6 +79,10 @@ const ArtCard = ({ title, text, artwork, numRows, numCols, onTrigger }) => {
     }
   }
 
+  const handleNavigation = () => {
+    router.push(`/compositenft?tokenId=${artwork.tokenID}`);
+  };
+
   const closeAlert = () => {
     setShowAlert(false);
   };
@@ -128,14 +134,15 @@ const ArtCard = ({ title, text, artwork, numRows, numCols, onTrigger }) => {
           disabled={true}          
         >Listing...</Button>
         }
-        <Link key={artwork.tokenID} href={`/compositenft?tokenId=${artwork.tokenID}`} passHref>
+        
         <Button
             bg="purple.900"               
             color="white"               
             _hover={{ bg: "blue.600"}}
-            borderRadius="full"   
+            borderRadius="full"
+            onClick = {handleNavigation}   
           >Details</Button>
-        </Link>
+        
         
         </HStack>
       </VStack>

@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useRouter } from 'next/router';
 import { Box, Text, Link, HStack, VStack, Button, Flex, filter, position } from "@chakra-ui/react";
 import NextLink from 'next/link';
 import Spinner from './Spinner';
@@ -41,7 +42,9 @@ const AirdropCanvas = ({height, width}) => {
     const [isArtMinted, setIsArtMinted] = useState(false)
     const [isMintingArt, setIsMintingArt] = useState(false)
     const artPayload = useSelector(state => state.flippando.artPayload);
+    const userLoggedIn = useSelector(state => state.flippando.userLoggedIn)
     const dispatch = useDispatch();
+    const router = useRouter();
 
     // Calculate start and end for draggable area
     const startRow = Math.floor((gridHeight - height) / 2);
@@ -135,9 +138,22 @@ const AirdropCanvas = ({height, width}) => {
         }
       };
     
-      fetchNFTs();
-      getMintedNFTs();
-    }, []);
+      
+      if(userLoggedIn === "1"){
+        fetchNFTs();
+        getMintedNFTs();
+      }
+      else if(userLoggedIn === "0"){
+        setSourceGrid([])
+        setCanvas(Array(height*width).fill(placeHolderNFT))
+        setTotalNFTsMinted([])
+        setTotalAirdropNFTsMinted([])
+        setAvailableForParent([])
+        setTotalNeededForParent([])
+        setIndexSourceGrid(null)
+        setIndexTrack([{}])
+      }
+    }, [userLoggedIn]);
     
 
     useEffect( () => {
@@ -353,7 +369,7 @@ const AirdropCanvas = ({height, width}) => {
       } 
     }
     else {
-      alert("seems like you're logged out")
+      alert("Looks like you're logged out. Log in to play.")
     }
   }
 
@@ -402,6 +418,9 @@ const AirdropCanvas = ({height, width}) => {
     
   };
 
+  const navigateToInventory = () => {
+    router.push('./inventory')
+  }
   return (
     <div className='flex items-center' style={{marginTop: 5, marginBottom: 20, flexDirection: 'column'}}>     
       <div className='flex justify-center items-center column' style={{flexDirection: 'column', position: 'relative'}}>
@@ -511,9 +530,10 @@ const AirdropCanvas = ({height, width}) => {
           <Text fontSize="lg" fontWeight="bold" textAlign="center">
             Your painting is now part of your collection.
           </Text>
-          <Link href={'/inventory'} passHref>
+          
           <Button 
             disabled={false}
+            onClick={navigateToInventory}
             bg="purple.900"
             color="white"
             fontSize="lg"
@@ -529,7 +549,7 @@ const AirdropCanvas = ({height, width}) => {
           >
               Your Collection
             </Button>
-          </Link>
+          
           </VStack>
         </Box>
       }

@@ -40,7 +40,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Actions from "../util/actions";
 import { getGNOTBalances, fetchUserFLIPBalances } from "../util/tokenActions";
-import { act } from "react";
+import { useRouter } from "next/router";
 
 const Home = () => {
   
@@ -77,6 +77,7 @@ const Home = () => {
   const userBasicNFTs = useSelector(state => state.flippando.userBasicNFTs);
 
   const dispatch = useDispatch();
+  const router = useRouter();
 
 
   useEffect( () => {
@@ -95,12 +96,25 @@ const Home = () => {
   }, [rpcEndpoint, dispatch])
 
   useEffect( () => {
-    getUserGamesByStatus();
-    //getGNOTBalances(dispatch);
-    fetchUserFLIPBalances(dispatch);
-    fetchUserNFTs();
+    if(userLoggedIn === "1"){
+      console.log("trigger")
     
-  }, [])
+      fetchUserFLIPBalances(dispatch);
+      fetchUserNFTs();
+      setIsLoadingUserGames(true)
+      getUserGamesByStatus();
+      renderLevels(1);
+      renderLevels(2);
+    }
+    if(userLoggedIn === "0"){
+      setGameStatus("Flippando is an undefined state.")
+    }
+    
+  }, [userLoggedIn, dispatch])
+
+  const navigateToInventory = () => {
+    router.push('/inventory')
+  }
 
   const fetchUserNFTs = async () => {
     const actions = await Actions.getInstance();
@@ -164,26 +178,28 @@ const Home = () => {
   const getUserGamesByStatus = async () => {
     //console.log("getUserGamesByStatus call in Flip");
     const actions = await Actions.getInstance();
-    const playerAddress = await actions.getWalletAddress();
-    if (isLoadingUserGames) {
-      try {
-        actions.getUserGamesByStatus(playerAddress, "initialized").then((response) => {
-          //console.log("getUserGamesByStatus response in Flip", response);
-          if (response !== undefined){
-            let parsedResponse = JSON.parse(response);
-            if (parsedResponse.length != 0) {
-              setUserGames(parsedResponse.userGames);
+    if(actions.hasWallet()){
+      const playerAddress = await actions.getWalletAddress();
+      if (isLoadingUserGames) {
+        try {
+          actions.getUserGamesByStatus(playerAddress, "initialized").then((response) => {
+            console.log("getUserGamesByStatus response in Flip", response);
+            if (response !== undefined){
+              let parsedResponse = JSON.parse(response);
+              if (parsedResponse.length != 0) {
+                setUserGames(parsedResponse.userGames);
+              }
+              setIsLoadingUserGames(false);
             }
             setIsLoadingUserGames(false);
-          }
-          setIsLoadingUserGames(false);
-          
-          //console.log("parseResponse", JSON.stringify(parsedResponse, null, 2))
-        });
-      } catch (err) {
-        console.log("error in calling getUserGamesByStatus", err);
+            
+            //console.log("parseResponse", JSON.stringify(parsedResponse, null, 2))
+          });
+        } catch (err) {
+          console.log("error in calling getUserGamesByStatus", err);
+        }
+        
       }
-      
     }
   }
 
@@ -216,23 +232,28 @@ const Home = () => {
   };
 
   async function createNewGame(gameLevel, typeOfGame) {
-    console.log("typeOfGame ", typeOfGame)
-    setIsCreatingGame(true)
     const actions = await Actions.getInstance();
-    const playerAddress = await actions.getWalletAddress();
-    try {
-      actions.startGame(playerAddress, typeOfGame, gameLevel.toString()).then((response) => {
-        console.log("response in Flip", response);
-        let parsedResponse = JSON.parse(response);
-        let newGameStatus = "Flippando initialized, game id: " + parsedResponse.id;
-        setCurrentGameId(parsedResponse.id);
-        setTileMatrix(Array(gameLevel).fill(0));
-        setUncoveredTileMatrix(Array(gameLevel).fill(0));
-        setGameStatus(newGameStatus);
-        setIsCreatingGame(false)
-      });
-    } catch (err) {
-      console.log("error in calling startGame", err);
+    if(actions.hasWallet()){
+      console.log("typeOfGame ", typeOfGame)
+      setIsCreatingGame(true)
+      const playerAddress = await actions.getWalletAddress();
+      try {
+        actions.startGame(playerAddress, typeOfGame, gameLevel.toString()).then((response) => {
+          console.log("response in Flip", response);
+          let parsedResponse = JSON.parse(response);
+          let newGameStatus = "Flippando initialized, game id: " + parsedResponse.id;
+          setCurrentGameId(parsedResponse.id);
+          setTileMatrix(Array(gameLevel).fill(0));
+          setUncoveredTileMatrix(Array(gameLevel).fill(0));
+          setGameStatus(newGameStatus);
+          setIsCreatingGame(false)
+        });
+      } catch (err) {
+        console.log("error in calling startGame", err);
+      }
+    }
+    else {
+      alert("Looks like you're logged out. Log in to play.")
     }
   }
 
@@ -254,107 +275,110 @@ const Home = () => {
 
   async function flipTiles(withPositions){
     const actions = await Actions.getInstance();
-    const playerAddress = await actions.getWalletAddress();
-    const processedPositions = JSON.stringify(withPositions);
-    console.log('currentGameId in flipTiles ', currentGameId)
-    
-    try {
-      actions.flipTiles(playerAddress, currentGameId, processedPositions).then((response) => {
-        console.log("Game response in flip.js flipTiles", response);
-        let parsedResponse = JSON.parse(response);
-        console.log("parsedResponse", parsedResponse)
-        
-        // this is the blockchain solved matrix
-        var tileMatrixCopy = parsedResponse.solvedGameBoard;
-        // we get non-zero values from chain
-        if (
-          parsedResponse.gameBoard[withPositions[0]] ===
-          parsedResponse.gameBoard[withPositions[1]] &&
-          parsedResponse.gameBoard[withPositions[0]] !== 0 &&
-          parsedResponse.gameBoard[withPositions[1]] !== 0
-        ) {
-          // this is the blockchain solved matrix
-          setTileMatrix(parsedResponse.solvedGameBoard);
-        }
-        // we get zero values from chain, we're in quantum state, and
-        // we don't have equal numbers, display quantum flickering visual
-        else if (
-          parsedResponse.gameBoard[withPositions[0]] ===
-          parsedResponse.gameBoard[withPositions[1]] &&
-          parsedResponse.gameBoard[withPositions[0]] === 0 &&
-          parsedResponse.gameBoard[withPositions[1]] === 0
-        ) {
-          // add a timeout function, so the numbers are visible for a while
-          tileMatrixCopy[withPositions[0]] = -2;
-          tileMatrixCopy[withPositions[1]] = -2;
-          setTileMatrix(tileMatrixCopy);
-
-          // wait 2 secs, then update with the solved tile matrix
-          setTimeout(() => {
-            console.log("Delayed for 2 seconds.");
-            var tileMatrixCopy1 = [...parsedResponse.solvedGameBoard];
-            tileMatrixCopy1[withPositions[0]] = 0;
-            tileMatrixCopy1[withPositions[1]] = 0;
-            setTileMatrix(tileMatrixCopy1);
-          }, 1000);
-        } else {
-          // add a timeout function, so the numbers are visible for a while
-          tileMatrixCopy[withPositions[0]] =
-          parsedResponse.gameBoard[withPositions[0]];
-          tileMatrixCopy[withPositions[1]] =
-          parsedResponse.gameBoard[withPositions[1]];
-          setTileMatrix(tileMatrixCopy);
-
-          // wait 2 secs, then update with the solved tile matrix
-          setTimeout(() => {
-            console.log("Delayed for 2 seconds.");
-            var tileMatrixCopy1 = [...parsedResponse.solvedGameBoard];
-            tileMatrixCopy1[withPositions[0]] = 0;
-            tileMatrixCopy1[withPositions[1]] = 0;
-            setTileMatrix(tileMatrixCopy1);
-          }, 2000);
-        }
-        if(parsedResponse.gameStatus === "finished"){
-          setGameStatus("Flippando solved, all tiles uncovered. Congrats!");
-        }
+    if(actions.hasWallet()){
+      const playerAddress = await actions.getWalletAddress();
+      const processedPositions = JSON.stringify(withPositions);
+      console.log('currentGameId in flipTiles ', currentGameId)
       
-      });
-    } catch (err) {
-      console.log("error in calling flipTiles", err);
+      try {
+        actions.flipTiles(playerAddress, currentGameId, processedPositions).then((response) => {
+          console.log("Game response in flip.js flipTiles", response);
+          let parsedResponse = JSON.parse(response);
+          console.log("parsedResponse", parsedResponse)
+          
+          // this is the blockchain solved matrix
+          var tileMatrixCopy = parsedResponse.solvedGameBoard;
+          // we get non-zero values from chain
+          if (
+            parsedResponse.gameBoard[withPositions[0]] ===
+            parsedResponse.gameBoard[withPositions[1]] &&
+            parsedResponse.gameBoard[withPositions[0]] !== 0 &&
+            parsedResponse.gameBoard[withPositions[1]] !== 0
+          ) {
+            // this is the blockchain solved matrix
+            setTileMatrix(parsedResponse.solvedGameBoard);
+          }
+          // we get zero values from chain, we're in quantum state, and
+          // we don't have equal numbers, display quantum flickering visual
+          else if (
+            parsedResponse.gameBoard[withPositions[0]] ===
+            parsedResponse.gameBoard[withPositions[1]] &&
+            parsedResponse.gameBoard[withPositions[0]] === 0 &&
+            parsedResponse.gameBoard[withPositions[1]] === 0
+          ) {
+            // add a timeout function, so the numbers are visible for a while
+            tileMatrixCopy[withPositions[0]] = -2;
+            tileMatrixCopy[withPositions[1]] = -2;
+            setTileMatrix(tileMatrixCopy);
+
+            // wait 2 secs, then update with the solved tile matrix
+            setTimeout(() => {
+              console.log("Delayed for 2 seconds.");
+              var tileMatrixCopy1 = [...parsedResponse.solvedGameBoard];
+              tileMatrixCopy1[withPositions[0]] = 0;
+              tileMatrixCopy1[withPositions[1]] = 0;
+              setTileMatrix(tileMatrixCopy1);
+            }, 1000);
+          } else {
+            // add a timeout function, so the numbers are visible for a while
+            tileMatrixCopy[withPositions[0]] =
+            parsedResponse.gameBoard[withPositions[0]];
+            tileMatrixCopy[withPositions[1]] =
+            parsedResponse.gameBoard[withPositions[1]];
+            setTileMatrix(tileMatrixCopy);
+
+            // wait 2 secs, then update with the solved tile matrix
+            setTimeout(() => {
+              console.log("Delayed for 2 seconds.");
+              var tileMatrixCopy1 = [...parsedResponse.solvedGameBoard];
+              tileMatrixCopy1[withPositions[0]] = 0;
+              tileMatrixCopy1[withPositions[1]] = 0;
+              setTileMatrix(tileMatrixCopy1);
+            }, 2000);
+          }
+          if(parsedResponse.gameStatus === "finished"){
+            setGameStatus("Flippando solved, all tiles uncovered. Congrats!");
+          }
+        
+        });
+      } catch (err) {
+        console.log("error in calling flipTiles", err);
+      }
     }
-    
   }
 
   async function mintNFT(gameId) {
     const actions = await Actions.getInstance();
-    const playerAddress = await actions.getWalletAddress();
-    setGameStatus("Hang on, we're minting this...");
-    setIsMintingNFT(true)
-    try {
-      actions.createNFT(playerAddress, gameId).then((response) => {
-        console.log("mintNFT response in Flip", response);
-        let parsedResponse = JSON.parse(response);
-        console.log("parseResponse", parsedResponse)
-        if(parsedResponse.error === undefined){
-          setGameStatus("Board minted. Flippando is now in an undefined state.")
-          if(gameLevel === 16){
-            updateLevel1Board()
+    if(actions.hasWallet()){
+      const playerAddress = await actions.getWalletAddress();
+      setGameStatus("Hang on, we're minting this...");
+      setIsMintingNFT(true)
+      try {
+        actions.createNFT(playerAddress, gameId).then((response) => {
+          console.log("mintNFT response in Flip", response);
+          let parsedResponse = JSON.parse(response);
+          console.log("parseResponse", parsedResponse)
+          if(parsedResponse.error === undefined){
+            setGameStatus("Board minted. Flippando is now in an undefined state.")
+            if(gameLevel === 16){
+              updateLevel1Board()
+            }
+            if(gameLevel === 64){
+              updateLevel2Board()
+            }
+            
+            fetchUserNFTs()
+            getGNOTBalances(dispatch);
+            fetchUserFLIPBalances(dispatch);
+            setIsLoadingUserGames(true)
+            getUserGamesByStatus()
+            setIsMintingNFT(false)
           }
-          if(gameLevel === 64){
-            updateLevel2Board()
-          }
-          
-          fetchUserNFTs()
-          getGNOTBalances(dispatch);
-          fetchUserFLIPBalances(dispatch);
-          setIsLoadingUserGames(true)
-          getUserGamesByStatus()
-          setIsMintingNFT(false)
-        }
-      });
-    } catch (err) {
-      console.log("error in calling mintNFT", err);
-      setGameStatus("There was an error minting this NFT.");
+        });
+      } catch (err) {
+        console.log("error in calling mintNFT", err);
+        setGameStatus("There was an error minting this NFT.");
+      }
     }
   }
 
@@ -495,12 +519,22 @@ const Home = () => {
           levelsBoard[i] = level1NFTs[i];
         }
       }
+      else {
+        for (i = 0; i < 12; i++) {
+          levelsBoard[i] = 0;
+        }
+      }
     } else if (levels === 2) {
       levelsBoard = level2Board;
       if(level2NFTs !== undefined && level2NFTs.length !== 0) {
-        let tileDisplayed = level2NFTs.length >= 12 ? 12 : level2NFTs.length
+          let tileDisplayed = level2NFTs.length >= 12 ? 12 : level2NFTs.length
           for (i = 0; i < tileDisplayed; i++) {
             levelsBoard[i] = level2NFTs[i];
+          }
+        }
+        else {
+          for (i = 0; i < 12; i++) {
+            levelsBoard[i] = 0;
           }
         }
     }
@@ -1182,7 +1216,7 @@ const Home = () => {
                     loading...
                   </Text>
                 }
-                {!isLoadingUserGames && userGames.length != 0 &&
+                {!isLoadingUserGames && userGames.length != 0 && userLoggedIn === "1" &&
                   renderUserGames()
                 }
                 {!isLoadingUserGames && userGames.length == 0 &&
@@ -1214,17 +1248,18 @@ const Home = () => {
               {renderLevels(2)}
             </div>
             
-            <Link href={`/inventory`} passHref>
+            
               <Button
                 bg="purple.900"
                 color="white"
                 _hover={{ bg: "blue.600" }}
                 borderRadius="md"
                 marginTop={3}
+                onClick={navigateToInventory}
               >
                 Inventory
               </Button>
-            </Link>
+            
           
         </Box>
         </div>

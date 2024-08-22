@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, Text, VStack, HStack, Button, Spacer, Alert, FormControl, FormLabel, Input, CloseButton, Link } from "@chakra-ui/react";
 import Actions from '../util/actions';
 import Spinner from './Spinner';
+import { useRouter } from 'next/router';
 
 const BasicNFTSmallTile = ({ size, basicNFT, tokenID }) => {
   console.log("basicNFT", JSON.stringify(basicNFT))
@@ -23,6 +24,7 @@ const BasicNFTSmallTile = ({ size, basicNFT, tokenID }) => {
 const BasicNFTCard = ({ title, text, cardData, numRows, numCols, onTrigger }) => {
   const imageWidth = 300; // Fixed image width
   const tileSize = 300; 
+  const router = useRouter()
 
   const [showAlert, setShowAlert] = useState(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
@@ -41,6 +43,10 @@ const BasicNFTCard = ({ title, text, cardData, numRows, numCols, onTrigger }) =>
   const handleButtonClick = () => {
     setShowAlert(true);
   };
+
+  const handleNavigation = () => {
+    router.push(`/basicnft?tokenId=${cardData.tokenID}`);
+  }
 
   const handleList = async (price, tokenId) => {
     console.log("handleList ", price, tokenId)
@@ -132,14 +138,13 @@ const BasicNFTCard = ({ title, text, cardData, numRows, numCols, onTrigger }) =>
           disabled={true}          
         >Listing...</Button>
         }
-        <Link key={cardData.tokenID} href={`/basicnft?tokenId=${cardData.tokenID}`} passHref>
         <Button
             bg="purple.900"               
             color="white"               
             _hover={{ bg: "blue.600"}}
-            borderRadius="full"   
+            borderRadius="full"
+            onClick={handleNavigation}
           >Details</Button>
-        </Link>
         </HStack>
       </VStack>
       {showAlert && (

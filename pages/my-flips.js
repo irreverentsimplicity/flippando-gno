@@ -14,6 +14,7 @@ const MyFlips = () => {
   const [isLoadingUsedNFTs, setIsLoadingUsedNFTs] = useState(true)
 
   const rpcEndpoint = useSelector(state => state.flippando.rpcEndpoint);
+  const userLoggedIn = useSelector(state => state.flippando.userLoggedIn)
 
   const dispatch = useDispatch()
   
@@ -83,16 +84,19 @@ const MyFlips = () => {
         console.log("error in fetching NFTs", err);
       }
     };
-  
-    fetchData();
-  }, []);
+    if(userLoggedIn === "1"){
+      fetchData();
+    }
+  }, [userLoggedIn]);
 
   useEffect( () => {
-    console.log("userBasicNFTs", JSON.stringify(userBasicNFTs))
-    if(userBasicNFTs !== undefined){
-      setIsLoadingNFTs(false)
+    if(userLoggedIn === "1"){
+      console.log("userBasicNFTs", JSON.stringify(userBasicNFTs))
+      if(userBasicNFTs !== undefined){
+        setIsLoadingNFTs(false)
+      }
     }
-  }, [userBasicNFTs])
+  }, [userBasicNFTs, userLoggedIn])
   
    const reloadData = async () => {
     try {

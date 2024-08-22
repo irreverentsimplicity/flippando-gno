@@ -97,6 +97,10 @@ const CompositeNFT = () => {
     }
   }
 
+  const handleNavigation = () => {
+    router.push('/inventory')
+  }
+
   return (
 
     <div className={styles.container}>
@@ -215,16 +219,17 @@ const CompositeNFT = () => {
         </div>
         <div className='col-span-4 flex justify-center mt-4'>
           <Box width="100%" textAlign="center">
-            <Link key={artNFT.tokenID} href={`/inventory`} passHref>
+            
               <Button
                 bg="purple.900"
                 color="white"
                 _hover={{ bg: "blue.600" }}
                 borderRadius="full"
+                onClick={handleNavigation}
               >
                 Inventory
               </Button>
-            </Link>
+            
           </Box>
         </div>
       </div>

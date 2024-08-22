@@ -13,9 +13,8 @@ const PasswordLoginForm = () => {
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
 
-  const handleLogin = async () => {
-    // Decrypt mnemonic using password and verify it
-    console.log("Attempting login with password: ", password);
+  const handleLogin = async () => { 
+    //console.log("Attempting login with password: ", password);
     try {
         // Retrieve encrypted mnemonic from IndexedDB
         const encryptedMnemonic = await getEncryptedMnemonicFromIndexedDB();
@@ -59,10 +58,9 @@ const PasswordLoginForm = () => {
 
   return (
     <FormControl>
-      <FormLabel>Start playing</FormLabel>
+      <FormLabel>Enter password</FormLabel>
       <Input
         type="password"
-        placeholder="Enter your password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
@@ -78,7 +76,7 @@ const PasswordLoginForm = () => {
       fontWeight="bold"
       _hover={{bg: "purple.900"}}
       mt={4} onClick={handleLogin}>
-        Log In
+        Start playing
       </Button>
     </FormControl>
   );

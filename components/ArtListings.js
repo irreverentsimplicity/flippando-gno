@@ -1,11 +1,6 @@
 import {useEffect, useState} from 'react';
 import { useSelector, useDispatch } from "react-redux";
-import styles from "../styles/Home.module.css";
-import Menu from '../components/Menu';
-import Footer from '../components/Footer';
 import Actions from '../util/actions';
-import { Box, Text } from "@chakra-ui/react";
-import Header from "../components/Header";
 import Spinner from '../components/Spinner';
 import MarketPlaceGrid from "../components/MarketPlaceGrid";
 import { setArtMarketplaceListings } from '../slices/flippandoSlice';
@@ -15,9 +10,10 @@ const  ArtListings = () => {
 
   const [enhancedNFTs, setEnhancedNFTs] = useState([]);
   const [listings, setListings] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const [playerAddress, setPlayerAddress] = useState()
   const rpcEndpoint = useSelector(state => state.flippando.rpcEndpoint);
+  const userLoggedIn = useSelector(state => state.flippando.userLoggedIn)
 
   const dispatch = useDispatch()
   
@@ -34,16 +30,24 @@ const  ArtListings = () => {
   }, [rpcEndpoint])
 
   useEffect(() => {
-    getPlayerAddress();
-    getListings();
-  }, []);
+    if(userLoggedIn === "1"){
+      getPlayerAddress();
+      getListings();
+    }
+    else if(userLoggedIn === "0"){
+      setListings([])
+      setEnhancedNFTs([])
+    }
+  }, [userLoggedIn]);
 
   useEffect( () => {
-    getPlayerAddress();
-    if(listings.length > 0 && enhancedNFTs.length === 0){
-      fetchArtworkNFTsForAll(listings);
+    if(userLoggedIn === "1"){
+      getPlayerAddress();
+      if(listings.length > 0 && enhancedNFTs.length === 0){
+        fetchArtworkNFTsForAll(listings);
+      }
     }
-  }, [enhancedNFTs, listings])
+  }, [enhancedNFTs, listings, userLoggedIn])
 
 
   const reloadMarketData = async () => {
@@ -59,61 +63,67 @@ const  ArtListings = () => {
 
   const getListings = async () => {
     const actions = await Actions.getInstance();
-    setIsLoading(true)
+    if(actions.hasWallet()){
+      setIsLoading(true)
 
-    try {
-      console.log("getListings")
-      actions.getCompositeListings().then((response) => {
-        console.log("getListings response in ArtListings.js", response);
-        let parsedResponse = JSON.parse(response);
-        //console.log("getUserCompositeNFTs parseResponse", parsedResponse)
-        if(parsedResponse.error === undefined){
-          fetchArtworkNFTsForAll(parsedResponse.marketplaceListings);
-          setListings(parsedResponse.marketplaceListings)
-          dispatch(setArtMarketplaceListings(parsedResponse.marketplaceListings))
-          setIsLoading(false)
-          return parsedResponse.marketplaceListings
-        }
-      });
-    } catch (error) {
-      console.error('Error retrieving Artwork:', error);
-      return null;
+      try {
+        console.log("getListings")
+        actions.getCompositeListings().then((response) => {
+          console.log("getListings response in ArtListings.js", response);
+          let parsedResponse = JSON.parse(response);
+          //console.log("getUserCompositeNFTs parseResponse", parsedResponse)
+          if(parsedResponse.error === undefined){
+            fetchArtworkNFTsForAll(parsedResponse.marketplaceListings);
+            setListings(parsedResponse.marketplaceListings)
+            dispatch(setArtMarketplaceListings(parsedResponse.marketplaceListings))
+            setIsLoading(false)
+            return parsedResponse.marketplaceListings
+          }
+        });
+      } catch (error) {
+        console.error('Error retrieving Artwork:', error);
+        return null;
+      }
     }
   }
 
   const getPlayerAddress = async() => {
     const actions = await Actions.getInstance();
-    const playerAddress = await actions.getWalletAddress();
-    setPlayerAddress(playerAddress);
+    if(actions.hasWallet()){
+      const playerAddress = await actions.getWalletAddress();
+      setPlayerAddress(playerAddress);
+    }
   }
 
   const fetchArtworkNFTsForAll = async (compositeNFTs) => {
     const actions = await Actions.getInstance();
-    const compositeNFTsWithArtwork = [];
-  
-    for (const compositeNFT of compositeNFTs) {
-      //console.log('compositeNFT', compositeNFT)
-      const bTokenIds = JSON.stringify(compositeNFT.tokenURI.bTokenIDs);
-      //console.log('bTokenIds ', bTokenIds )
-      try {
-        const response = await actions.getArtworkNFTs(bTokenIds);
-        const parsedResponse = JSON.parse(response);
-        if (!parsedResponse.error) {
-          compositeNFTsWithArtwork.push({
-            ...compositeNFT,
-            artworkNFT: parsedResponse.userNFTs
-          });
-        } else {
+    if(actions.hasWallet()){
+      const compositeNFTsWithArtwork = [];
+    
+      for (const compositeNFT of compositeNFTs) {
+        //console.log('compositeNFT', compositeNFT)
+        const bTokenIds = JSON.stringify(compositeNFT.tokenURI.bTokenIDs);
+        //console.log('bTokenIds ', bTokenIds )
+        try {
+          const response = await actions.getArtworkNFTs(bTokenIds);
+          const parsedResponse = JSON.parse(response);
+          if (!parsedResponse.error) {
+            compositeNFTsWithArtwork.push({
+              ...compositeNFT,
+              artworkNFT: parsedResponse.userNFTs
+            });
+          } else {
+            compositeNFTsWithArtwork.push(compositeNFT);
+          }
+        } catch (error) {
+          console.error('Error retrieving basic NFTs for composite NFT:', error);
           compositeNFTsWithArtwork.push(compositeNFT);
         }
-      } catch (error) {
-        console.error('Error retrieving basic NFTs for composite NFT:', error);
-        compositeNFTsWithArtwork.push(compositeNFT);
       }
+      setEnhancedNFTs(compositeNFTsWithArtwork);
+      dispatch(setArtMarketplaceListings(compositeNFTsWithArtwork))
+      setListings([])
     }
-    setEnhancedNFTs(compositeNFTsWithArtwork);
-    dispatch(setArtMarketplaceListings(compositeNFTsWithArtwork))
-    setListings([])
   };
 
   return (

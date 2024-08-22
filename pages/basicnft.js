@@ -65,6 +65,9 @@ const BasicNFT = () => {
     }
   }
 
+  const handleNavigation = () => {
+    router.push('/inventory')
+  }
   return (
 
     <div className={styles.container}>
@@ -181,16 +184,17 @@ const BasicNFT = () => {
         </div>
         <div className='col-span-4 flex justify-center mt-4'>
           <Box width="100%" textAlign="center">
-            <Link key={basicNFTData.tokenID} href={`/inventory`} passHref>
+            
               <Button
                 bg="purple.900"
                 color="white"
                 _hover={{ bg: "blue.600" }}
                 borderRadius="full"
+                onClick={handleNavigation}
               >
                 Inventory
               </Button>
-            </Link>
+            
           </Box>
         </div>
       </div>

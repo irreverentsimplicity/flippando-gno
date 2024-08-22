@@ -1,24 +1,55 @@
 //import Link from 'next/link';
 import styles from "../styles/Home.module.css";
 import PackageJSON from "../package.json";
-import { Link, HStack, Text, Icon } from '@chakra-ui/react';
+import { Link, HStack, Text, Icon, Button } from '@chakra-ui/react';
 import { FaTwitter} from 'react-icons/fa';
+import {useRouter} from 'next/router';
 
 export default function Footer() {
+
+  const router = useRouter();
+
+  const handleNavigation = (target) => {
+    router.push(target)
+  }
 
     return (
         <footer className={styles.footer}>
           <div style={{width: "100%", justifyContent: "center",  alignItems: "center"}}>
           <HStack style={{ fontSize: "medium", borderBottom: "1px solid #ffffff", justifyContent: "flex-end",  alignItems: "center"}}>
             <HStack>
-            <Link style={{textDecoration: "none"}} href="/docs">What is Flippando</Link>
+            <Button 
+              onClick={() => handleNavigation('/docs')}
+              bg="transparent"
+              color="gray.100"
+              padding={0}
+              _hover={"transparent"}
+            >
+              What is Flippando
+            </Button>
             <Text> | </Text>
-            <Link style={{textDecoration: "none"}} href="/airdrop">Airdrop</Link>
+            <Button 
+              onClick={() => handleNavigation('/airdrop')}
+              bg="transparent"
+              color="gray.100"
+              padding={0}
+              _hover={"transparent"}
+            >
+              Airdrop
+            </Button>
             <Text> | </Text>
-            <Link style={{textDecoration: "none"}} href="/roadmap">Roadmap</Link> 
+            <Button 
+              onClick={() => handleNavigation('/roadmap')}
+              bg="transparent"
+              color="gray.100"
+              padding={0}
+              _hover={"transparent"}
+            >
+              Roadmap
+            </Button>
             </HStack>
             <Text> | </Text>
-            <Text>Community: </Text>
+            <Text fontStyle={"medium"}>Community: </Text>
             <a href={'https://twitter.com/Flippand0'} target="_blank" rel="noopener noreferrer">
               <Icon as={FaTwitter} w={5} h={5} alignSelf="right" color={'#eeeeee'}/> 
             </a>

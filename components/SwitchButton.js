@@ -20,7 +20,7 @@ const SwitchButton = ({ setAssistiveImage, assistiveImage }) => {
           borderLeftRadius="md"
           mr={0}
         >
-          Playeground (test) Airdrop
+          Playground (test) Airdrop
         </Button>
         <Button
           onClick={() => setAssistiveImage(true)}
