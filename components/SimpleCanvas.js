@@ -68,14 +68,17 @@ const SimpleCanvas = ({height, width}) => {
                   console.log("filteredBasicNFTs: ", JSON.stringify(filteredBasicNFTs));
                   
                   filteredBasicNFTs.forEach((nftItem) => {
-                    nftData.push({
-                      tokenId: nftItem.tokenId,
-                      metadata: nftItem,
-                    });
+                    if((nftItem.airdropName === "" && nftItem.gameType !== "airdrop")){
+                      nftData.push({
+                        tokenId: nftItem.tokenId,
+                        metadata: nftItem,
+                      });
+                    }
                   });
                 } else {
                   parsedResponse.userNFTs.forEach((nftItem) => {
                     // filter by airdrop name empty and gameType not "airdrop"
+                    console.log("nftItem ", JSON.stringify(nftItem));
                     if((nftItem.airdropName === "" && nftItem.gameType !== "airdrop")){
                       nftData.push({
                         tokenId: nftItem.tokenId,
