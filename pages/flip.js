@@ -107,7 +107,7 @@ const Home = () => {
       renderLevels(2);
     }
     if(userLoggedIn === "0"){
-      setGameStatus("Flippando is an undefined state.")
+      setGameStatus("Flippando is in an undefined state.")
     }
     
   }, [userLoggedIn, dispatch])

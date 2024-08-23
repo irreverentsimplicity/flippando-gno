@@ -77,6 +77,7 @@ const Wallet = ({ userBalances, userGnotBalances }) => {
     }
 
     const showLocalOption = process.env.NEXT_PUBLIC_SHOW_LOCAL_OPTION === 'true';
+    const displayDropDown = process.env.NEXT_PUBLIC_SHOW_DROP_DOWN;
     
     return (
       <div>
@@ -109,20 +110,22 @@ const Wallet = ({ userBalances, userGnotBalances }) => {
         <div className="col-span-5 flex justify-end pr-10 pt-2">
           <AddressDisplay address={address} />
         </div>
-        <div className="col-span-5 flex justify-end pr-10 pt-2">
-          <Select onChange={handleNetworkChange} value={rpcEndpoint}
-          size="sm"
-          fontSize="sm"
-          backgroundColor="purple.700"
-          color="white"
-          borderColor="purple.500"
-          _hover={{ bg: 'purple.600' }}
-          _focus={{ boxShadow: 'outline' }}>
-          <option value="https://rpc.irreverentsimplicity.xyz" >IrreverentSimplicity RPC</option>
-          {showLocalOption && <option value="http://localhost:26657">Local node</option>}
-          
-        </Select>
-        </div>
+        {displayDropDown && 
+          <div className="col-span-5 flex justify-end pr-10 pt-2">
+            <Select onChange={handleNetworkChange} value={rpcEndpoint}
+            size="sm"
+            fontSize="sm"
+            backgroundColor="purple.700"
+            color="white"
+            borderColor="purple.500"
+            _hover={{ bg: 'purple.600' }}
+            _focus={{ boxShadow: 'outline' }}>
+            <option value="https://rpc.irreverentsimplicity.xyz" >IrreverentSimplicity RPC</option>
+            {showLocalOption && <option value="http://localhost:26657">Local node</option>}
+            
+          </Select>
+          </div>
+        }
       </div>
       </div>
       )
