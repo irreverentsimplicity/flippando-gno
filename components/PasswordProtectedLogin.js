@@ -1,7 +1,7 @@
 import { Button, Drawer, DrawerOverlay, DrawerContent, DrawerCloseButton, DrawerHeader, DrawerBody } from "@chakra-ui/react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import PasswordLoginForm from './PasswordLoginform';
+import PasswordLoginForm from './PasswordLoginForm';
 import PasswordSetupForm from './PasswordSetupForm';
 
 const PasswordProtectedLogin = () => {
