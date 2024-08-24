@@ -77,7 +77,7 @@ const Wallet = ({ userBalances, userGnotBalances }) => {
     }
 
     const showLocalOption = process.env.NEXT_PUBLIC_SHOW_LOCAL_OPTION === 'true';
-    const displayDropDown = process.env.NEXT_PUBLIC_SHOW_DROP_DOWN;
+    const displayDropDown = process.env.NEXT_PUBLIC_SHOW_DROP_DOWN === 'false';
     
     return (
       <div>
