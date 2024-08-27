@@ -203,33 +203,22 @@ const Home = () => {
     }
   }
 
-  const updateLevel1Board = () => {
-    let newArray = [...level1Board]; 
-    console.log("newArray ", JSON.stringify(newArray, null, 2))
+  const updateBoard = (board, setBoard) => {
+    let newArray = [...board];
+    console.log("newArray ", JSON.stringify(newArray, null, 2));
     const zeroIndex = newArray.indexOf(0);
-  
+
     if (zeroIndex !== -1) {
       newArray[zeroIndex] = 1;
     } else {
       newArray.push(1);
     }
-    console.log("newArray after update ", JSON.stringify(newArray, null, 2))
-    setLevel1Board(newArray);
+    console.log("newArray after update ", JSON.stringify(newArray, null, 2));
+    setBoard(newArray);
   };
 
-  const updateLevel2Board = () => {
-    let newArray = [...level1Board]; 
-    console.log("newArray ", JSON.stringify(newArray, null, 2))
-    const zeroIndex = newArray.indexOf(0);
-  
-    if (zeroIndex !== -1) {
-      newArray[zeroIndex] = 1;
-    } else {
-      newArray.push(1);
-    }
-    console.log("newArray after update ", JSON.stringify(newArray, null, 2))
-    setLevel2Board(newArray);
-  };
+  const updateLevel1Board = () => updateBoard(level1Board, setLevel1Board);
+  const updateLevel2Board = () => updateBoard(level2Board, setLevel2Board);
 
   async function createNewGame(gameLevel, typeOfGame) {
     const actions = await Actions.getInstance();
@@ -787,72 +776,63 @@ const Home = () => {
   };
 
   const renderUserGames = () => {
-    //console.log("userGames ", JSON.stringify(userGames, null, 2));
-    
-    return userGames.map((userGame, index) => {
-      
-      return (
-        <div key={index}>
-          <Box borderBottom="1px solid white">
+    return userGames.map((userGame, index) => (
+      <div key={index}>
+        <Box borderBottom="1px solid white">
           <Flex justifyContent="space-between">
-          <Flex gap="2">
-          <div className= "flex justify-center p-3 m-2 rounded-lg shadow-lg bg-gray-100 w-20">
-            <div>
-              <Text fontSize="3xl" fontWeight="bold" textAlign="center" color="black">
-              {userGame.solvedGameBoard.length === 16 ? '16' : '64'}
-              </Text>
-              <Text fontSize="4xs" fontWeight="normal" textAlign="center" color="black">
-                tiles
-              </Text>
-            </div>
-          </div>
+            <Flex gap="2">
+              <div className="flex justify-center p-3 m-2 rounded-lg shadow-lg bg-gray-100 w-20">
+                <div>
+                  <Text fontSize="3xl" fontWeight="bold" textAlign="center" color="black">
+                    {userGame.solvedGameBoard.length === 16 ? '16' : '64'}
+                  </Text>
+                  <Text fontSize="4xs" fontWeight="normal" textAlign="center" color="black">
+                    tiles
+                  </Text>
+                </div>
+              </div>
 
-          <div className= "flex justify-center p-3 m-2 rounded-lg shadow-lg bg-gray-100 w-20">
-            <div>
-            <Text fontSize="3xl" fontWeight="bold" textAlign="center" color="black">
-            {userGame.solvedGameBoard.length === 16 ? '1' : '4'}  
-              </Text>
-              <Text fontSize="4xs" fontWeight="normal" textAlign="center" color="black">
-               $FLIP
-              </Text>
-               
-            </div>
-          </div>
-          
-          <div className= "flex flex-col justify-center p-3 m-2 rounded-lg shadow-lg bg-gray-100 w-20" >
-            <div style={{display: "flex", flexDirection: "space-between", alignContent: "center", justifyContent: "center"}}>
-              <div
-                className={
-                  userGame.solvedGameBoard.length == 16
-                    ? "grid gap-x-0 gap-y-0 grid-cols-4 p-0 m-0"
-                    : "grid gap-x-0 gap-y-0 grid-cols-8 p-0 m-0"
-                }>
-                  {renderUnfinishedGame(userGame)}
+              <div className="flex justify-center p-3 m-2 rounded-lg shadow-lg bg-gray-100 w-20">
+                <div>
+                  <Text fontSize="3xl" fontWeight="bold" textAlign="center" color="black">
+                    {userGame.solvedGameBoard.length === 16 ? '1' : '4'}
+                  </Text>
+                  <Text fontSize="4xs" fontWeight="normal" textAlign="center" color="black">
+                    $FLIP
+                  </Text>
+                </div>
               </div>
+
+              <div className="flex flex-col justify-center p-3 m-2 rounded-lg shadow-lg bg-gray-100 w-20">
+                <div style={{ display: "flex", flexDirection: "space-between", alignContent: "center", justifyContent: "center" }}>
+                  <div
+                    className={
+                      userGame.solvedGameBoard.length == 16
+                        ? "grid gap-x-0 gap-y-0 grid-cols-4 p-0 m-0"
+                        : "grid gap-x-0 gap-y-0 grid-cols-8 p-0 m-0"
+                    }>
+                    {renderUnfinishedGame(userGame)}
+                  </div>
+                </div>
+                <div style={{ marginTop: 10 }}>
+                  <Text fontSize={"2xs"} textAlign="center" color="black">
+                    {userGame.solvedGameBoard.reduce((acc, val) => acc + (val !== 0 ? 1 : 0), 0) / userGame.solvedGameBoard.length * 100}%
+                  </Text>
+                </div>
               </div>
-            <div style={{marginTop: 10}}>
-            <Text fontSize={"2xs"} textAlign="center" color="black">
-              {userGame.solvedGameBoard.reduce((acc, val) => acc + (val !== 0 ? 1 : 0), 0) / userGame.solvedGameBoard.length * 100}%
-            </Text>
-            </div>
-          </div>
-          
-          </Flex>
-          <Flex alignItems="center" justifyContent="center">
-          <button 
-            className="rounded-full bg-gray-200 px-3.5 py-2.5 m-1 text-md hover:scale-100 font-semibold font-quantic text-black shadow-bg hover:bg-purple-900 hover:text-white border-none w-[140px] focus:outline-none"
-            onClick={() => setCurrentGame(userGame.id)}>
-              Finish flipping
-          </button>
-          </Flex>
+            </Flex>
+            <Flex alignItems="center" justifyContent="center">
+              <button
+                className="rounded-full bg-gray-200 px-3.5 py-2.5 m-1 text-md hover:scale-100 font-semibold font-quantic text-black shadow-bg hover:bg-purple-900 hover:text-white border-none w-[140px] focus:outline-none"
+                onClick={() => setCurrentGame(userGame.id)}>
+                Finish flipping
+              </button>
+            </Flex>
           </Flex>
         </Box>
-          
-        </div>
-      )
-    })
-  
-  }
+      </div>
+    ));
+  };
 
   const setCurrentGame = (gameId)=> {
     const currentGameObject = userGames.find(g => g.id === gameId);
