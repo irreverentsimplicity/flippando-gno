@@ -1,10 +1,5 @@
-/* pages/my-nfts.js */
-//import {ethers} from 'ethers';
-import styles from "../styles/Home.module.css";
 import { useEffect, useState } from 'react';
 import { useDispatch } from "react-redux";
-import { Box, Text, VStack, Button } from "@chakra-ui/react";
-import Link from 'next/link';
 import { useSelector } from 'react-redux';;
 import AirdropCanvas from './AirdropCanvas';
 import Actions from "../util/actions";
@@ -13,11 +8,8 @@ import { getGNOTBalances, fetchUserFLIPBalances } from "../util/tokenActions";
  const AirdropPlayground = () => {
   const [width, setWidth] = useState(2); // defaults, changed on calling setExistingBasicNFTs
   const [height, setHeight] = useState(2); // defaults, changed on calling setExistingBasicNFTs
-  const [existingBasicNFTs, setExistingBasicNFTs] = useState(0);
-  const userBalances = useSelector(state => state.flippando.userBalances);
-  const userGnotBalances = useSelector(state => state.flippando.userGnotBalances);
   const [isArtMinted, setIsArtMinted] = useState(false)
-  const artPayload = useSelector(state => state.flippando.artPayload);
+  
 
   const rpcEndpoint = useSelector(state => state.flippando.rpcEndpoint);
 

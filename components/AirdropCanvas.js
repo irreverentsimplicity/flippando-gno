@@ -476,12 +476,14 @@ const AirdropCanvas = ({height, width}) => {
         </VStack>
         
           <VStack style={{ marginLeft: 20}}>
-            <a onClick={() => setAssistiveImage(true)}>
+            
+            
               <img src={images[currentImageIndex]} alt="helper" style={{
                 width: '380px',
                 height: '380px',
               }}/>
-            </a>
+            
+            
           <HStack>
           <Button onClick={handlePrev} isDisabled={isPrevDisabled}>
               <FaArrowLeft />

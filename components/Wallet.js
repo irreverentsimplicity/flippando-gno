@@ -26,7 +26,7 @@ const Wallet = ({ userBalances, userGnotBalances }) => {
 
     useEffect( () => {
       setPlayerAddress()
-    }, [])
+    })
     
     const setPlayerAddress = async () => {
       const actions = await Actions.getInstance();
