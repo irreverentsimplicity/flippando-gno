@@ -5,6 +5,7 @@ import styles from "../styles/Home.module.css";
 import Menu from "../components/Menu";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import Actions from "../util/actions";
 import { Box, Text, VStack, HStack, Button, Tabs, Tab, TabList, TabPanels, TabPanel, Link, Divider } from "@chakra-ui/react";
 import { getGNOTBalances, fetchUserFLIPBalances } from "../util/tokenActions";
 
@@ -31,6 +32,7 @@ const BasicNFT = () => {
   const userBalances = useSelector(state => state.flippando.userBalances);
   const userGnotBalances = useSelector(state => state.flippando.userGnotBalances);
   const rpcEndpoint = useSelector(state => state.flippando.rpcEndpoint);
+  const userLoggedIn = useSelector(state => state.flippando.userLoggedIn);
   const [basicNFTData, setBasicNFTData] = useState(null)
   const imageWidth = 400; // Fixed image width
   const tileSize = 400; 
@@ -54,14 +56,38 @@ const BasicNFT = () => {
   }, [rpcEndpoint, dispatch])
 
   useEffect( () => {
-        getBasicNFTData()
-  }, [tokenId])
+    if(userLoggedIn === "1"){
+       getBasicNFTData();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tokenId, userLoggedIn])
 
+  /**
+   * this filters an existing array of tokenIds, for a logged in user
+   */
+  /*
   const getBasicNFTData = () => {
     if (tokenId){
         const basicNFT = userBasicNFTs.filter(item => item.tokenID === tokenId);
         console.log("basicNFT ", JSON.stringify(basicNFT))
         setBasicNFTData(basicNFT[0])
+    }
+  }*/
+
+  /**
+   * this calls the backend for a specific NFT, without the need for a user to be logged in
+   */  
+  const getBasicNFTData = async () => {
+    if (tokenId !== undefined ){
+      const actions = await Actions.getInstance();
+      actions.GetBasicTokenURI(tokenId).then( tokenMetaData => {
+        //console.log("in then, tokenMetaData ", tokenMetaData)
+        //if (tokenMetaData !== undefined ) {
+          console.log("tokenMetaData, ", tokenMetaData)
+          setBasicNFTData(JSON.parse(tokenMetaData))
+        //}
+      })
+      
     }
   }
 

@@ -465,6 +465,20 @@ class Actions {
   }
 
   /**
+   * Gets a basic NFT URI string, to be displayed in various places
+   * regardless if the user owns it or not, but the user still has to be logged in
+   * to call vm qeval, otherwise the call doesn't succeed
+   * @param tokenId string
+   */
+  async GetBasicTokenURI(
+    tokenId: string
+  ): Promise<any> {
+    const response = await this.evaluateExpression("GetBasicTokenURI(\"" + tokenId + "\")")
+    console.log("actions GetBasicTokenURI response ", JSON.stringify(response))
+    return response;
+  }
+
+  /**
    * Call the GetUserNFTs function and return an array of basic NFTs
    * @param playerAddr string
    */
