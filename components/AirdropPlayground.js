@@ -9,7 +9,8 @@ import { getGNOTBalances, fetchUserFLIPBalances } from "../util/tokenActions";
   const [width, setWidth] = useState(2); // defaults, changed on calling setExistingBasicNFTs
   const [height, setHeight] = useState(2); // defaults, changed on calling setExistingBasicNFTs
   const [isArtMinted, setIsArtMinted] = useState(false)
-  
+  const [exsitingBasicNFTs, setExistingBasicNFTs] = useState()
+
 
   const rpcEndpoint = useSelector(state => state.flippando.rpcEndpoint);
 
